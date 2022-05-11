@@ -1,7 +1,7 @@
 /**
  * @file MQTTClient.cpp
  * @author Marc S. Ressl
- * @brief Simple MQTT client with callback
+ * @brief Simple MQTT mqttClient2 with callback
  * @version 2.0
  *
  * @copyright Copyright (c) 2022
@@ -72,7 +72,7 @@ MQTTClient2::~MQTTClient2()
 /**
  * @brief Connects to an MQTT server without encryption.
  *
- * @param clientId MQTT client identifier
+ * @param clientId MQTT mqttClient2 identifier
  * @param host Host to connect to (IP address or domain name)
  * @param port TCP port of MQTT server
  * @param username MQTT username

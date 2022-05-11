@@ -1,7 +1,7 @@
 /**
  * @file MQTTClient.cpp
  * @author Marc S. Ressl
- * @brief Simple MQTT client with callback
+ * @brief Simple MQTT mqttClient2 with callback
  * @version 2.0
  *
  * @copyright Copyright (c) 2022
@@ -25,7 +25,7 @@ public:
 };
 
 /**
- * @brief Manages an MQTT client connection.
+ * @brief Manages an MQTT mqttClient2 connection.
  * 
  */
 class MQTTClient2
