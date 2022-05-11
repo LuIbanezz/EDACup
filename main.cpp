@@ -8,7 +8,6 @@
  * @copyright Copyright (c) 2022
  * 
  */
-
 #include <iostream>
 #include <string>
 #include "MQTTClient2.h"
@@ -33,16 +32,18 @@ int main(int argc, char** argv)
 
     for(int i = 1; i <= ROBOT_NUMBER; i++)
     {
-        mqttClient2.subscribe("robot" + "1" + "." + i + "/display/leftEye/set");
+        string topic = "robot"; topic += EQUIPO; topic += "."; topic += i;
+        mqttClient2.subscribe(topic + "/display/leftEye/set");
         for (char c = '1'; c < ('1' + 4); c++)
         {
-            mqttClient2.subscribe("robot" + EQUIPO + "." + i + "/motor" + c + "/current");
-            mqttClient2.subscribe("robot" + EQUIPO + "." + i + "/motor" + c + "/rpm");
-            mqttClient2.subscribe("robot" + EQUIPO + "." + i + "/motor" + c + "/temperature");
+            mqttClient2.subscribe(topic + "/motor" + c + "/current");
+            mqttClient2.subscribe(topic + "/motor" + c + "/rpm");
+            mqttClient2.subscribe(topic + "/motor" + c + "/temperature");
         }
-    mqttClient2.subscribe("robot" + EQUIPO + "." + i + "/display/leftEye/set");
-    mqttClient2.subscribe("robot" + EQUIPO + "." + i + "/display/rightEye/set");
+    mqttClient2.subscribe(topic + "/display/leftEye/set");
+    mqttClient2.subscribe(topic + "/display/rightEye/set");
     }
+     
 
 
 }
