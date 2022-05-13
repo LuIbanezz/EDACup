@@ -4,10 +4,13 @@
 #include "Robot.h"
 #include <vector>
 
+using namespace std;
+
 class GameModel
 {
 public:
-	vector<Robot *> team;
+    GameModel();
+	vector<Robot *> team1;
 private:
 	
 };

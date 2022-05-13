@@ -15,7 +15,7 @@
 #include "raylib.h"
 
 
-#define EQUIPO      "1"
+#define TEAM      "1"
 #define ROBOT_NUMBER  6
 
 using namespace std;
@@ -35,7 +35,7 @@ int main(int argc, char** argv)
 
     for(int i = 1; i <= ROBOT_NUMBER; i++)
     {
-        string topic = "robot"; topic += EQUIPO; topic += "."; topic += i + '0';
+        string topic = "robot"; topic += TEAM; topic += "."; topic += i + '0';
         mqttClient2.subscribe(topic + "/display/leftEye/set");
         for (char c = '1'; c < ('1' + 4); c++)
         {
@@ -45,28 +45,22 @@ int main(int argc, char** argv)
         }
     
     mqttClient2.subscribe(topic + "/display/leftEye/set");
-    string holis = topic + "/display/leftEye/set";
     mqttClient2.subscribe(topic + "/display/rightEye/set");
     mqttClient2.subscribe("ball/motion/state");
     mqttClient2.subscribe(topic + "/motion/state");
     }
 
-    
-    float x = 3;
-    float y = 10;
-    float rotation = 0;
-
-    vector<char> payload(12);
-
-    *((float*)&payload[0]) = x;
-    *((float*)&payload[4]) = y;
-    *((float*)&payload[8]) = rotation;
-
-    mqttClient2.publish("robot1.1/pid/setpoint/set", payload);
-
-
     MyListener listener;
-    mqttClient2.setListener(&listener); 
+    mqttClient2.setListener(&listener);
+    
+    GameModel model;
+
+    Robot * robot1 = new Robot("robot1.1");
+    model.team1.push_back(robot1);
+
+     //TODO: agregar mas robots a el team1
+
+
     mqttClient2.run();
     // MQTTListener mensajes;
     // mensajes = cliente.getMessages();

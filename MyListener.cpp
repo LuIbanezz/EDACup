@@ -12,8 +12,6 @@
 
 #include "MyListener.h"
 
-#define ROBOT_INDEX topic[7] - '1'
-
 using namespace std;
 
 void MyListener::onMessage(string topic, vector<char> payload)
@@ -21,30 +19,29 @@ void MyListener::onMessage(string topic, vector<char> payload)
     vector<float> decodedMessage = decode(payload);
     if (topic.find("robot") != -1)
     {
-                assign(decodedMessage, model->team[ROBOT_INDEX], topic);
+        //Deja los numeros de equipo (del payload) en 1 y 2
+        int robotTeam = topic[5] - '0';
+        //Deja los indices de los robots (del payload) en 0,1,2...
+        int robotIndex = topic[7] - '1';
+        //TODO: sacar el switch y poner un arreglo de teams de la misma forma que hacemos con robots 
+        switch (robotTeam)
+        {
+        case 1:
+            if(robotIndex == 0)
+            model->team1[robotIndex]->assign(decodedMessage,topic);
+            break;
+        case 2:
+            //model->team2[ROBOT_INDEX]->assign(decodedMessage,topic);    //team2 no esta todavía
+            break;
+        default:
+            break;
+        }    
+        
     }
-    cout << topic << endl;
+    //TODO: usar la posicion de la pelota para actualizar al equipo (SIN GUARDAR EL DATO)
 }
 
-void assign(vector<float>& message, Robot* robot, string topic)
-{
-    if (topic.find("motion") != -1)
-    {
-        //TODO: Arreglar plsssss
-        robot->coordinates.x = message[0];
-        robot->coordinates.y = message[1];
-        robot->coordinates.z = message[2];
-        robot->speed.x = message[3];
-        robot->speed.y = message[4];
-        robot->speed.z = message[5];
-        robot->rotation.x = message[6];
-        robot->rotation.y = message[7];
-        robot->rotation.z = message[8];
-        robot->angularSpeed.x = message[9];
-        robot->angularSpeed.y = message[10];
-        robot->angularSpeed.z = message[11];
-    } 
-}
+
 
 //void Robot::setSetpoint(Setpoint setpoint)
 //{
@@ -58,6 +55,8 @@ void assign(vector<float>& message, Robot* robot, string topic)
 //
 //    mqttClient->publish(robotId + "/pid/setpoint/set", payload);
 //}
+
+
 vector<float> MyListener::decode(vector<char> vecChar)
 {
     vector<float> vecFloat;
@@ -67,7 +66,8 @@ vector<float> MyListener::decode(vector<char> vecChar)
     for (int i = 0; i < (vecChar.size() / 4); i++)
     {
         for (int j = 0; j < 4; j++)
-            ptrAuxChar[j] = vecChar[(i * 4) + j]; //cambio btb el float auxiliar
+            //cambio btb el float auxiliar
+            ptrAuxChar[j] = vecChar[(i * 4) + j]; 
 
         vecFloat.push_back(flaux);
     }

@@ -16,7 +16,7 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     add_link_options(-fsanitize=undefined)
 endif()
 
-add_executable(main main.cpp MyListener.cpp MQTTClient2.cpp "Robot.h" "Robot.cpp" "GameModel.h" "GameModel.c")
+add_executable(main main.cpp MyListener.cpp MQTTClient2.cpp "Robot.h" "Robot.cpp" "GameModel.h" "GameModel.cpp")
 
 # Packages
 

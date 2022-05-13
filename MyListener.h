@@ -22,6 +22,7 @@ public:
     virtual void onMessage(std::string topic, std::vector<char> payload);
 private:
     vector<float> decode(vector<char> vecChar);
+    void assign(vector<float>& message, Robot* robot, string topic);
     GameModel* model;
 };
 
