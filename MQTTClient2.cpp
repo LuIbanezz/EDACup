@@ -32,7 +32,6 @@ static void onMQTTMessage(struct mosquitto *mosquittoClient,
                           void *context,
                           const struct mosquitto_message *message)
 {
-    cout << "holis2" << endl;
     MQTTClient2 *mqttClient2 = (MQTTClient2 *)context;
 
     if (mqttClient2->listener == NULL)

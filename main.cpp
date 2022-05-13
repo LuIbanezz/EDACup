@@ -43,11 +43,13 @@ int main(int argc, char** argv)
             mqttClient2.subscribe(topic + "/motor" + c + "/rpm");
             mqttClient2.subscribe(topic + "/motor" + c + "/temperature");
         }
+    
     mqttClient2.subscribe(topic + "/display/leftEye/set");
+    string holis = topic + "/display/leftEye/set";
     mqttClient2.subscribe(topic + "/display/rightEye/set");
-    mqttClient2.subscribe(topic + "/ball/motion/state");
+    mqttClient2.subscribe("ball/motion/state");
+    mqttClient2.subscribe(topic + "/motion/state");
     }
-
     MyListener listener;
     mqttClient2.setListener(&listener); 
     mqttClient2.run();
