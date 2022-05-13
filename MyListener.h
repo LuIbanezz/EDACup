@@ -19,6 +19,7 @@
 class MyListener : public MQTTListener
 {
 public:
+    MyListener(GameModel* model);
     virtual void onMessage(std::string topic, std::vector<char> payload);
 private:
     vector<float> decode(vector<char> vecChar);

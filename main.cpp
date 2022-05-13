@@ -50,13 +50,12 @@ int main(int argc, char** argv)
     mqttClient2.subscribe(topic + "/motion/state");
     }
 
-    MyListener listener;
-    mqttClient2.setListener(&listener);
-    
     GameModel model;
-
-    Robot * robot1 = new Robot("robot1.1");
+    Robot* robot1 = new Robot("robot1.1");
     model.team1.push_back(robot1);
+
+    MyListener listener(&model);
+    mqttClient2.setListener(&listener);
 
      //TODO: agregar mas robots a el team1
 
@@ -83,7 +82,7 @@ int main(int argc, char** argv)
     //     }
     // }
 
-
+    delete robot1;
 }
 
 

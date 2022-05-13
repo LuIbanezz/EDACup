@@ -14,6 +14,11 @@
 
 using namespace std;
 
+MyListener::MyListener(GameModel* model)
+{
+    this->model = model;
+}
+
 void MyListener::onMessage(string topic, vector<char> payload)
 {
     vector<float> decodedMessage = decode(payload);
