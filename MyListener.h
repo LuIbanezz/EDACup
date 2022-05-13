@@ -13,5 +13,5 @@
 class MyListener : public MQTTListener
 {
 public:
-    void onMessage(std::string topic, std::vector<char> payload);
+    virtual void onMessage(std::string topic, std::vector<char> payload);
 };

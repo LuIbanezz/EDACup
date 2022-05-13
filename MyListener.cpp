@@ -8,10 +8,11 @@
  * @copyright Copyright (c) 2022
  * 
  */
+#include <iostream>
 
 #include "MyListener.h"
 
 void onMessage(std::string topic, std::vector<char> payload)
 {
-    
+    std::cout << "holis" << std::endl;
 }
