@@ -12,9 +12,9 @@
 #include <string>
 #include "MQTTClient2.h"
 #include "MyListener.h"
+#include "raylib.h"
 
 
-#define ASCII_NUMBER_CONST 48
 #define EQUIPO      "1"
 #define ROBOT_NUMBER  6
 
@@ -35,7 +35,7 @@ int main(int argc, char** argv)
 
     for(int i = 1; i <= ROBOT_NUMBER; i++)
     {
-        string topic = "robot"; topic += EQUIPO; topic += "."; topic += i + ASCII_NUMBER_CONST;
+        string topic = "robot"; topic += EQUIPO; topic += "."; topic += i + '0';
         mqttClient2.subscribe(topic + "/display/leftEye/set");
         for (char c = '1'; c < ('1' + 4); c++)
         {
@@ -50,6 +50,21 @@ int main(int argc, char** argv)
     mqttClient2.subscribe("ball/motion/state");
     mqttClient2.subscribe(topic + "/motion/state");
     }
+
+    
+    float x = 3;
+    float y = 10;
+    float rotation = 0;
+
+    vector<char> payload(12);
+
+    *((float*)&payload[0]) = x;
+    *((float*)&payload[4]) = y;
+    *((float*)&payload[8]) = rotation;
+
+    mqttClient2.publish("robot1.1/pid/setpoint/set", payload);
+
+
     MyListener listener;
     mqttClient2.setListener(&listener); 
     mqttClient2.run();
@@ -76,3 +91,5 @@ int main(int argc, char** argv)
 
 
 }
+
+
