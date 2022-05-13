@@ -8,6 +8,10 @@
  * @copyright Copyright (c) 2022
  * 
  */
+#ifndef _MYLISTENER_H
+#define _MYLISTENER_H
+
+
 #include "MQTTClient2.h"
 
 class MyListener : public MQTTListener
@@ -15,3 +19,5 @@ class MyListener : public MQTTListener
 public:
     virtual void onMessage(std::string topic, std::vector<char> payload);
 };
+
+#endif //_MYLISTENER_H

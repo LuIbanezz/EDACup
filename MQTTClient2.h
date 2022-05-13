@@ -21,7 +21,7 @@
 class MQTTListener
 {
 public:
-    virtual void onMessage(std::string topic, std::vector<char> payload);
+    virtual void onMessage(std::string topic, std::vector<char> payload) = 0;
 };
 
 /**

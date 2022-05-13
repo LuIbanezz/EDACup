@@ -12,7 +12,9 @@
 
 #include "MyListener.h"
 
-void onMessage(std::string topic, std::vector<char> payload)
+using namespace std;
+
+void MyListener::onMessage(string topic, vector<char> payload)
 {
-    std::cout << "holis" << std::endl;
+    cout << "holis" << endl;
 }

@@ -49,8 +49,7 @@ int main(int argc, char** argv)
     }
 
     MyListener listener;
-    MyListener*ptrToListener = &listener;
-    mqttClient2.setListener(ptrToListener); 
+    mqttClient2.setListener(&listener); 
     mqttClient2.run();
     // MQTTListener mensajes;
     // mensajes = cliente.getMessages();
