@@ -16,17 +16,17 @@ GameModel::GameModel()
     
 }
 
-void GameModel::addRobot(Robot *robot)
-{
-    team1.push_back(robot);
-}
-
 GameModel::~GameModel()
 {
     for(auto robot : team1)
     {
         delete robot;
     }
+}
+
+void GameModel::addRobot(Robot *robot)
+{
+    team1.push_back(robot);
 }
 
 void GameModel::assignRobotMessage(int robotTeam,
