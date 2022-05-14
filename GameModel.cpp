@@ -40,5 +40,9 @@ void GameModel::assignRobotMessage(int robotTeam,
     {
         //team2[robotIndex]->assignMessage(message, topic);
     }
-        //team2[robotIndex]->assignMessage(message, topic);
+}
+
+void GameModel::updateRobots()
+{
+    team1[0]->updateRobot({-0.5f, 0, 90}, 1.0f/10.0f, 1.5f);
 }
