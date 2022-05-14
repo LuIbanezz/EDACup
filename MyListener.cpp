@@ -14,7 +14,7 @@
 
 using namespace std;
 
-MyListener::MyListener(GameModel* model)
+MyListener::MyListener(GameModel* model)        // 
 {
     this->model = model;
 }
@@ -28,11 +28,11 @@ void MyListener::onMessage(string topic, vector<char> payload)
         int robotTeam = topic[5] - '0';
         //Deja los indices de los robots (del payload) en 0,1,2...
         int robotIndex = topic[7] - '1';
+
         //TODO: sacar el switch y poner un arreglo de teams de la misma forma que hacemos con robots 
         switch (robotTeam)
         {
         case 1:
-            if(robotIndex == 0)
             model->team1[robotIndex]->assign(decodedMessage,topic);
             break;
         case 2:
@@ -41,7 +41,7 @@ void MyListener::onMessage(string topic, vector<char> payload)
         default:
             break;
         }    
-        
+        cout << model->team1[robotIndex]->coordinates.x << endl;        //PRUEBA (imprime coordenadas)
     }
     //TODO: usar la posicion de la pelota para actualizar al equipo (SIN GUARDAR EL DATO)
 }
