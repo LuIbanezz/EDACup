@@ -60,12 +60,12 @@ int main(int argc, char** argv)
     mqttClient2.setListener(&listener);
 
     /**** DEFINO EL VECTOR DE ROBOTS DE TEAM 1 ********/
-    model.addRobot(new Robot("robot1.1"));
-    model.addRobot(new Robot("robot1.2"));
-    model.addRobot(new Robot("robot1.3"));
-    model.addRobot(new Robot("robot1.4"));
-    model.addRobot(new Robot("robot1.5"));
-    model.addRobot(new Robot("robot1.6"));
+    model.addRobot(new Robot("robot1.1", &mqttClient2));
+    model.addRobot(new Robot("robot1.2", &mqttClient2));
+    model.addRobot(new Robot("robot1.3", &mqttClient2));
+    model.addRobot(new Robot("robot1.4", &mqttClient2));
+    model.addRobot(new Robot("robot1.5", &mqttClient2));
+    model.addRobot(new Robot("robot1.6", &mqttClient2));
     
 
      //TODO: agregar mas robots al team1

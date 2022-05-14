@@ -32,8 +32,9 @@ public:
      * @param topic 
      */
     void assignRobotMessage(int robotTeam, int robotIndex, vector<float> &message, string& topic);
-    
+    void updateRobots();
 	
+    
 private:
 	vector<Robot *> team1;
 };

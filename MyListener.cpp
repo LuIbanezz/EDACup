@@ -30,20 +30,19 @@ void MyListener::onMessage(string topic, vector<char> payload)
         int robotIndex = topic[7] - '1';
 
         //TODO: sacar el switch y poner un arreglo de teams de la misma forma que hacemos con robots 
-        switch (robotTeam)
-        {
-        case 1:
-            model->assignRobotMessage(robotTeam, robotIndex, decodedMessage, topic);
-            break;
-        case 2:
-            //model->team2[ROBOT_INDEX]->assign(decodedMessage,topic);    //team2 no esta todavía
-            break;
-        default:
-            break;
-        }    
+       
+        model->assignRobotMessage(robotTeam, robotIndex, decodedMessage, topic);
+            
         //cout << model->team1[robotIndex]->coordinates.x << endl;        //PRUEBA (imprime coordenadas)
     }
+    else
+    {
+        model->updateRobots();
+    }
+
     //TODO: usar la posicion de la pelota para actualizar al equipo (SIN GUARDAR EL DATO)
+
+
 }
 
 
