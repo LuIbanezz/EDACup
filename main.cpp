@@ -54,30 +54,21 @@ int main(int argc, char** argv)
     mqttClient2.subscribe(topic + "/motion/state");
     }
 
-    
 
     GameModel model;
     MyListener listener(&model);
     mqttClient2.setListener(&listener);
 
     /**** DEFINO EL VECTOR DE ROBOTS DE TEAM 1 ********/
-    Robot* robot1 = new Robot("robot1.1");
-    Robot* robot2 = new Robot("robot1.2");
-    Robot* robot3 = new Robot("robot1.3");
-    Robot* robot4 = new Robot("robot1.4");
-    Robot* robot5 = new Robot("robot1.5");
-    Robot* robot6 = new Robot("robot1.6");
-    model.team1.push_back(robot1);
-    model.team1.push_back(robot2);
-    model.team1.push_back(robot3);
-    model.team1.push_back(robot4);
-    model.team1.push_back(robot5);
-    model.team1.push_back(robot6);
-
+    model.addRobot(new Robot("robot1.1"));
+    model.addRobot(new Robot("robot1.2"));
+    model.addRobot(new Robot("robot1.3"));
+    model.addRobot(new Robot("robot1.4"));
+    model.addRobot(new Robot("robot1.5"));
+    model.addRobot(new Robot("robot1.6"));
     
 
      //TODO: agregar mas robots al team1
-
 
     mqttClient2.run();
     
@@ -99,11 +90,7 @@ int main(int argc, char** argv)
     //         tempMotores[motor] = vecToFloat(i.payload);
     //     }
     // }
-    
-    for (auto robot : model.team1)
-    {
-        delete robot;
-    }
+    cout << "Disconnected." << endl;
 }
 
 

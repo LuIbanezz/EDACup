@@ -1,3 +1,13 @@
+/**
+ * @file Robot.cpp
+ * @author Agrippino, Cilfone, Di Sanzo, Hertter, Ibañez
+ * @brief 
+ * @version 0.1
+ * @date 2022-05-14
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
 #include "Robot.h"
 
 using namespace std;
@@ -8,7 +18,7 @@ Robot::Robot(string robotID)
     this->robotID = robotID;
 }
 
-void Robot::assign(vector<float> &message, string topic)
+void Robot::assignMessage(vector<float> &message, string& topic)
 {
     if (topic.find("motion") != -1)
     {

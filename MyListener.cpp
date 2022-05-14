@@ -1,6 +1,6 @@
 /**
  * @file MyListener.cpp
- * @author your name (you@domain.com)
+ * @author Agrippino, Cilfone, Di Sanzo, Hertter, Ibañez
  * @brief 
  * @version 0.1
  * @date 2022-05-10
@@ -33,7 +33,7 @@ void MyListener::onMessage(string topic, vector<char> payload)
         switch (robotTeam)
         {
         case 1:
-            model->team1[robotIndex]->assign(decodedMessage,topic);
+            model->assignRobotMessage(robotTeam, robotIndex, decodedMessage, topic);
             break;
         case 2:
             //model->team2[ROBOT_INDEX]->assign(decodedMessage,topic);    //team2 no esta todavía
@@ -41,7 +41,7 @@ void MyListener::onMessage(string topic, vector<char> payload)
         default:
             break;
         }    
-        cout << model->team1[robotIndex]->coordinates.x << endl;        //PRUEBA (imprime coordenadas)
+        //cout << model->team1[robotIndex]->coordinates.x << endl;        //PRUEBA (imprime coordenadas)
     }
     //TODO: usar la posicion de la pelota para actualizar al equipo (SIN GUARDAR EL DATO)
 }
