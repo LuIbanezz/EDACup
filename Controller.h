@@ -1,5 +1,5 @@
 /**
- * @file GameModel.h
+ * @file Controller.h
  * @author Agrippino, Cilfone, Di Sanzo, Hertter, Ibañez
  * @brief 
  * @version 0.1
@@ -8,20 +8,20 @@
  * @copyright Copyright (c) 2022
  * 
  */
-#ifndef _GAMEMODEL_H
-#define _GAMEMODEL_H
+#ifndef _CONTROLLER_H
+#define _CONTROLLER_H
 
 #include "Robot.h"
 #include <vector>
 
 using namespace std;
 
-class GameModel
+class Controller
 {
 public:
-    GameModel();
-    ~GameModel();
-    void addRobot(Robot*);
+    Controller();
+    ~Controller();
+    void addRobot(Robot* robot);
 
     /**
      * @brief Assigns the received message to the robot
@@ -32,11 +32,13 @@ public:
      * @param topic 
      */
     void assignRobotMessage(int robotTeam, int robotIndex, vector<float> &message, string& topic);
-    void updateRobots();
+    void updateController(vector<float>& ballInfo);
+    float getTime();
 	
     
 private:
 	vector<Robot *> team1;
+    float elapsedTime;
 };
 
 #endif

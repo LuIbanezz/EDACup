@@ -52,20 +52,23 @@ int main(int argc, char** argv)
     mqttClient2.subscribe(topic + "/display/rightEye/set");
     mqttClient2.subscribe("ball/motion/state");
     mqttClient2.subscribe(topic + "/motion/state");
+    mqttClient2.subscribe(topic + "/kicker/chargeVoltage/set");
+    mqttClient2.subscribe(topic + "/kicker/kick/cmd");
+    
     }
 
 
-    GameModel model;
-    MyListener listener(&model);
+    Controller controller;
+    MyListener listener(&controller);
     mqttClient2.setListener(&listener);
 
     /**** DEFINO EL VECTOR DE ROBOTS DE TEAM 1 ********/
-    model.addRobot(new Robot("robot1.1", &mqttClient2));
-    model.addRobot(new Robot("robot1.2", &mqttClient2));
-    model.addRobot(new Robot("robot1.3", &mqttClient2));
-    model.addRobot(new Robot("robot1.4", &mqttClient2));
-    model.addRobot(new Robot("robot1.5", &mqttClient2));
-    model.addRobot(new Robot("robot1.6", &mqttClient2));
+    controller.addRobot(new Robot("robot1.1", &mqttClient2, &controller));
+    controller.addRobot(new Robot("robot1.2", &mqttClient2, &controller));
+    controller.addRobot(new Robot("robot1.3", &mqttClient2, &controller));
+    controller.addRobot(new Robot("robot1.4", &mqttClient2, &controller));
+    controller.addRobot(new Robot("robot1.5", &mqttClient2, &controller));
+    controller.addRobot(new Robot("robot1.6", &mqttClient2, &controller));
     
 
      //TODO: agregar mas robots al team1

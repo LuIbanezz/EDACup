@@ -13,17 +13,17 @@
 
 #include "Robot.h"
 #include "MQTTClient2.h"
-#include "GameModel.h"
+#include "Controller.h"
 #include <vector>
 
 class MyListener : public MQTTListener
 {
 public:
-    MyListener(GameModel* model);
+    MyListener(Controller* controller);
     virtual void onMessage(std::string topic, std::vector<char> payload);
     
 private:
-    GameModel* model;
+    Controller* controller;
 
     vector<float> decode(vector<char> vecChar);
     void assign(vector<float>& message, Robot* robot, string topic);

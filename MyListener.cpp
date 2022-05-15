@@ -14,9 +14,9 @@
 
 using namespace std;
 
-MyListener::MyListener(GameModel* model)        // 
+MyListener::MyListener(Controller* controller)        // 
 {
-    this->model = model;
+    this->controller = controller;
 }
 
 void MyListener::onMessage(string topic, vector<char> payload)
@@ -31,13 +31,14 @@ void MyListener::onMessage(string topic, vector<char> payload)
 
         //TODO: sacar el switch y poner un arreglo de teams de la misma forma que hacemos con robots 
        
-        model->assignRobotMessage(robotTeam, robotIndex, decodedMessage, topic);
+        controller->assignRobotMessage(robotTeam, robotIndex, decodedMessage, topic);
             
-        //cout << model->team1[robotIndex]->coordinates.x << endl;        //PRUEBA (imprime coordenadas)
+        //cout << controller->team1[robotIndex]->coordinates.x << endl;        //PRUEBA (imprime coordenadas)
     }
-    else
+    else // en este caso, el decodedMessage es el estado de la pelota
     {
-        model->updateRobots();
+        controller->updateController(decodedMessage);
+
     }
 
     //TODO: usar la posicion de la pelota para actualizar al equipo (SIN GUARDAR EL DATO)

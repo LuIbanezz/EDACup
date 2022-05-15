@@ -34,7 +34,7 @@ Robot::~Robot()
  * @brief Initializes the robot for a game.
  *
  */
-void Robot::start(GameModel*, MQTTClient *mqttClient_)
+void Robot::start(Controller*, MQTTClient *mqttClient_)
 {
 }
 
@@ -177,7 +177,7 @@ void Robot::setRobotGameMode(GameMode _gameMode)
     gameMode = _gameMode;
     if(_gameMode == blue)
     {
-        timeBlueStarted = gameModel->getGameStateTime();
+        timeBlueStarted = Controller->getGameStateTime();
     }
 }
 

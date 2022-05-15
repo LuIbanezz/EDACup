@@ -12,13 +12,12 @@
 
 using namespace std;
 
-#define MAX_DISTANCE 0.1f
-
 // TODO: completar constructor de Robot
-Robot::Robot(string robotID, MQTTClient2 * client)
+Robot::Robot(string robotID, MQTTClient2 *client, Controller *controller)
 {
     this->robotID = robotID;
     mqttClient2 = client;
+    this->controller = controller; 
 }
 
 void Robot::assignMessage(vector<float> &message, string &topic)
@@ -27,8 +26,8 @@ void Robot::assignMessage(vector<float> &message, string &topic)
     {
         // TODO: Arreglar plsssss //pero si está bien
         coordinates.x = message[0];
-        coordinates.y = message[1];
-        coordinates.z = message[2];
+        coordinates.y = message[2];
+        coordinates.z = message[1];
         speed.x = message[3];
         speed.y = message[4];
         speed.z = message[5];
@@ -41,30 +40,41 @@ void Robot::assignMessage(vector<float> &message, string &topic)
     }
 }
 
-void Robot::updateRobot(Vector3 position, float deltaTime, float speed)
+void Robot::updateRobot(vector<float> &ballInfo)
 {
-    moveRobot(position, deltaTime, speed);
+    Setpoint destination = setDestination(ballInfo);
+
+    if(moveRobot(destination, MAXSPEED) && controller->getTime() - positioningTime > 1)
+    {
+        kick(1.0f);
+    }
 }
 
-void Robot::moveRobot(Vector3 position, float deltaTime, float speed)
+bool Robot::moveRobot(Setpoint destination, float speed)
 {
+    bool arrived = false;
     Vector2 directorVector;
-    directorVector.x = position.x - coordinates.x;
-    directorVector.y = position.y - coordinates.y;
+    directorVector.x = destination.position.x - coordinates.x;
+    directorVector.y = destination.position.y - coordinates.y;
 
-    if(Vector2Length(directorVector) > MAX_DISTANCE)
+    float rotationAngle = 90.0f - Vector2Angle({0,0}, directorVector); // wtf
+
+    if (Vector2Length(directorVector) > (speed * DELTATIME))
     {
         directorVector = Vector2Add({coordinates.x, coordinates.y},
-                Vector2Scale(Vector2Normalize(directorVector), deltaTime * speed));
+                                    Vector2Scale(Vector2Normalize(directorVector), DELTATIME * speed));
 
-        Setpoint setPoint = {directorVector, position.z};
+        Setpoint setPoint = {directorVector, rotationAngle};
         setSetpoint(setPoint);
     }
-    
-    
+    else
+    {
+        setSetpoint(destination);
+        arrived = true;
+        positioningTime = time;
+    }
+    return arrived;
 }
-
-
 
 void Robot::setSetpoint(Setpoint setpoint) // ESTA ES LA FUNCIÓN PARA PUBLICAR EL SETPOINT
 {
@@ -75,4 +85,25 @@ void Robot::setSetpoint(Setpoint setpoint) // ESTA ES LA FUNCIÓN PARA PUBLICAR 
     *((float *)&payload[8]) = setpoint.rotation;
 
     mqttClient2->publish(robotID + "/pid/setpoint/set", payload);
+}
+
+Setpoint Robot::setDestination(vector<float> &ballInfo)
+{
+    Vector2 goalToBall = {ballInfo[0] - GOAL1X, ballInfo[2] - GOAL1Y};
+    Setpoint destination = {(Vector2Add(
+                                Vector2Scale(
+                                    Vector2Normalize(goalToBall), BALLRADIUS + ROBOTRADIUS),
+                                {ballInfo[0], ballInfo[2]})),
+                            90.0f - Vector2Angle(goalToBall,{0,0})};
+    return destination;
+}
+
+void Robot::kick(float strength)
+{
+    vector<char> payload(4);
+
+    *((float *)&payload[0]) = strength;
+    mqttClient2->publish(robotID + "/kicker/kick/cmd", payload);
+
+
 }

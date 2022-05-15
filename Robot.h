@@ -17,6 +17,15 @@
 #include "raylib.h"
 #include <raymath.h>
 #include "MQTTClient2.h"
+#include <iostream>
+#include "Controller.h"
+
+#define DELTATIME 	0.1f
+#define MAXSPEED	6.5f
+#define GOAL1X 		4.5f
+#define GOAL1Y		0.0f
+#define BALLRADIUS	0.0215f
+#define ROBOTRADIUS	0.08f
 
 using namespace std;
 
@@ -30,10 +39,10 @@ struct Setpoint
 class Robot
 {
 public:
-    Robot(string robotID, MQTTClient2 *client);
+    Robot(string robotID, MQTTClient2 *client, Controller* controller);
 	
     void assignMessage(vector<float>& message, string& topic);
-	void updateRobot(Vector3 position, float deltaTime, float speed);// qué hace esta???????
+	void updateRobot(vector<float>& ballInfo);// qué hace esta???????
 	
 protected:
 
@@ -44,10 +53,13 @@ protected:
 	Vector3 angularSpeed;
     string robotID;
 	MQTTClient2* mqttClient2;
+	Controller* controller;
 	
+	void kick(float strength);
 	void setSetpoint(Setpoint setpoint);
-	void moveRobot(Vector3 position, float deltaTime, float speed);//esta publica los setpoints??? si
-	
+	bool moveRobot(Setpoint position, float speed);//esta publica los setpoints??? si
+	Setpoint setDestination(vector<float>& ballInfo);
+	float positioningTime;
 
 };
 
