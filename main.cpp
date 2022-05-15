@@ -70,6 +70,7 @@ int main(int argc, char** argv)
     controller.addRobot(new Robot("robot1.5", &mqttClient2, &controller));
     controller.addRobot(new Robot("robot1.6", &mqttClient2, &controller));
     
+    controller.start();
 
      //TODO: agregar mas robots al team1
 

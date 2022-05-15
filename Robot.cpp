@@ -45,11 +45,15 @@ void Robot::updateRobot(vector<float> &ballInfo)
     static bool kicked = false;
     Setpoint destination = setDestination(ballInfo);
 
-
-    if(moveRobot(destination, MAXSPEED) && kicked == false)
+    bool arrived = moveRobot(destination, MAXSPEED);
+    if(arrived && kicked == false)
     {
-        kick(0.7f);
+        kick(1.0f);
         kicked = true;
+    }
+    else if (!arrived)
+    {
+        kicked = false;
     }
     
 }
@@ -75,10 +79,9 @@ bool Robot::moveRobot(Setpoint destination, float speed)
     else if(arrived == false)
     {
         setSetpoint(destination);
-        positioningTime = controller->getTime();
     }
     if(Vector2Distance({destination.position.x, destination.position.y},
-    {coordinates.x, coordinates.y}) < 0.0001f)
+    {coordinates.x, coordinates.y}) < 0.006f)
     {
         arrived = true;
     }
@@ -112,7 +115,7 @@ void Robot::kick(float strength)
     vector<char> payload(4);
 
     *((float *)&payload[0]) = strength;
-    mqttClient2->publish(robotID + "/kicker/chip/cmd", payload);
+    mqttClient2->publish(robotID + "/kicker/kick/cmd", payload);
 
     *((float *)&payload[0]) = 249.0f;
     mqttClient2->publish(robotID + "/kicker/chargeVoltage/set", payload);
