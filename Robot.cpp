@@ -71,7 +71,7 @@ bool Robot::moveRobot(Setpoint destination, float speed)
     {
         setSetpoint(destination);
         arrived = true;
-        positioningTime = time;
+        positioningTime = controller->getTime();
     }
     return arrived;
 }

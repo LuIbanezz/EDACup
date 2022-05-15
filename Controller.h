@@ -16,13 +16,15 @@
 
 using namespace std;
 
+class Robot;
+
 class Controller
 {
 public:
     Controller();
     ~Controller();
     void addRobot(Robot* robot);
-
+    
     /**
      * @brief Assigns the received message to the robot
      * 

@@ -29,6 +29,8 @@
 
 using namespace std;
 
+class Controller;
+
 struct Setpoint
 {
     Vector2 position;
