@@ -46,6 +46,7 @@ public:
     void assignMessage(vector<float>& message, string& topic);
 	void updateRobot(vector<float>& ballInfo);// qué hace esta???????
 	
+	void startRobot();
 protected:
 
 

@@ -70,3 +70,11 @@ float Controller::getTime()
 {
     return elapsedTime;
 }
+
+void Controller::start()
+{
+    for(auto robot : team1)
+    {
+        robot->startRobot();
+    }
+}

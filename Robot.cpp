@@ -42,22 +42,26 @@ void Robot::assignMessage(vector<float> &message, string &topic)
 
 void Robot::updateRobot(vector<float> &ballInfo)
 {
+    static bool kicked = false;
     Setpoint destination = setDestination(ballInfo);
 
-    if(moveRobot(destination, MAXSPEED) && controller->getTime() - positioningTime > 1)
+
+    if(moveRobot(destination, MAXSPEED) && kicked == false)
     {
-        kick(1.0f);
+        kick(0.7f);
+        kicked = true;
     }
+    
 }
 
 bool Robot::moveRobot(Setpoint destination, float speed)
 {
-    bool arrived = false;
+    static bool arrived = false;
     Vector2 directorVector;
     directorVector.x = destination.position.x - coordinates.x;
     directorVector.y = destination.position.y - coordinates.y;
 
-    float rotationAngle = 90.0f - Vector2Angle({0,0}, directorVector); // wtf
+    float rotationAngle = 90.0f - Vector2Angle({0,0}, directorVector);
 
     if (Vector2Length(directorVector) > (speed * DELTATIME))
     {
@@ -66,12 +70,17 @@ bool Robot::moveRobot(Setpoint destination, float speed)
 
         Setpoint setPoint = {directorVector, rotationAngle};
         setSetpoint(setPoint);
+        arrived = false;
     }
-    else
+    else if(arrived == false)
     {
         setSetpoint(destination);
-        arrived = true;
         positioningTime = controller->getTime();
+    }
+    if(Vector2Distance({destination.position.x, destination.position.y},
+    {coordinates.x, coordinates.y}) < 0.0001f)
+    {
+        arrived = true;
     }
     return arrived;
 }
@@ -103,7 +112,15 @@ void Robot::kick(float strength)
     vector<char> payload(4);
 
     *((float *)&payload[0]) = strength;
-    mqttClient2->publish(robotID + "/kicker/kick/cmd", payload);
+    mqttClient2->publish(robotID + "/kicker/chip/cmd", payload);
 
+    *((float *)&payload[0]) = 249.0f;
+    mqttClient2->publish(robotID + "/kicker/chargeVoltage/set", payload);
+}
 
+void Robot::startRobot()
+{
+    vector<char> payload(4);
+    *((float *)&payload[0]) = 249.0f;
+    mqttClient2->publish(robotID + "/kicker/chargeVoltage/set", payload);
 }

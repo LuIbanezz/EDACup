@@ -36,7 +36,7 @@ public:
     void assignRobotMessage(int robotTeam, int robotIndex, vector<float> &message, string& topic);
     void updateController(vector<float>& ballInfo);
     float getTime();
-	
+	void start();
     
 private:
 	vector<Robot *> team1;
