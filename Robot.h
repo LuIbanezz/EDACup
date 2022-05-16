@@ -26,6 +26,7 @@
 #define GOAL1Y		0.0f
 #define BALLRADIUS	0.0215f
 #define ROBOTRADIUS	0.08f
+#define RUN_UP		0.5f
 
 using namespace std;
 
@@ -61,8 +62,12 @@ protected:
 	void kick(float strength);
 	void setSetpoint(Setpoint setpoint);
 	bool moveRobot(Setpoint position, float speed);//esta publica los setpoints??? si
-	Setpoint setDestination(vector<float>& ballInfo);
+	Setpoint runUpDestination(vector<float>& ballInfo);
+	Setpoint kickDestination(vector<float>& ballInfo);
 	float positioningTime;
+
+	bool readyToKick;
+	bool kicked;
 
 };
 
