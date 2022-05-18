@@ -9,6 +9,7 @@
  *
  */
 #include "Robot.h"
+#include <math.h>
 
 using namespace std;
 
@@ -167,14 +168,23 @@ static Vector2 projection (Vector2 direc, Vector2 projector)
     return result;
 }
 
+static float angleBetweenVectors(Vector2 v1, Vector2 v2)
+{
+    float angle;
+    angle = acos(Vector2DotProduct(v1,v2) / (Vector2Length(v1) * Vector2Length(v2))) * (180 / PI);
+    return angle;
+}
+
 /**
-    @brief Calcula el "vector distancia" entre v1 y v2
+    @brief Calcula la trayectoria a seguir dependiendo si la pelota se encuentra 
+    entre la posición de carrera y la trayectoria actual del robot.
 */
 Setpoint Robot::getPath (float minDistance)
 {
     Vector2 ballPosition = {controller->ball.position.x, controller->ball.position.y};
     Vector2 vToBall = Vector2Subtract(ballPosition, {coordinates.x, coordinates.y});
     Vector2 vToFinal = Vector2Subtract(direction.position, {coordinates.x, coordinates.y});
+    Vector2 vBallToFinal = Vector2Subtract(vToFinal, vToBall);
 
     Vector2 project = projection(vToBall,vToFinal);
 
@@ -183,13 +193,27 @@ Setpoint Robot::getPath (float minDistance)
     Vector2 resultDirection;
     Setpoint result;
     float distance = Vector2Length(distanceDirector);
-    if(distance < minDistance)
-    {
-        resultDirection = Vector2Add(Vector2Scale(Vector2Normalize(distanceDirector),minDistance),
-                            ballPosition);
+    float angle = angleBetweenVectors(vBallToFinal, Vector2Scale(vToBall, -1) );
 
+    if(distance < minDistance && angle > 90.0f)
+    {
+        if( abs(angle - 180.f) < 0.1f) //POSIBLE CASO DE DISTANCEDIRECTOR = 0
+        {
+            Vector2 perpendicularVector = 
+                            Vector2Normalize({-distanceDirector.y, distanceDirector.x});
+
+            resultDirection =  Vector2Add(Vector2Scale
+                        (Vector2Normalize(perpendicularVector), minDistance), ballPosition);
+        }
+        else
+        {
+            resultDirection = Vector2Add(Vector2Scale
+                        (Vector2Normalize(distanceDirector), minDistance), ballPosition);
+  
+        }
         result = {{resultDirection.x, resultDirection.y},
                   90.0f - Vector2Angle({0,0}, resultDirection)};
+        
     }
     else
     {
