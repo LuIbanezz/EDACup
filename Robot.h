@@ -14,7 +14,7 @@
 
 #include <vector>
 #include <string>
-#include "raylib.h"
+#include <raylib.h>
 #include <raymath.h>
 #include "MQTTClient2.h"
 #include <iostream>
@@ -58,6 +58,7 @@ protected:
     string robotID;
 	MQTTClient2* mqttClient2;
 	Controller* controller;
+	Image shirt;
 
 	Setpoint direction;
 
@@ -65,12 +66,15 @@ protected:
 
 	bool readyToKick;
 	bool kicked;
+	void dressRobot(int robotNumber);
+	void setShirt(int imageIndex);	
 	void kick(float strength);
 	void setSetpoint(Setpoint setpoint);
 	bool moveRobot(Setpoint position, float speed);//esta publica los setpoints??? si
 	Setpoint runUpDestination();
 	Setpoint kickDestination();
 	Setpoint getPath (float minDistance);
+	
 };
 
 #endif //_ROBOT_H
