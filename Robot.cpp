@@ -46,10 +46,12 @@ void Robot::updateRobot()
 {
     if(!readyToKick)
     {
-        direction = runUpDestination();
-        Setpoint newPath = getPath(BALLRADIUS + ROBOTREALRADIUS + 0.1f);
-        readyToKick = moveRobot(newPath, MAXSPEED);
-
+        if(Vector3Length(controller->ball.speed) < 0.1f)
+        {
+            direction = runUpDestination();
+            Setpoint newPath = getPath(BALLRADIUS + ROBOTREALRADIUS + 0.1f);
+            readyToKick = moveRobot(newPath, MAXSPEED);
+        }
     }
     
     else if(readyToKick && !kicked)
@@ -187,7 +189,7 @@ Setpoint Robot::getPath (float minDistance)
                             ballPosition);
 
         result = {{resultDirection.x, resultDirection.y},
-                  90.0f - Vector2Angle(resultDirection, {0,0})};
+                  90.0f - Vector2Angle({0,0}, resultDirection)};
     }
     else
     {

@@ -22,7 +22,7 @@
 
 #define DELTATIME 	0.1f
 #define MAXSPEED	6.5f
-#define GOAL1X 		4.5f
+#define GOAL1X 		(-4.5f)
 #define GOAL1Y		0.0f
 #define BALLRADIUS	0.0215f
 #define ROBOTRADIUS	0.08f

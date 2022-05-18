@@ -19,6 +19,7 @@
 #include <mosquitto.h>
 
 #define ROBOT_NUMBER  6
+#define TEAM1 "1"
 
 class MQTTListener
 {
