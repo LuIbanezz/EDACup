@@ -12,6 +12,8 @@
 
 using namespace std;
 
+static Vector2 projection (Vector2 vector, Vector2 projector);
+
 // TODO: completar constructor de Robot
 Robot::Robot(string robotID, MQTTClient2 *client, Controller *controller)
 {
@@ -29,31 +31,33 @@ void Robot::assignMessage(vector<float> &message, string &topic)
         coordinates.y = message[2];
         coordinates.z = message[1];
         speed.x = message[3];
-        speed.y = message[4];
-        speed.z = message[5];
+        speed.y = message[5];
+        speed.z = message[4];
         rotation.x = message[6];
-        rotation.y = message[7];
-        rotation.z = message[8];
+        rotation.y = message[8];
+        rotation.z = message[7];
         angularSpeed.x = message[9];
-        angularSpeed.y = message[10];
-        angularSpeed.z = message[11];
+        angularSpeed.y = message[11];
+        angularSpeed.z = message[10];
     }
 }
 
-void Robot::updateRobot(vector<float> &ballInfo)
+void Robot::updateRobot()
 {
     if(!readyToKick)
     {
-        Setpoint destination = runUpDestination(ballInfo);
-        readyToKick = moveRobot(destination, MAXSPEED);
+        direction = runUpDestination();
+        Setpoint newPath = getPath(BALLRADIUS + ROBOTREALRADIUS + 0.1f);
+        readyToKick = moveRobot(newPath, MAXSPEED);
+
     }
     
     else if(readyToKick && !kicked)
     {
-        Setpoint destination = kickDestination(ballInfo);
-        moveRobot(destination, MAXSPEED);
-        if(Vector2Distance({ballInfo[0], ballInfo[2]}, {coordinates.x, coordinates.y}) < 
-        (BALLRADIUS + ROBOTRADIUS))
+        direction = kickDestination();
+        moveRobot(direction, MAXSPEED);
+        if(Vector2Distance({controller->ball.position.x, controller->ball.position.y}, 
+            {coordinates.x, coordinates.y}) < (BALLRADIUS + ROBOTRADIUS))
         {
             kick(1.0f);
             kicked = true;
@@ -94,6 +98,7 @@ bool Robot::moveRobot(Setpoint destination, float speed)
     {
         arrived = true;
     }
+
     return arrived;
 }
 
@@ -108,24 +113,26 @@ void Robot::setSetpoint(Setpoint setpoint) // ESTA ES LA FUNCIÓN PARA PUBLICAR 
     mqttClient2->publish(robotID + "/pid/setpoint/set", payload);
 }
 
-Setpoint Robot::runUpDestination(vector<float> &ballInfo)
+Setpoint Robot::runUpDestination()
 {
-    Vector2 goalToBall = {ballInfo[0] - GOAL1X, ballInfo[2] - GOAL1Y};
+    Vector2 goalToBall = {controller->ball.position.x - GOAL1X,
+                        controller->ball.position.y - GOAL1Y};
     Setpoint destination = {(Vector2Add(
                                 Vector2Scale(
                                 Vector2Normalize(goalToBall), BALLRADIUS + ROBOTRADIUS + RUN_UP),
-                                {ballInfo[0], ballInfo[2]})),
+                                {controller->ball.position.x, controller->ball.position.y})),
                             90.0f - Vector2Angle(goalToBall,{0,0})};
     return destination;
 }
 
-Setpoint Robot::kickDestination(vector<float> &ballInfo)
+Setpoint Robot::kickDestination()
 {
-    Vector2 goalToBall = {ballInfo[0] - GOAL1X, ballInfo[2] - GOAL1Y};
+    Vector2 goalToBall = {controller->ball.position.x - GOAL1X,
+                            controller->ball.position.y - GOAL1Y};
     Setpoint destination = {(Vector2Add(
                                 Vector2Scale(
                                 Vector2Normalize(goalToBall), -0.01f),
-                                {ballInfo[0], ballInfo[2]})),
+                                {controller->ball.position.x, controller->ball.position.y})),
                             90.0f - Vector2Angle(goalToBall,{0,0})};
     return destination;
 }
@@ -149,4 +156,43 @@ void Robot::startRobot()
 
     readyToKick = false;
     kicked = false;
+}
+
+static Vector2 projection (Vector2 direc, Vector2 projector)
+{
+    Vector2 unitaryProjector = Vector2Normalize(projector);
+    Vector2 result = Vector2Scale(unitaryProjector, Vector2DotProduct(direc, unitaryProjector));
+    return result;
+}
+
+/**
+    @brief Calcula el "vector distancia" entre v1 y v2
+*/
+Setpoint Robot::getPath (float minDistance)
+{
+    Vector2 ballPosition = {controller->ball.position.x, controller->ball.position.y};
+    Vector2 vToBall = Vector2Subtract(ballPosition, {coordinates.x, coordinates.y});
+    Vector2 vToFinal = Vector2Subtract(direction.position, {coordinates.x, coordinates.y});
+
+    Vector2 project = projection(vToFinal, vToBall);
+
+    Vector2 distanceDirector = Vector2Subtract(project, vToBall);
+    
+    Vector2 resultDirection;
+    Setpoint result;
+    float distance = Vector2Length(distanceDirector);
+    if(distance < minDistance)
+    {
+        resultDirection = Vector2Add(Vector2Scale(Vector2Normalize(distanceDirector),minDistance),
+                            ballPosition);
+
+        result = {{resultDirection.x, resultDirection.y},
+                  90.0f - Vector2Angle(resultDirection, {0,0})};
+    }
+    else
+    {
+        result = direction;
+    }
+    
+    return result;
 }

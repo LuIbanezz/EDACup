@@ -42,7 +42,7 @@ void Controller::assignRobotMessage(int robotTeam,
     }
 }
 
-void Controller::updateController(vector<float>& ballInfo)
+void Controller::updateController()
 {
     elapsedTime += DELTATIME;
     //acá seteamos los "flags"
@@ -61,9 +61,9 @@ void Controller::updateController(vector<float>& ballInfo)
     vel angular
     */
 
+    
 
-
-    team1[0]->updateRobot(ballInfo);
+    team1[0]->updateRobot();
 }
 
 float Controller::getTime()
@@ -77,4 +77,23 @@ void Controller::start()
     {
         robot->startRobot();
     }
+}
+
+void Controller::updateBall(vector<float>& ballInfo)
+{
+    ball.position.x = ballInfo[0];
+    ball.position.y = ballInfo[2];
+    ball.position.z = ballInfo[1];
+
+    ball.speed.x = ballInfo[3];
+    ball.speed.y = ballInfo[5];
+    ball.speed.z = ballInfo[4];
+
+    ball.rotation.x = ballInfo[6];
+    ball.rotation.x = ballInfo[8];
+    ball.rotation.x = ballInfo[7];
+
+    ball.angularSpeed.x = ballInfo[9];
+    ball.angularSpeed.x = ballInfo[11];
+    ball.angularSpeed.x = ballInfo[10];
 }

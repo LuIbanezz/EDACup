@@ -33,11 +33,11 @@ void MyListener::onMessage(string topic, vector<char> payload)
        
         controller->assignRobotMessage(robotTeam, robotIndex, decodedMessage, topic);
             
-        //cout << controller->team1[robotIndex]->coordinates.x << endl;        //PRUEBA (imprime coordenadas)
     }
     else // en este caso, el decodedMessage es el estado de la pelota
     {
-        controller->updateController(decodedMessage);
+        controller->updateBall(decodedMessage);
+        controller->updateController();
 
     }
 
@@ -45,22 +45,6 @@ void MyListener::onMessage(string topic, vector<char> payload)
 
 
 }
-
-
-
-//void Robot::setSetpoint(Setpoint setpoint)
-//{
-//    this->setpoint = setpoint;
-//
-//    vector<char> payload(12);
-//
-//    *((float*)&payload[0]) = setpoint.position.x;
-//    *((float*)&payload[4]) = setpoint.position.y;
-//    *((float*)&payload[8]) = setpoint.rotation;
-//
-//    mqttClient->publish(robotId + "/pid/setpoint/set", payload);
-//}
-
 
 vector<float> MyListener::decode(vector<char> vecChar)
 {

@@ -18,12 +18,21 @@ using namespace std;
 
 class Robot;
 
+struct Ball 
+{
+    Vector3 position;
+    Vector3 speed;
+    Vector3 rotation;
+    Vector3 angularSpeed;
+};
+
 class Controller
 {
 public:
     Controller();
     ~Controller();
     void addRobot(Robot* robot);
+    
     
     /**
      * @brief Assigns the received message to the robot
@@ -34,13 +43,18 @@ public:
      * @param topic 
      */
     void assignRobotMessage(int robotTeam, int robotIndex, vector<float> &message, string& topic);
-    void updateController(vector<float>& ballInfo);
+    void updateController();
+    void updateBall();
     float getTime();
 	void start();
+    void updateBall(vector<float>& ballInfo);
+
+    Ball ball;
     
 private:
 	vector<Robot *> team1;
     float elapsedTime;
+    
 };
 
 #endif

@@ -26,6 +26,7 @@
 #define GOAL1Y		0.0f
 #define BALLRADIUS	0.0215f
 #define ROBOTRADIUS	0.08f
+#define ROBOTREALRADIUS	0.09f
 #define RUN_UP		0.5f
 
 using namespace std;
@@ -45,11 +46,10 @@ public:
     Robot(string robotID, MQTTClient2 *client, Controller* controller);
 	
     void assignMessage(vector<float>& message, string& topic);
-	void updateRobot(vector<float>& ballInfo);// qué hace esta???????
+	void updateRobot();// qué hace esta???????
 	
 	void startRobot();
 protected:
-
 
 	Vector3 coordinates;
 	Vector3 speed;
@@ -58,17 +58,19 @@ protected:
     string robotID;
 	MQTTClient2* mqttClient2;
 	Controller* controller;
-	
-	void kick(float strength);
-	void setSetpoint(Setpoint setpoint);
-	bool moveRobot(Setpoint position, float speed);//esta publica los setpoints??? si
-	Setpoint runUpDestination(vector<float>& ballInfo);
-	Setpoint kickDestination(vector<float>& ballInfo);
+
+	Setpoint direction;
+
 	float positioningTime;
 
 	bool readyToKick;
 	bool kicked;
-
+	void kick(float strength);
+	void setSetpoint(Setpoint setpoint);
+	bool moveRobot(Setpoint position, float speed);//esta publica los setpoints??? si
+	Setpoint runUpDestination();
+	Setpoint kickDestination();
+	Setpoint getPath (float minDistance);
 };
 
 #endif //_ROBOT_H

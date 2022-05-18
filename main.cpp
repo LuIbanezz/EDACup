@@ -72,7 +72,6 @@ int main(int argc, char** argv)
     
     controller.start();
 
-     //TODO: agregar mas robots al team1
 
     mqttClient2.run();
     
