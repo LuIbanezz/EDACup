@@ -15,8 +15,6 @@
 #include "raylib.h"
 
 
-#define TEAM      "1"
-#define ROBOT_NUMBER  6
 
 typedef vector<Robot*> team;
 
@@ -24,7 +22,10 @@ using namespace std;
 
 int main(int argc, char** argv)
 {
+    Controller controller;
+    MyListener listener(&controller);
     MQTTClient2 mqttClient2;
+    mqttClient2.setListener(&listener);
     
     const int port = 1883;
     if (!mqttClient2.connect("controller","127.0.0.1", port, "user", "vdivEMMN3SQWX2Ez"))
@@ -34,44 +35,10 @@ int main(int argc, char** argv)
     }
     
     cout << "Connected." << endl;
-
-    /* SUBSCRIPCION */
-
-    for(int i = 1; i <= ROBOT_NUMBER; i++)
-    {
-        string topic = "robot"; topic += TEAM; topic += "."; topic += i + '0';
-        mqttClient2.subscribe(topic + "/display/leftEye/set");
-        for (char c = '1'; c < ('1' + 4); c++)
-        {
-            mqttClient2.subscribe(topic + "/motor" + c + "/current");
-            mqttClient2.subscribe(topic + "/motor" + c + "/rpm");
-            mqttClient2.subscribe(topic + "/motor" + c + "/temperature");
-        }
-    
-    mqttClient2.subscribe(topic + "/display/leftEye/set");
-    mqttClient2.subscribe(topic + "/display/rightEye/set");
-    mqttClient2.subscribe("ball/motion/state");
-    mqttClient2.subscribe(topic + "/motion/state");
-    mqttClient2.subscribe(topic + "/kicker/chargeVoltage/set");
-    mqttClient2.subscribe(topic + "/kicker/kick/cmd");
-    
-    }
-
-
-    Controller controller;
-    MyListener listener(&controller);
-    mqttClient2.setListener(&listener);
-
-    /**** DEFINO EL VECTOR DE ROBOTS DE TEAM 1 ********/
-    controller.addRobot(new Robot("robot1.1", &mqttClient2, &controller));
-    controller.addRobot(new Robot("robot1.2", &mqttClient2, &controller));
-    controller.addRobot(new Robot("robot1.3", &mqttClient2, &controller));
-    controller.addRobot(new Robot("robot1.4", &mqttClient2, &controller));
-    controller.addRobot(new Robot("robot1.5", &mqttClient2, &controller));
-    controller.addRobot(new Robot("robot1.6", &mqttClient2, &controller));
+    mqttClient2.subscribeToTopics();
+    controller.createTeam1(&mqttClient2);
     
     controller.start();
-
 
     mqttClient2.run();
     

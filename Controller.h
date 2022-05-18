@@ -31,7 +31,7 @@ class Controller
 public:
     Controller();
     ~Controller();
-    void addRobot(Robot* robot);
+    void addRobot(Robot* robot,int teamNum);
     
     
     /**
@@ -48,11 +48,12 @@ public:
     float getTime();
 	void start();
     void updateBall(vector<float>& ballInfo);
-
+    void createTeam1(MQTTClient2 * mqttClient2);
     Ball ball;
     
 private:
 	vector<Robot *> team1;
+    vector<Robot *> team2;
     float elapsedTime;
     
 };

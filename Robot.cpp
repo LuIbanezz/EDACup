@@ -174,7 +174,7 @@ Setpoint Robot::getPath (float minDistance)
     Vector2 vToBall = Vector2Subtract(ballPosition, {coordinates.x, coordinates.y});
     Vector2 vToFinal = Vector2Subtract(direction.position, {coordinates.x, coordinates.y});
 
-    Vector2 project = projection(vToFinal, vToBall);
+    Vector2 project = projection(vToBall,vToFinal);
 
     Vector2 distanceDirector = Vector2Subtract(project, vToBall);
     

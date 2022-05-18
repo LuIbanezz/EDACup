@@ -18,8 +18,6 @@
 
 #include <mosquitto.h>
 
-#define ROBOT_NUMBER  6
-
 class MQTTListener
 {
 public:
@@ -44,10 +42,10 @@ public:
 
     bool subscribe(std::string topic);
     bool unsubscribe(std::string topic);
+    void subscribeToTopics();
 
     void setListener(MQTTListener *listener);
     void run();
-    void subscribeToTopics();
 
 private:
     struct mosquitto *mosquittoInstance;

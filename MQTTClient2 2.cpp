@@ -19,6 +19,9 @@ static void onMQTTMessage(struct mosquitto *mosquittoClient,
 
 #include "MQTTClient2.h"
 
+#define ROBOT_NUMBER 6
+#define TEAM1 "1"
+
 using namespace std;
 
 // Awful but necessary global variable:
@@ -251,10 +254,12 @@ void MQTTClient2::run()
 
 void MQTTClient2::subscribeToTopics()
 {
+    /* SUBSCRIPCION */
+
     for (int i = 1; i <= ROBOT_NUMBER; i++)
     {
         string topic = "robot";
-        topic += "1";
+        topic += TEAM1;
         topic += ".";
         topic += i + '0';
         subscribe(topic + "/display/leftEye/set");
