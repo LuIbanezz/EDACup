@@ -66,6 +66,7 @@ protected:
 
 	bool readyToKick;
 	bool kicked;
+	
 	void dressRobot(int robotNumber);
 	void setShirt(int imageIndex);	
 	void kick(float strength);

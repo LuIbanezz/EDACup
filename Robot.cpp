@@ -22,14 +22,14 @@ Robot::Robot(string robotID, MQTTClient2 *client, Controller *controller)
     this->robotID = robotID;
     mqttClient2 = client;
     this->controller = controller; 
-    int holis = robotID[7] - '1';
-    dressRobot(robotID[7] - '1');
+    //dressRobot(robotID[7] - '1');
 
 }
 
 
 void Robot::assignMessage(vector<float> &message, string &topic)
 {
+    
     if (topic.find("motion") != -1)
     {
         // TODO: Arreglar plsssss //pero si está bien
@@ -50,6 +50,7 @@ void Robot::assignMessage(vector<float> &message, string &topic)
 
 void Robot::updateRobot()
 {
+    static float kickPower = 0.799f;
     if(!readyToKick)
     {
         if(Vector3Length(controller->ball.speed) < 0.1f)
@@ -67,7 +68,7 @@ void Robot::updateRobot()
         if(Vector2Distance({controller->ball.position.x, controller->ball.position.y}, 
             {coordinates.x, coordinates.y}) < (BALLRADIUS + ROBOTRADIUS))
         {
-            kick(1.0f);
+            kick(kickPower);
             kicked = true;
         }
         
@@ -76,6 +77,14 @@ void Robot::updateRobot()
     {
         readyToKick = false;
         kicked = false;
+    }
+
+    float ballVelocity = Vector3Length(controller->ball.speed);
+    if (abs(ballVelocity) > 6.5f )
+    {
+        cout << "SUPERA VELOCIDAD MAXIMA :" << '\t' << ballVelocity << endl;
+        kickPower -= 0.0001f;
+        cout << "CON V :" << '\t' << kickPower << endl;
     }
     
 }
@@ -228,6 +237,7 @@ Setpoint Robot::getPath (float minDistance)
     return result;
 }
 
+/*
 void Robot::setShirt(int shirtIndex)
 {
     Rectangle selectRectangle = {16.0F * shirtIndex, 0, 16, 16};
@@ -248,3 +258,4 @@ void Robot::dressRobot(int robotNumber)
     ImageFormat(&shirt, PIXELFORMAT_UNCOMPRESSED_R8G8B8);
     setShirt(robotID[7] - '1'); //no me acuerdo el define
 }
+*/
