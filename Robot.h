@@ -22,7 +22,7 @@
 
 #define DELTA_TIME 	0.1f
 #define MAX_SPEED	6.5f
-#define MAX_KICK_POWER	0.79f
+#define MAX_KICK_POWER	0.75f
 #define	BALL_SPEED_ZERO	0.01f
 #define ARRIVED_MIN_DISTANCE 0.001f
 
