@@ -1,6 +1,6 @@
 /**
  * @file main.cpp
- * @author your name (you@domain.com)
+ * @author Agrippino, Cilfone, Di Sanzo, Hertter, Ibañez
  * @brief 
  * @version 0.1
  * @date 2022-05-10

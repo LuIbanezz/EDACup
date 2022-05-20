@@ -74,7 +74,7 @@ protected:
 	bool kicked;
 	
 	void dressRobot(int robotNumber);
-	void setShirt(int imageIndex);	
+	void setShirt();	
 	void kick(float strength);
 	void setSetpoint(Setpoint setpoint);
 	bool moveRobot(Setpoint position, float speed);//esta publica los setpoints??? si

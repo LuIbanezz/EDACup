@@ -22,7 +22,7 @@ Robot::Robot(string robotID, MQTTClient2 *client, Controller *controller)
     this->robotID = robotID;
     mqttClient2 = client;
     this->controller = controller;
-    dressRobot(robotID[7] - '1');
+    dressRobot(robotID[7] - '0');
 
 }
 
@@ -294,9 +294,9 @@ Setpoint Robot::getPath (float minDistance)
 }
 
 
-void Robot::setShirt(int shirtIndex)
+void Robot::setShirt()
 {
-    Rectangle selectRectangle = {16.0F * shirtIndex, 0, 16, 16};
+    Rectangle selectRectangle = {16.0F * 0, 0, 16, 16};
     Image selectedShirt = ImageFromImage(shirt, selectRectangle);
 
     const int dataSize = 16 * 16 * 3;
@@ -315,7 +315,40 @@ void Robot::setShirt(int shirtIndex)
  */
 void Robot::dressRobot(int robotNumber)
 {
-    shirt = LoadImage("../../resources/shirts.png");
+    switch (robotNumber)
+    {
+        case 1:
+            shirt = LoadImage("../../resources/1.png");
+            break;
+        
+        case 2:
+            shirt = LoadImage("../../resources/2.png");
+            break;
+
+        case 3:
+            shirt = LoadImage("../../resources/3.png");
+            break;
+        
+        case 4:
+            shirt = LoadImage("../../resources/4.png");
+            break;
+
+        case 5:
+            shirt = LoadImage("../../resources/5.png");
+            break;
+
+        case 6:
+            shirt = LoadImage("../../resources/6.png");
+            break;
+    }
     ImageFormat(&shirt, PIXELFORMAT_UNCOMPRESSED_R8G8B8);
-    setShirt(robotID[7] - '1'); //no me acuerdo el define
+    setShirt();
 }
+// string topic = "robot"; topic += TEAM; topic += "."; topic += i + '0';
+
+// for (char c = '1'; c < ('1' + 4); c++)
+//         {
+//             mqttClient2.subscribe(topic + "/motor" + c + "/current");
+//             mqttClient2.subscribe(topic + "/motor" + c + "/rpm");
+//             mqttClient2.subscribe(topic + "/motor" + c + "/temperature");
+//         }
