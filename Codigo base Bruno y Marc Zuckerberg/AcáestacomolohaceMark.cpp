@@ -147,11 +147,11 @@ void Robot::setEyes(Color leftEye, Color rightEye)
  * @brief Updates setpoint 
  * 
  * @param velocity 
- * @param deltatime 
+ * @param DELTA_TIME 
  */
-void Robot::updateSetpoint(float velocity, float deltatime)
+void Robot::updateSetpoint(float velocity, float DELTA_TIME)
 {
-    float distance = velocity * deltatime;
+    float distance = velocity * DELTA_TIME;
 
     Setpoint destinationPoint = getSetpoint(tilePosition);
 

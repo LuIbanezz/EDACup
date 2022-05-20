@@ -53,7 +53,7 @@ void Controller::assignRobotMessage(int robotTeam,
 
 void Controller::updateController()
 {
-    elapsedTime += DELTATIME;
+    elapsedTime += DELTA_TIME;
     //acá seteamos los "flags"
 
     //acá actualizamos

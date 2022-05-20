@@ -16,23 +16,42 @@ using namespace std;
 
 static Vector2 projection (Vector2 vector, Vector2 projector);
 
-// TODO: completar constructor de Robot
+
 Robot::Robot(string robotID, MQTTClient2 *client, Controller *controller)
 {
     this->robotID = robotID;
     mqttClient2 = client;
-    this->controller = controller; 
+    this->controller = controller;
     dressRobot(robotID[7] - '1');
 
 }
 
+/**
+ * @brief Initializes the robot. To be used whenever the robots need to be restarted.
+ * 
+ */
+void Robot::startRobot()
+{
+    vector<char> payload(4);
+    *((float *)&payload[0]) = 249.0f;
+    mqttClient2->publish(robotID + "/kicker/chargeVoltage/set", payload);
 
+    readyToKick = false;
+    kicked = false;
+    kickPower = MAX_KICK_POWER;
+}
+
+/**
+ * @brief Assigns the message with the information of the robot to the robot.
+ * 
+ * @param message 
+ * @param topic 
+ */
 void Robot::assignMessage(vector<float> &message, string &topic)
 {
     
     if (topic.find("motion") != -1)
     {
-        // TODO: Arreglar plsssss //pero si está bien
         coordinates.x = message[0];
         coordinates.y = message[2];
         coordinates.z = message[1];
@@ -48,25 +67,29 @@ void Robot::assignMessage(vector<float> &message, string &topic)
     }
 }
 
+/**
+ * @brief Calculates the path to the position to hit the ball, moves the robot and decides when
+ * to kick the ball.
+ * 
+ */
 void Robot::updateRobot()
 {
-    static float kickPower = 0.79f;
     if(!readyToKick)
     {
-        if(Vector3Length(controller->ball.speed) < 0.1f)
+        if(Vector3Length(controller->ball.speed) < BALL_SPEED_ZERO)
         {
             direction = runUpDestination();
-            Setpoint newPath = getPath(BALLRADIUS + ROBOTREALRADIUS + 0.1f);
-            readyToKick = moveRobot(newPath, MAXSPEED);
+            Setpoint newPath = getPath(BALL_RADIUS + ROBOT_RADIUS + 0.1f);
+            readyToKick = moveRobot(newPath, MAX_SPEED);
         }
     }
     
     else if(readyToKick && !kicked)
     {
         direction = kickDestination();
-        moveRobot(direction, MAXSPEED);
+        moveRobot(direction, MAX_SPEED);
         if(Vector2Distance({controller->ball.position.x, controller->ball.position.y}, 
-            {coordinates.x, coordinates.y}) < (BALLRADIUS + ROBOTRADIUS))
+            {coordinates.x, coordinates.y}) < (BALL_RADIUS + ROBOT_KICKER_RADIUS))
         {
             kick(kickPower);
             kicked = true;
@@ -81,6 +104,14 @@ void Robot::updateRobot()
     
 }
 
+/**
+ * @brief Moves the robot to the destination with the rotation indicated, with the speed passed. 
+ * 
+ * @param destination 
+ * @param speed 
+ * @return true if the robot arrived to the destination
+ * @return false otherwise.
+ */
 bool Robot::moveRobot(Setpoint destination, float speed)
 {
     bool arrived = false;
@@ -90,16 +121,16 @@ bool Robot::moveRobot(Setpoint destination, float speed)
 
     float rotationAngle = 90.0f - Vector2Angle({0,0}, directorVector);
 
-    if (Vector2Length(directorVector) > (speed * DELTATIME))
+    if (Vector2Length(directorVector) > (speed * DELTA_TIME))
     {
         directorVector = Vector2Add({coordinates.x, coordinates.y},
-                        Vector2Scale(Vector2Normalize(directorVector), DELTATIME * speed));
+                        Vector2Scale(Vector2Normalize(directorVector), DELTA_TIME * speed));
 
         Setpoint setPoint = {directorVector, rotationAngle};
         setSetpoint(setPoint);
     }
     else if(Vector2Distance({destination.position.x, destination.position.y},
-    {coordinates.x, coordinates.y}) > 0.006f)
+    {coordinates.x, coordinates.y}) > ARRIVED_MIN_DISTANCE)
     {
         setSetpoint(destination);
     }
@@ -111,7 +142,13 @@ bool Robot::moveRobot(Setpoint destination, float speed)
     return arrived;
 }
 
-void Robot::setSetpoint(Setpoint setpoint) // ESTA ES LA FUNCIÓN PARA PUBLICAR EL SETPOINT
+/**
+ * @brief Publishes the setPoint
+ * 
+ * @copyright Marc S. Ressl 
+ * @param setpoint 
+ */
+void Robot::setSetpoint(Setpoint setpoint)
 {
     vector<char> payload(12);
 
@@ -122,18 +159,31 @@ void Robot::setSetpoint(Setpoint setpoint) // ESTA ES LA FUNCIÓN PARA PUBLICAR 
     mqttClient2->publish(robotID + "/pid/setpoint/set", payload);
 }
 
+/**
+ * @brief Calculates the position behind the ball, in direction to the goal, to prepare for
+ * hitting the ball.
+ * 
+ * @return Setpoint     returns the position and the rotation
+ */
 Setpoint Robot::runUpDestination()
 {
     Vector2 goalToBall = {controller->ball.position.x - GOAL1X,
                         controller->ball.position.y - GOAL1Y};
     Setpoint destination = {(Vector2Add(
                                 Vector2Scale(
-                                Vector2Normalize(goalToBall), BALLRADIUS + ROBOTRADIUS + RUN_UP),
+                                    Vector2Normalize(goalToBall),
+                                    BALL_RADIUS + ROBOT_KICKER_RADIUS + RUN_UP_DISTANCE),
                                 {controller->ball.position.x, controller->ball.position.y})),
                             90.0f - Vector2Angle(goalToBall,{0,0})};
     return destination;
 }
 
+/**
+ * @brief Calculates the position between the ball and the goal, just ahead of the ball.
+ * To be used when the robot has to kick the ball
+ * 
+ * @return Setpoint 
+ */
 Setpoint Robot::kickDestination()
 {
     Vector2 goalToBall = {controller->ball.position.x - GOAL1X,
@@ -146,6 +196,11 @@ Setpoint Robot::kickDestination()
     return destination;
 }
 
+/**
+ * @brief Kicks the ball with the power indicated and charges the capacitor again.
+ * 
+ * @param strength 
+ */
 void Robot::kick(float strength)
 {
     vector<char> payload(4);
@@ -157,16 +212,13 @@ void Robot::kick(float strength)
     mqttClient2->publish(robotID + "/kicker/chargeVoltage/set", payload);
 }
 
-void Robot::startRobot()
-{
-    vector<char> payload(4);
-    *((float *)&payload[0]) = 249.0f;
-    mqttClient2->publish(robotID + "/kicker/chargeVoltage/set", payload);
-
-    readyToKick = false;
-    kicked = false;
-}
-
+/**
+ * @brief Calculates the projection of a Vector over another vector
+ * 
+ * @param direc Vector to be projected
+ * @param projector Vector that direc will be projected over.
+ * @return Vector2 
+ */
 static Vector2 projection (Vector2 direc, Vector2 projector)
 {
     Vector2 unitaryProjector = Vector2Normalize(projector);
@@ -174,6 +226,13 @@ static Vector2 projection (Vector2 direc, Vector2 projector)
     return result;
 }
 
+/**
+ * @brief Calculates the angle between two vectors
+ * 
+ * @param v1 
+ * @param v2 
+ * @return float 
+ */
 static float angleBetweenVectors(Vector2 v1, Vector2 v2)
 {
     float angle;
@@ -182,9 +241,14 @@ static float angleBetweenVectors(Vector2 v1, Vector2 v2)
 }
 
 /**
-    @brief Calcula la trayectoria a seguir dependiendo si la pelota se encuentra 
-    entre la posición de carrera y la trayectoria actual del robot.
-*/
+ * @brief Calculates the path to the run_up position depending if the ball is in the
+ *   middle of the way. In such case, the robot will dodge the ball.
+ * 
+ * @param minDistance The minimun distance between the ball and the current path, such that
+ * the robot does not hit the ball.
+ * 
+ * @return Setpoint 
+ */
 Setpoint Robot::getPath (float minDistance)
 {
     Vector2 ballPosition = {controller->ball.position.x, controller->ball.position.y};
@@ -244,6 +308,11 @@ void Robot::setShirt(int shirtIndex)
     mqttClient2->publish(robotID + "/display/lcd/set", payload);
 }
 
+/**
+ * @brief Sets the robots T-Shirt
+ * 
+ * @param robotNumber 
+ */
 void Robot::dressRobot(int robotNumber)
 {
     shirt = LoadImage("../../resources/shirts.png");

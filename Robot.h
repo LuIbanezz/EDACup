@@ -20,14 +20,19 @@
 #include <iostream>
 #include "Controller.h"
 
-#define DELTATIME 	0.1f
-#define MAXSPEED	6.5f
+#define DELTA_TIME 	0.1f
+#define MAX_SPEED	6.5f
+#define MAX_KICK_POWER	0.79f
+#define	BALL_SPEED_ZERO	0.01f
+#define ARRIVED_MIN_DISTANCE 0.001f
+
 #define GOAL1X 		(-4.5f)
 #define GOAL1Y		0.0f
-#define BALLRADIUS	0.0215f
-#define ROBOTRADIUS	0.08f
-#define ROBOTREALRADIUS	0.09f
-#define RUN_UP		0.5f
+
+#define BALL_RADIUS	0.0215f
+#define ROBOT_KICKER_RADIUS	0.08f
+#define ROBOT_RADIUS	0.09f
+#define RUN_UP_DISTANCE		0.25f
 
 using namespace std;
 
@@ -46,7 +51,7 @@ public:
     Robot(string robotID, MQTTClient2 *client, Controller* controller);
 	
     void assignMessage(vector<float>& message, string& topic);
-	void updateRobot();// qué hace esta???????
+	void updateRobot();
 	
 	void startRobot();
 protected:
@@ -61,6 +66,7 @@ protected:
 	Image shirt;
 
 	Setpoint direction;
+	float kickPower;
 
 	float positioningTime;
 
