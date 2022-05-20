@@ -14,38 +14,45 @@
 
 using namespace std;
 
-MyListener::MyListener(Controller* controller)        // 
+MyListener::MyListener(Controller* controller)       
 {
     this->controller = controller;
 }
 
+/**
+ * @brief 
+ * 
+ * @param topic 
+ * @param payload 
+ */
 void MyListener::onMessage(string topic, vector<char> payload)
 {
     vector<float> decodedMessage = decode(payload);
     if (topic.find("robot") != -1)
     {
-        //Deja los numeros de equipo (del payload) en 1 y 2
+        
         int robotTeam = topic[5] - '0';
-        //Deja los indices de los robots (del payload) en 0,1,2...
+        
         int robotIndex = topic[7] - '1';
-
-        //TODO: sacar el switch y poner un arreglo de teams de la misma forma que hacemos con robots 
        
         controller->assignRobotMessage(robotTeam, robotIndex, decodedMessage, topic);
             
     }
-    else // en este caso, el decodedMessage es el estado de la pelota
+    else
     {
         controller->updateBall(decodedMessage);
         controller->updateController();
 
     }
 
-    //TODO: usar la posicion de la pelota para actualizar al equipo (SIN GUARDAR EL DATO)
-
-
 }
 
+/**
+ * @brief Decodes a message from a char vector to a float vector
+ * 
+ * @param vecChar 
+ * @return vector<float> 
+ */
 vector<float> MyListener::decode(vector<char> vecChar)
 {
     vector<float> vecFloat;
