@@ -1,7 +1,7 @@
 /**
  * @file main.cpp
  * @author Agrippino, Cilfone, Di Sanzo, Hertter, Ibañez
- * @brief 
+ * @brief EDACup controller Main module
  * @version 0.1
  * @date 2022-05-10
  * 

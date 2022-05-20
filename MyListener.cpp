@@ -1,7 +1,7 @@
 /**
  * @file MyListener.cpp
  * @author Agrippino, Cilfone, Di Sanzo, Hertter, Ibañez
- * @brief 
+ * @brief MQTTListener sub-class definition
  * @version 0.1
  * @date 2022-05-10
  * 

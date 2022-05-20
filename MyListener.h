@@ -1,7 +1,7 @@
 /**
  * @file MyListener.h
  * @author Agrippino, Cilfone, Di Sanzo, Hertter, Ibañez
- * @brief 
+ * @brief MQTTListener sub-class declaration
  * @version 0.1
  * @date 2022-05-10
  * 

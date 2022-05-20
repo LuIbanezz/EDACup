@@ -1,7 +1,7 @@
 /**
  * @file Robot.cpp
  * @author Agrippino, Cilfone, Di Sanzo, Hertter, Ibañez
- * @brief
+ * @brief   Definition for Robot methods
  * @version 0.1
  * @date 2022-05-14
  *
@@ -16,7 +16,13 @@ using namespace std;
 
 static Vector2 projection (Vector2 vector, Vector2 projector);
 
-
+/**
+ * @brief Construct a new Robot:: Robot object
+ * 
+ * @param robotID 
+ * @param client 
+ * @param controller 
+ */
 Robot::Robot(string robotID, MQTTClient2 *client, Controller *controller)
 {
     this->robotID = robotID;
@@ -344,11 +350,3 @@ void Robot::dressRobot(int robotNumber)
     ImageFormat(&shirt, PIXELFORMAT_UNCOMPRESSED_R8G8B8);
     setShirt();
 }
-// string topic = "robot"; topic += TEAM; topic += "."; topic += i + '0';
-
-// for (char c = '1'; c < ('1' + 4); c++)
-//         {
-//             mqttClient2.subscribe(topic + "/motor" + c + "/current");
-//             mqttClient2.subscribe(topic + "/motor" + c + "/rpm");
-//             mqttClient2.subscribe(topic + "/motor" + c + "/temperature");
-//         }

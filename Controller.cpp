@@ -1,7 +1,7 @@
 /**
  * @file Controller.cpp
  * @author Agrippino, Cilfone, Di Sanzo, Hertter, Ibañez
- * @brief 
+ * @brief Controller class definition. Contains information about the game state.
  * @version 0.1
  * @date 2022-05-14
  * 
