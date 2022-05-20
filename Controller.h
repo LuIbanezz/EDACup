@@ -32,23 +32,14 @@ public:
     Controller();
     ~Controller();
     void addRobot(Robot* robot,int teamNum);
+    void createTeam1(MQTTClient2 * mqttClient2);
     
-    
-    /**
-     * @brief Assigns the received message to the robot
-     * 
-     * @param robotTeam 
-     * @param robotIndex 
-     * @param message 
-     * @param topic 
-     */
     void assignRobotMessage(int robotTeam, int robotIndex, vector<float> &message, string& topic);
     void updateController();
     void updateBall();
     float getTime();
 	void start();
     void updateBall(vector<float>& ballInfo);
-    void createTeam1(MQTTClient2 * mqttClient2);
     Ball ball;
     
 private:

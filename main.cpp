@@ -14,10 +14,6 @@
 #include "MyListener.h"
 #include "raylib.h"
 
-
-
-typedef vector<Robot*> team;
-
 using namespace std;
 
 int main(int argc, char** argv)
@@ -42,24 +38,6 @@ int main(int argc, char** argv)
 
     mqttClient2.run();
     
-
-    // for (auto i : mensajes)
-    // {
-    //     size_t indice;
-    //     if ((indice = i.topic.find("motor")) != -1)
-    //     {
-    //     int motor = i.topic.at(indice + 5) - '1'; // se obtiene el número de motor
-
-    //     if (i.topic.find("voltage") != -1)
-    //         tensionMotoresRead[motor] = vecToFloat(i.payload);
-    //     if (i.topic.find("current") != -1)
-    //         corrienteMotoresRead[motor] = vecToFloat(i.payload);
-    //     if (i.topic.find("rpm") != -1)
-    //         rpmMotores[motor] = vecToFloat(i.payload);
-    //     if (i.topic.find("temperature") != -1)
-    //         tempMotores[motor] = vecToFloat(i.payload);
-    //     }
-    // }
     cout << "Disconnected." << endl;
 }
 

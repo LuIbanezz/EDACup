@@ -10,10 +10,18 @@
  */
 #include "Controller.h"
 
-//TODO: completar constructor de Controller
+
 Controller::Controller()
 {
     elapsedTime = 0;
+}
+
+void Controller::start()
+{
+    for (auto robot : team1)
+    {
+        robot->startRobot();
+    }
 }
 
 Controller::~Controller()
@@ -24,6 +32,12 @@ Controller::~Controller()
     }
 }
 
+/**
+ * @brief Adds new robot to the indicated team
+ * 
+ * @param robot 
+ * @param teamNum 
+ */
 void Controller::addRobot(Robot *robot, int teamNum)
 {
     switch (teamNum)
@@ -38,6 +52,29 @@ void Controller::addRobot(Robot *robot, int teamNum)
     }
 }
 
+/**
+ * @brief Creates a new Team of robots
+ * 
+ * @param mqttClient2 
+ */
+void Controller::createTeam1(MQTTClient2 *mqttClient2)
+{
+    addRobot(new Robot("robot1.1", mqttClient2, this),1);
+    addRobot(new Robot("robot1.2", mqttClient2, this),1);
+    addRobot(new Robot("robot1.3", mqttClient2, this),1);
+    addRobot(new Robot("robot1.4", mqttClient2, this),1);
+    addRobot(new Robot("robot1.5", mqttClient2, this),1);
+    addRobot(new Robot("robot1.6", mqttClient2, this),1);
+}
+
+/**
+ * @brief Assigns the message of the robot received to the corresponding robot.
+ * 
+ * @param robotTeam 
+ * @param robotIndex 
+ * @param message 
+ * @param topic 
+ */
 void Controller::assignRobotMessage(int robotTeam,
                                     int robotIndex, vector<float> &message, string &topic)
 {
@@ -47,44 +84,26 @@ void Controller::assignRobotMessage(int robotTeam,
     }
     else if (robotTeam == 2)
     {
-        //team2[robotIndex]->assignMessage(message, topic);
+        team2[robotIndex]->assignMessage(message, topic);
     }
 }
 
+/**
+ * @brief Updates each robot
+ * 
+ */
 void Controller::updateController()
 {
     elapsedTime += DELTA_TIME;
-    //acá seteamos los "flags"
-
-    //acá actualizamos
-    // for(auto robot : team1)
-    // {
-    //     robot->updateRobot();
-    // }
-
-    /*
-    Position
-    velocidad
-    rotacion
-    vel angular
-    */
 
     team1[0]->updateRobot();
 }
 
-float Controller::getTime()
-{
-    return elapsedTime;
-}
-
-void Controller::start()
-{
-    for (auto robot : team1)
-    {
-        robot->startRobot();
-    }
-}
-
+/**
+ * @brief Saves the message received with the ball information
+ * 
+ * @param ballInfo 
+ */
 void Controller::updateBall(vector<float> &ballInfo)
 {
     ball.position.x = ballInfo[0];
@@ -104,12 +123,11 @@ void Controller::updateBall(vector<float> &ballInfo)
     ball.angularSpeed.x = ballInfo[10];
 }
 
-void Controller::createTeam1(MQTTClient2 *mqttClient2)
+/**
+ * @brief Getters
+ * 
+ */
+float Controller::getTime()
 {
-    addRobot(new Robot("robot1.1", mqttClient2, this),1);
-    addRobot(new Robot("robot1.2", mqttClient2, this),1);
-    addRobot(new Robot("robot1.3", mqttClient2, this),1);
-    addRobot(new Robot("robot1.4", mqttClient2, this),1);
-    addRobot(new Robot("robot1.5", mqttClient2, this),1);
-    addRobot(new Robot("robot1.6", mqttClient2, this),1);
+    return elapsedTime;
 }
