@@ -80,6 +80,9 @@ void Robot::assignMessage(vector<float> &message, string &topic)
  */
 void Robot::updateRobot()
 {
+    
+    
+/* 
     if(!readyToKick)
     {
         if(Vector3Length(controller->ball.speed) < BALL_SPEED_ZERO)
@@ -107,7 +110,7 @@ void Robot::updateRobot()
         readyToKick = false;
         kicked = false;
     }
-    
+*/
 }
 
 /**

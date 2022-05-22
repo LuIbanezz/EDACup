@@ -38,7 +38,7 @@ void MyListener::onMessage(string topic, vector<char> payload)
         controller->assignRobotMessage(robotTeam, robotIndex, decodedMessage, topic);
             
     }
-    else
+    else if (topic.find("ball") != -1)
     {
         controller->updateBall(decodedMessage);
         controller->updateController();

@@ -13,6 +13,7 @@
 
 #include "Robot.h"
 #include <vector>
+#include "Graph.h"
 
 using namespace std;
 
@@ -41,6 +42,7 @@ public:
 	void start();
     void updateBall(vector<float>& ballInfo);
     Ball ball;
+    Graph graph;
     
 private:
 	vector<Robot *> team1;

@@ -14,6 +14,7 @@
 Controller::Controller()
 {
     elapsedTime = 0;
+    
 }
 
 void Controller::start()
@@ -96,7 +97,12 @@ void Controller::updateController()
 {
     elapsedTime += DELTA_TIME;
 
-    team1[0]->updateRobot();
+    for (auto robot : team1)
+    {
+        robot->updateRobot();
+    }
+    
+
 }
 
 /**
