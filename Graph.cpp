@@ -28,7 +28,7 @@ GraphNode::GraphNode(int index)
 
         case TOP_RIGHT:
             neighbor.index = GRAPHINDEX(NODE_ROW(index) - 1, NODE_COLUMN(index) + 1);
-            if (NODE_COLUMN(index) == GRAPH_WIDTH || NODE_ROW(index) == 0)
+            if (NODE_COLUMN(index) == GRAPH_WIDTH - 1 || NODE_ROW(index) == 0)
                 neighbor.weight = -1;
             else
                 neighbor.weight = sqrt(2);
@@ -44,7 +44,7 @@ GraphNode::GraphNode(int index)
 
         case RIGHT:
             neighbor.index = GRAPHINDEX(NODE_ROW(index), NODE_COLUMN(index) + 1);
-            if (NODE_COLUMN(index) == GRAPH_WIDTH) 
+            if (NODE_COLUMN(index) == GRAPH_WIDTH - 1) 
                 neighbor.weight = -1;
             else
                 neighbor.weight = 1;
@@ -52,7 +52,7 @@ GraphNode::GraphNode(int index)
 
         case BOTTOM_LEFT:
             neighbor.index = GRAPHINDEX(NODE_ROW(index) + 1, NODE_COLUMN(index) - 1);
-            if (NODE_COLUMN(index) == 0 || (NODE_ROW(index) == GRAPH_LENGTH))
+            if (NODE_COLUMN(index) == 0 || (NODE_ROW(index) == GRAPH_LENGTH - 1))
                 neighbor.weight = -1;
             else
                 neighbor.weight = sqrt(2);
@@ -60,7 +60,7 @@ GraphNode::GraphNode(int index)
 
         case BOTTOM:
             neighbor.index = GRAPHINDEX(NODE_ROW(index) + 1, NODE_COLUMN(index));
-            if (NODE_ROW(index) == GRAPH_LENGTH)
+            if (NODE_ROW(index) == GRAPH_LENGTH - 1)
                 neighbor.weight = -1;
             else
                 neighbor.weight = 1;
@@ -68,7 +68,7 @@ GraphNode::GraphNode(int index)
 
         case BOTTOM_RIGHT:
             neighbor.index = GRAPHINDEX(NODE_ROW(index) + 1, NODE_COLUMN(index) + 1);
-            if (NODE_COLUMN(index) == GRAPH_WIDTH || NODE_ROW(index) == GRAPH_LENGTH)
+            if (NODE_COLUMN(index) == GRAPH_WIDTH - 1|| NODE_ROW(index) == GRAPH_LENGTH - 1)
                 neighbor.weight = -1;
             else
                 neighbor.weight = sqrt(2);
@@ -86,3 +86,15 @@ Graph::Graph()
         nodes.push_back(newNode);
     }
 };
+
+int Graph::searchPath(int source, int destination)
+{
+    return 0;
+}
+
+float Graph::hScore(int source, int destination)
+{
+    float x = nodes[source].x - nodes[destination].x;
+    float y =  nodes[source].y - nodes[destination].y;
+    return sqrt(x*x + y*y);
+}

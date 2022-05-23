@@ -105,10 +105,13 @@ void Controller::updateController()
     static bool flag = true;
     if(flag)
     {
-        for (auto i : graph.nodes[0].neighbors)
-        {
-            cout << i.weight << ' ' << endl;
-        }
+        for(auto i : graph.nodes)
+          {  for (auto j : i.neighbors)
+            {
+                cout << j.weight << ' ' << endl;
+            }
+            cout << endl;
+          }
         flag = false;
     }
     

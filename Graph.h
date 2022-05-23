@@ -33,6 +33,9 @@ class GraphNode
 public:
     GraphNode(int index);
 
+    float x;
+    float y;
+
     int value;
     bool mark;
     vector<WeightedNode> neighbors;
@@ -43,4 +46,9 @@ class Graph
 public:
     Graph();
     vector<GraphNode> nodes;
+
+    int searchPath(int source, int destination);
+
+private:
+    float hScore(int source, int destination);
 };
