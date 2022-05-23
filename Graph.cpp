@@ -1,5 +1,18 @@
 #include "Graph.h"
 #include <raymath.h>
+#include <queue>
+
+class Compare
+{
+public:
+    bool operator() (GraphNode node1, GraphNode node2)
+    {
+        if(node1.fScore <  node2.fScore)
+            return true;
+        else
+            return false;
+    }
+};
 
 GraphNode::GraphNode(int index)
 {
@@ -87,8 +100,47 @@ Graph::Graph()
     }
 };
 
+/**
+ * @brief Chequear, completar y verificar
+ * 
+ * @param source 
+ * @param destination 
+ * @return int 
+ */
 int Graph::searchPath(int source, int destination)
 {
+    priority_queue <GraphNode, vector<GraphNode>, Compare> openSet;
+
+    while (!openSet.empty())
+    {
+        GraphNode currentNode = openSet.top();
+
+        if(currentNode.index == destination)
+        {
+            return;
+        }
+        else
+        {
+            openSet.pop();
+            for(auto neighbor : currentNode.neighbors)
+            {
+
+                float tentativeGScore = currentNode.gScore + neighbor.weight;
+                if(tentativeGScore < nodes[neighbor.index].gScore )
+                {
+                    nodes[neighbor.index].cameFromIndex = currentNode.index;
+                    nodes[neighbor.index].gScore = tentativeGScore;
+                    nodes[neighbor.index].fScore = tentativeGScore +
+                                                    hScore(neighbor.index, destination);
+                    if(nodes[neighbor.index] not in)
+                    {
+                        openSet.push(nodes[neighbor.index]);
+                    }
+                }
+            }
+        }
+    }
+
     return 0;
 }
 
@@ -97,4 +149,9 @@ float Graph::hScore(int source, int destination)
     float x = nodes[source].x - nodes[destination].x;
     float y =  nodes[source].y - nodes[destination].y;
     return sqrt(x*x + y*y);
+}
+
+float reconstructPath()
+{
+
 }

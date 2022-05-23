@@ -35,7 +35,12 @@ public:
 
     float x;
     float y;
+    float fScore;
+    float gScore;
+    float hScore;
+    int cameFromIndex;
 
+    int index;
     int value;
     bool mark;
     vector<WeightedNode> neighbors;
