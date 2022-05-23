@@ -4,8 +4,8 @@
 GraphNode::GraphNode(int index)
 {
     neighbors.clear();
-    for (int i = BOTTOM_RIGHT; i >= TOP_LEFT; i--)          
-    //Se va restando por el forward_list, para que quede *arriba a la izquierda* primero y *abajo a la derecha* ultimo
+    for (int i = LEFT; i <= BOTTOM_LEFT; i++)          
+    //Se recorren los vecinos arrancando por izquierda, en sentido horario
     {
         WeightedNode neighbor;
         switch (i)
@@ -74,7 +74,7 @@ GraphNode::GraphNode(int index)
                 neighbor.weight = sqrt(2);
             break;
         }
-        neighbors.push_front(neighbor);
+        neighbors.push_back(neighbor);
     }
 }
 

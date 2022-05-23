@@ -330,27 +330,27 @@ void Robot::dressRobot(int robotNumber)
     switch (robotNumber)
     {
         case 1:
-            shirt = LoadImage("../resources/1.png");
+            shirt = LoadImage("../../resources/1.png");
             break;
         
         case 2:
-            shirt = LoadImage("../resources/2.png");
+            shirt = LoadImage("../../resources/2.png");
             break;
 
         case 3:
-            shirt = LoadImage("../resources/3.png");
+            shirt = LoadImage("../../resources/3.png");
             break;
         
         case 4:
-            shirt = LoadImage("../resources/4.png");
+            shirt = LoadImage("../../resources/4.png");
             break;
 
         case 5:
-            shirt = LoadImage("../resources/5.png");
+            shirt = LoadImage("../../resources/5.png");
             break;
 
         case 6:
-            shirt = LoadImage("../resources/6.png");
+            shirt = LoadImage("../../resources/6.png");
             break;
     }
     ImageFormat(&shirt, PIXELFORMAT_UNCOMPRESSED_R8G8B8);

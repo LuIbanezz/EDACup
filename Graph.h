@@ -1,30 +1,29 @@
 #include <raylib.h>
-#include <forward_list>
 #include <vector>
 
-#define GRAPH_WIDTH 20
-#define GRAPH_LENGTH 50
-#define GRAPHINDEX(x,y) (int)((y)*GRAPH_WIDTH+(x))
-#define GRAPH_TOTAL_SIZE (int)(GRAPH_WIDTH*GRAPH_LENGTH)
-#define NODE_COLUMN(i) ((i)%GRAPH_WIDTH)
-#define NODE_ROW(i) ((i)/(GRAPH_WIDTH))
-
+#define GRAPH_WIDTH 90
+#define GRAPH_LENGTH 60
+#define GRAPHINDEX(x, y) (int)((y)*GRAPH_WIDTH + (x))
+#define GRAPH_TOTAL_SIZE (int)(GRAPH_WIDTH * GRAPH_LENGTH)
+#define NODE_COLUMN(i) ((i) % GRAPH_WIDTH)
+#define NODE_ROW(i) ((i) / (GRAPH_WIDTH))
 
 enum direction
 {
+    LEFT,
     TOP_LEFT,
     TOP,
     TOP_RIGHT,
-    LEFT,
     RIGHT,
-    BOTTOM_LEFT,
+    BOTTOM_RIGHT,
     BOTTOM,
-    BOTTOM_RIGHT
+    BOTTOM_LEFT
 };
 
 using namespace std;
 
-struct WeightedNode{
+struct WeightedNode
+{
     int index;
     float weight;
 };
@@ -32,11 +31,11 @@ struct WeightedNode{
 class GraphNode
 {
 public:
-GraphNode(int index);
+    GraphNode(int index);
 
-int value;
-bool mark;
-forward_list<WeightedNode> neighbors;
+    int value;
+    bool mark;
+    vector<WeightedNode> neighbors;
 };
 
 class Graph

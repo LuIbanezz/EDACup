@@ -41,6 +41,7 @@ public:
     float getTime();
 	void start();
     void updateBall(vector<float>& ballInfo);
+    
     Ball ball;
     Graph graph;
     

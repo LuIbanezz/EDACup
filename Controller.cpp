@@ -101,6 +101,16 @@ void Controller::updateController()
     {
         robot->updateRobot();
     }
+
+    static bool flag = true;
+    if(flag)
+    {
+        for (auto i : graph.nodes[0].neighbors)
+        {
+            cout << i.weight << ' ' << endl;
+        }
+        flag = false;
+    }
     
 
 }
