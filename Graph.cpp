@@ -21,12 +21,13 @@ GraphNode::GraphNode(int index)
     //Se recorren los vecinos arrancando por izquierda, en sentido horario
     {
         WeightedNode neighbor;
+        bool NotANeighboor=false;
         switch (i)
         {
         case TOP_LEFT:
             neighbor.index = GRAPHINDEX(NODE_ROW(index) - 1, NODE_COLUMN(index) - 1);
             if (NODE_COLUMN(index) == 0 || NODE_ROW(index) == 0)
-                neighbor.weight = -1;
+                NotANeighboor=true;
             else
                 neighbor.weight = sqrt(2);
             break;
@@ -34,7 +35,7 @@ GraphNode::GraphNode(int index)
         case TOP:
             neighbor.index = GRAPHINDEX(NODE_ROW(index) - 1, NODE_COLUMN(index));
             if (NODE_ROW(index) == 0)
-                neighbor.weight = -1;
+                NotANeighboor=true;
             else
                 neighbor.weight = 1;
             break;
@@ -42,7 +43,7 @@ GraphNode::GraphNode(int index)
         case TOP_RIGHT:
             neighbor.index = GRAPHINDEX(NODE_ROW(index) - 1, NODE_COLUMN(index) + 1);
             if (NODE_COLUMN(index) == GRAPH_WIDTH - 1 || NODE_ROW(index) == 0)
-                neighbor.weight = -1;
+                NotANeighboor=true;
             else
                 neighbor.weight = sqrt(2);
             break;
@@ -50,7 +51,7 @@ GraphNode::GraphNode(int index)
         case LEFT:
             neighbor.index = GRAPHINDEX(NODE_ROW(index), NODE_COLUMN(index) - 1);
             if (NODE_COLUMN(index) == 0)
-                neighbor.weight = -1;
+                NotANeighboor=true;
             else
                 neighbor.weight = 1;
             break;
@@ -58,7 +59,7 @@ GraphNode::GraphNode(int index)
         case RIGHT:
             neighbor.index = GRAPHINDEX(NODE_ROW(index), NODE_COLUMN(index) + 1);
             if (NODE_COLUMN(index) == GRAPH_WIDTH - 1) 
-                neighbor.weight = -1;
+                NotANeighboor=true;
             else
                 neighbor.weight = 1;
             break;
@@ -66,7 +67,7 @@ GraphNode::GraphNode(int index)
         case BOTTOM_LEFT:
             neighbor.index = GRAPHINDEX(NODE_ROW(index) + 1, NODE_COLUMN(index) - 1);
             if (NODE_COLUMN(index) == 0 || (NODE_ROW(index) == GRAPH_LENGTH - 1))
-                neighbor.weight = -1;
+                NotANeighboor=true;
             else
                 neighbor.weight = sqrt(2);
             break;
@@ -74,7 +75,7 @@ GraphNode::GraphNode(int index)
         case BOTTOM:
             neighbor.index = GRAPHINDEX(NODE_ROW(index) + 1, NODE_COLUMN(index));
             if (NODE_ROW(index) == GRAPH_LENGTH - 1)
-                neighbor.weight = -1;
+                NotANeighboor=true;
             else
                 neighbor.weight = 1;
             break;
@@ -82,12 +83,13 @@ GraphNode::GraphNode(int index)
         case BOTTOM_RIGHT:
             neighbor.index = GRAPHINDEX(NODE_ROW(index) + 1, NODE_COLUMN(index) + 1);
             if (NODE_COLUMN(index) == GRAPH_WIDTH - 1|| NODE_ROW(index) == GRAPH_LENGTH - 1)
-                neighbor.weight = -1;
+                NotANeighboor=true;
             else
                 neighbor.weight = sqrt(2);
             break;
         }
-        neighbors.push_back(neighbor);
+        if (!NotANeighboor)
+            neighbors.push_back(neighbor);
     }
 }
 
