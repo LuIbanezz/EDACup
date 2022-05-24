@@ -35,10 +35,6 @@ public:
 
     float x;
     float y;
-    float fScore;
-    float gScore;
-    float hScore;
-    int cameFromIndex;
 
     int index;
     int value;
@@ -52,8 +48,9 @@ public:
     Graph();
     vector<GraphNode> nodes;
 
-    int searchPath(int source, int destination);
+    void searchPath(int source, int destination, vector<int> &);
 
 private:
-    float hScore(int source, int destination);
+    float heuristic(int source, int destination);
+    void reconstructPath(vector <int> &cameFrom, int currentIndex, vector<int> &);
 };
