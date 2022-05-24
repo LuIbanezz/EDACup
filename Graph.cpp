@@ -5,7 +5,7 @@
 class Compare
 {
 public:
-    bool operator() (GraphNode node1, GraphNode node2)
+    bool operator() (GraphNode &node1, GraphNode &node2)
     {
         if(node1.fScore <  node2.fScore)
             return true;
@@ -109,7 +109,14 @@ Graph::Graph()
  */
 int Graph::searchPath(int source, int destination)
 {
-    priority_queue <GraphNode, vector<GraphNode>, Compare> openSet;
+    priority_queue <GraphNode&, vector<GraphNode&>, Compare> openSet;
+    for(auto node : nodes)
+    {
+        node.mark = false;
+        node.gScore = 10E10;
+    }
+    nodes[source].gScore = 0;
+    openSet.push(nodes[source]);
 
     while (!openSet.empty())
     {
@@ -122,19 +129,21 @@ int Graph::searchPath(int source, int destination)
         else
         {
             openSet.pop();
-            for(auto neighbor : currentNode.neighbors)
+            currentNode.mark = false;
+            for(auto i : currentNode.neighbors)
             {
-
-                float tentativeGScore = currentNode.gScore + neighbor.weight;
-                if(tentativeGScore < nodes[neighbor.index].gScore )
+                GraphNode neighbor = nodes[i.index];
+                float tentativeGScore = currentNode.gScore + i.weight;
+                if(tentativeGScore < neighbor.gScore )
                 {
-                    nodes[neighbor.index].cameFromIndex = currentNode.index;
-                    nodes[neighbor.index].gScore = tentativeGScore;
-                    nodes[neighbor.index].fScore = tentativeGScore +
-                                                    hScore(neighbor.index, destination);
-                    if(nodes[neighbor.index] not in)
+                    neighbor.cameFromIndex = currentNode.index;
+                    neighbor.gScore = tentativeGScore;
+                    neighbor.fScore = tentativeGScore +
+                                                    hScore(i.index, destination);
+                    if(!neighbor.mark)
                     {
-                        openSet.push(nodes[neighbor.index]);
+                        openSet.push(neighbor);
+                        neighbor.mark = true;
                     }
                 }
             }
