@@ -59,6 +59,5 @@ public:
     void searchPath(int source, int destination, vector<int> &);
 
 private:
-    float heuristic(int source, int destination);
     void reconstructPath(vector <int> &cameFrom, int currentIndex, vector<int> &);
 };
