@@ -119,71 +119,25 @@ Graph::Graph()
     }
 };
 
-
-/**
- * @brief Chequear, completar y verificar
- * 
- * @param source 
- * @param destination 
- * @return int 
- */
-void Graph::searchPath(int source, int destination, vector<int> &path)
+vector<int> Graph::neighbors(int current)
 {
-    priority_queue <Node, vector<Node>, Compare> openSet;
-    vector <float> gScore (nodes.size(), 10E10f);
-    vector <float> fScore (nodes.size(), 10E10f);
-    vector <int> cameFrom (nodes.size(), -1);
-
-    gScore[source] = 0;
-    fScore[source] = heuristic(source, destination);
-
-    openSet.push({source, gScore[source]});
-
-
-    while (!openSet.empty())
+    vector<int> vec;
+    for (auto neighbor : nodes[current].neighbors)
     {
-        Node currentNode = openSet.top();
-        int currentIndex = currentNode.index;
-
-        if(currentIndex == destination)
-        {
-            reconstructPath(cameFrom, currentIndex, path);
-        }
-
-        openSet.pop();
-
-        for(auto neighbor : nodes[currentIndex].neighbors)
-        {
-            float tentativeGScore = gScore[currentIndex] + neighbor.weight;
-            if(tentativeGScore < gScore[neighbor.index] )
-            {
-                cameFrom[neighbor.index] = currentIndex;
-                gScore[neighbor.index] = tentativeGScore;
-                fScore[neighbor.index] = tentativeGScore +
-                                                heuristic(neighbor.index, destination);
-            }
-        }
-        
+        vec.push_back(neighbor.index);
     }
+    return vec;
 }
 
-float Graph::heuristic(int source, int destination)
+float Graph::cost(int current, int next)
 {
-    float x = nodes[source].x - nodes[destination].x;
-    float y =  nodes[source].y - nodes[destination].y;
-    return (float) sqrt(x*x + y*y);
+    return (nodes[current].neighbors[next].weight * (nodes[next].weight - nodes[current].weight));
 }
 
-void Graph::reconstructPath(vector <int> &cameFrom, int currentIndex, vector<int> &path)
+float Graph::heuristic(int current, int next)
 {
-    path.clear();
-    path.push_back(currentIndex);
-    int current = currentIndex;
-    while (cameFrom[current] != -1)
-    {
-        current = cameFrom[current];
-        path.push_back(current);
-    }
+    float x = nodes[current].x - nodes[next].x;
+    float y = nodes[current].y - nodes[next].y;
 
-    return reverse(path.begin(), path.end());
+    return sqrt(x*x + y*y);
 }

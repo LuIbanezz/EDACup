@@ -36,6 +36,8 @@ public:
     float x;
     float y;
 
+    float weight;
+
     int index;
     int value;
     bool mark;
@@ -47,6 +49,12 @@ class Graph
 public:
     Graph();
     vector<GraphNode> nodes;
+
+    vector<int> neighbors(int current);
+
+    float cost(int current, int next);
+    float heuristic(int current, int next);
+
 
     void searchPath(int source, int destination, vector<int> &);
 
