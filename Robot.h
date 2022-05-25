@@ -34,6 +34,14 @@
 #define ROBOT_RADIUS	0.09f
 #define RUN_UP_DISTANCE		0.25f
 
+#define MAC 1
+
+#if MAC
+#define RESOURCES_PATH "../resources/"
+#else
+#define RESOURCES_PATH "../../resources/"
+#endif
+
 using namespace std;
 
 class Controller;

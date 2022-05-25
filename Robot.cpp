@@ -327,30 +327,37 @@ void Robot::setShirt()
  */
 void Robot::dressRobot(int robotNumber)
 {
+    string path= RESOURCES_PATH;
     switch (robotNumber)
     {
         case 1:
-            shirt = LoadImage("../../resources/1.png");
+            path+= "1.png";
+            shirt = LoadImage(path.c_str());
             break;
         
         case 2:
-            shirt = LoadImage("../../resources/2.png");
+            path+= "2.png";
+            shirt = LoadImage(path.c_str());
             break;
 
         case 3:
-            shirt = LoadImage("../../resources/3.png");
+            path+= "3.png";
+            shirt = LoadImage(path.c_str());
             break;
         
         case 4:
-            shirt = LoadImage("../../resources/4.png");
+            path+= "4.png";
+            shirt = LoadImage(path.c_str());
             break;
 
         case 5:
-            shirt = LoadImage("../../resources/5.png");
+            path+= "5.png";
+            shirt = LoadImage(path.c_str());
             break;
 
         case 6:
-            shirt = LoadImage("../../resources/6.png");
+            path+= "6.png";
+            shirt = LoadImage(path.c_str());
             break;
     }
     ImageFormat(&shirt, PIXELFORMAT_UNCOMPRESSED_R8G8B8);
