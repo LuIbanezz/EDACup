@@ -39,7 +39,7 @@ struct PriorityQueue {
 template<typename Location>
 std::vector<Location> reconstruct_path(
    Location start, Location goal,
-   std::unordered_map<Location, Location> came_from
+   std::unordered_map<Location, Location> &came_from
 ) {
   std::vector<Location> path;
   Location current = goal;
@@ -58,9 +58,9 @@ void a_star_search
    Location start,
    Location goal,
    std::unordered_map<Location, Location>& came_from,
-   std::unordered_map<Location, double>& cost_so_far)
+   std::unordered_map<Location, float>& cost_so_far)
 {
-  PriorityQueue<Location, double> frontier;
+  PriorityQueue<Location, float> frontier;
   frontier.put(start, 0);
 
   came_from[start] = start;

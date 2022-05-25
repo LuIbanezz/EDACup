@@ -36,77 +36,91 @@ public:
 GraphNode::GraphNode(int index)
 {
     neighbors.clear();
+    mark = false;
+
+    int column = NODE_COLUMN(index);
+    int row = NODE_ROW(index);
+
+    this->index = index;
+
+    x = - ((GRAPH_WIDTH / 2 - column) / 10.0f - 0.05f);
+    y = ((GRAPH_LENGTH / 2 - row) / 10.0f - 0.05f);
+
+    weight = 1.0f;
+
     for (int i = LEFT; i <= BOTTOM_LEFT; i++)          
     //Se recorren los vecinos arrancando por izquierda, en sentido horario
     {
         WeightedNode neighbor;
+        bool NotANeighboor=false;
         switch (i)
         {
         case TOP_LEFT:
-            neighbor.index = GRAPHINDEX(NODE_ROW(index) - 1, NODE_COLUMN(index) - 1);
-            if (NODE_COLUMN(index) == 0 || NODE_ROW(index) == 0)
-                neighbor.weight = -1;
+            neighbor.index = GRAPHINDEX(column - 1, row - 1);
+            if (column == 0 || row == 0)
+                NotANeighboor = true;
             else
-                neighbor.weight = (float)sqrt(2);
+                neighbor.weight = sqrt(2);
             break;
 
         case TOP:
-            neighbor.index = GRAPHINDEX(NODE_ROW(index) - 1, NODE_COLUMN(index));
-            if (NODE_ROW(index) == 0)
-                neighbor.weight = -1;
+            neighbor.index = GRAPHINDEX(column, row - 1);
+            if (row == 0)
+                NotANeighboor = true;
             else
                 neighbor.weight = 1;
             break;
 
         case TOP_RIGHT:
-            neighbor.index = GRAPHINDEX(NODE_ROW(index) - 1, NODE_COLUMN(index) + 1);
-            if (NODE_COLUMN(index) == GRAPH_WIDTH - 1 || NODE_ROW(index) == 0)
-                neighbor.weight = -1;
+            neighbor.index = GRAPHINDEX(column + 1, row - 1);
+            if (column == GRAPH_WIDTH - 1 || row == 0)
+                NotANeighboor=true;
             else
-                neighbor.weight = (float)sqrt(2);
+                neighbor.weight = sqrt(2);
             break;
 
         case LEFT:
-            neighbor.index = GRAPHINDEX(NODE_ROW(index), NODE_COLUMN(index) - 1);
-            if (NODE_COLUMN(index) == 0)
-                neighbor.weight = -1;
+            neighbor.index = GRAPHINDEX(column - 1, row);
+            if (column == 0)
+                NotANeighboor=true;
             else
                 neighbor.weight = 1;
             break;
 
         case RIGHT:
-            neighbor.index = GRAPHINDEX(NODE_ROW(index), NODE_COLUMN(index) + 1);
-            if (NODE_COLUMN(index) == GRAPH_WIDTH - 1) 
-                neighbor.weight = -1;
+            neighbor.index = GRAPHINDEX(column + 1, row);
+            if (column == GRAPH_WIDTH - 1) 
+                NotANeighboor=true;
             else
                 neighbor.weight = 1;
             break;
 
         case BOTTOM_LEFT:
-            neighbor.index = GRAPHINDEX(NODE_ROW(index) + 1, NODE_COLUMN(index) - 1);
-            if (NODE_COLUMN(index) == 0 || (NODE_ROW(index) == GRAPH_LENGTH - 1))
-                neighbor.weight = -1;
+            neighbor.index = GRAPHINDEX(column - 1, row + 1);
+            if (column == 0 || (row == GRAPH_LENGTH - 1))
+                NotANeighboor=true;
             else
-                neighbor.weight = (float)sqrt(2);
+                neighbor.weight = sqrt(2);
             break;
 
         case BOTTOM:
-            neighbor.index = GRAPHINDEX(NODE_ROW(index) + 1, NODE_COLUMN(index));
+            neighbor.index = GRAPHINDEX(column, row + 1);
             if (NODE_ROW(index) == GRAPH_LENGTH - 1)
-                neighbor.weight = -1;
+                NotANeighboor=true;
             else
                 neighbor.weight = 1;
             break;
 
         case BOTTOM_RIGHT:
-            neighbor.index = GRAPHINDEX(NODE_ROW(index) + 1, NODE_COLUMN(index) + 1);
-            if (NODE_COLUMN(index) == GRAPH_WIDTH - 1|| NODE_ROW(index) == GRAPH_LENGTH - 1)
-                neighbor.weight = -1;
+            neighbor.index = GRAPHINDEX(column + 1, row + 1);
+            if (column == GRAPH_WIDTH - 1 || row == GRAPH_LENGTH - 1)
+                NotANeighboor=true;
             else
-                neighbor.weight = (float)sqrt(2);
+                neighbor.weight = sqrt(2);
             break;
         }
-        neighbors.push_back(neighbor);
+        if (!NotANeighboor)
+            neighbors.push_back(neighbor);
     }
 }
 
@@ -131,7 +145,7 @@ vector<int> Graph::neighbors(int current)
 
 float Graph::cost(int current, int next)
 {
-    return (nodes[current].neighbors[next].weight * (nodes[next].weight - nodes[current].weight));
+    return (nodes[next].weight - nodes[current].weight);
 }
 
 float Graph::heuristic(int current, int next)

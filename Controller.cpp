@@ -4,17 +4,17 @@
  * @brief Controller class definition. Contains information about the game state.
  * @version 0.1
  * @date 2022-05-14
- * 
+ *
  * @copyright Copyright (c) 2022
- * 
+ *
  */
 #include "Controller.h"
-
+#include <unordered_map>
+#include "aStarAlgorithm.h"
 
 Controller::Controller()
 {
     elapsedTime = 0;
-    
 }
 
 void Controller::start()
@@ -35,9 +35,9 @@ Controller::~Controller()
 
 /**
  * @brief Adds new robot to the indicated team
- * 
- * @param robot 
- * @param teamNum 
+ *
+ * @param robot
+ * @param teamNum
  */
 void Controller::addRobot(Robot *robot, int teamNum)
 {
@@ -55,26 +55,26 @@ void Controller::addRobot(Robot *robot, int teamNum)
 
 /**
  * @brief Creates a new Team of robots
- * 
- * @param mqttClient2 
+ *
+ * @param mqttClient2
  */
 void Controller::createTeam1(MQTTClient2 *mqttClient2)
 {
-    addRobot(new Robot("robot1.1", mqttClient2, this),1);
-    addRobot(new Robot("robot1.2", mqttClient2, this),1);
-    addRobot(new Robot("robot1.3", mqttClient2, this),1);
-    addRobot(new Robot("robot1.4", mqttClient2, this),1);
-    addRobot(new Robot("robot1.5", mqttClient2, this),1);
-    addRobot(new Robot("robot1.6", mqttClient2, this),1);
+    addRobot(new Robot("robot1.1", mqttClient2, this), 1);
+    addRobot(new Robot("robot1.2", mqttClient2, this), 1);
+    addRobot(new Robot("robot1.3", mqttClient2, this), 1);
+    addRobot(new Robot("robot1.4", mqttClient2, this), 1);
+    addRobot(new Robot("robot1.5", mqttClient2, this), 1);
+    addRobot(new Robot("robot1.6", mqttClient2, this), 1);
 }
 
 /**
  * @brief Assigns the message of the robot received to the corresponding robot.
- * 
- * @param robotTeam 
- * @param robotIndex 
- * @param message 
- * @param topic 
+ *
+ * @param robotTeam
+ * @param robotIndex
+ * @param message
+ * @param topic
  */
 void Controller::assignRobotMessage(int robotTeam,
                                     int robotIndex, vector<float> &message, string &topic)
@@ -91,7 +91,7 @@ void Controller::assignRobotMessage(int robotTeam,
 
 /**
  * @brief Updates each robot
- * 
+ *
  */
 void Controller::updateController()
 {
@@ -102,26 +102,33 @@ void Controller::updateController()
         robot->updateRobot();
     }
 
-    static bool flag = true;
-    if(flag)
+    for (int i = 5; i < GRAPH_LENGTH - 5; i++)
     {
-        for(auto i : graph.nodes)
-          {  for (auto j : i.neighbors)
-            {
-                cout << j.weight << ' ' << endl;
-            }
-            cout << endl;
-          }
+        graph.nodes[GRAPHINDEX(30, i)].weight = 50.0f;
+    }
+
+    static bool flag = true;
+
+    if (flag)
+    {
+        std::unordered_map<int, int> came_from;
+        std::unordered_map<int, float> cost_so_far;
+        a_star_search<int, Graph>(graph, 0, GRAPH_TOTAL_SIZE - 1, came_from, cost_so_far);
+        vector<int> path = reconstruct_path <int> (0, GRAPH_TOTAL_SIZE - 1, came_from);
+
+        for (int i = 0; i < path.size(); i++)
+        {
+            cout << path[i] << endl;
+        }
+
         flag = false;
     }
-    
-
 }
 
 /**
  * @brief Saves the message received with the ball information
- * 
- * @param ballInfo 
+ *
+ * @param ballInfo
  */
 void Controller::updateBall(vector<float> &ballInfo)
 {
@@ -144,7 +151,7 @@ void Controller::updateBall(vector<float> &ballInfo)
 
 /**
  * @brief Getters
- * 
+ *
  */
 float Controller::getTime()
 {

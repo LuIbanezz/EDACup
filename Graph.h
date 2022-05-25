@@ -1,6 +1,9 @@
 #include <raylib.h>
 #include <vector>
 
+#define FIELD_WIDTH     9.0f
+#define FIELD_LENGTH    6.0f
+
 #define GRAPH_WIDTH 90
 #define GRAPH_LENGTH 60
 #define GRAPHINDEX(x, y) (int)((y)*GRAPH_WIDTH + (x))
@@ -55,9 +58,4 @@ public:
     float cost(int current, int next);
     float heuristic(int current, int next);
 
-
-    void searchPath(int source, int destination, vector<int> &);
-
-private:
-    void reconstructPath(vector <int> &cameFrom, int currentIndex, vector<int> &);
 };
