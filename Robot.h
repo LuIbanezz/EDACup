@@ -26,13 +26,20 @@
 #define	BALL_SPEED_ZERO	0.01f
 #define ARRIVED_MIN_DISTANCE 0.001f
 
-#define GOAL1X 		(-4.5f)
-#define GOAL1Y		0.0f
+#define GOAL_LENGTH    1
 
 #define BALL_RADIUS	0.0215f
 #define ROBOT_KICKER_RADIUS	0.08f
 #define ROBOT_RADIUS	0.09f
 #define RUN_UP_DISTANCE		0.25f
+
+const Vector2 goal1 {-4.5,0};
+const Vector2 goal1_1 {-4.5,-0.5};      // Primer y segundo palo
+const Vector2 goal1_2 {-4.5,0.5};
+
+const Vector2 goal2 {4.5,-0.5};
+const Vector2 goal2_1 {4.5,-0.5};
+const Vector2 goal2_2 {4.5,0.5};
 
 #define MAC 1
 
@@ -43,6 +50,7 @@
 #endif
 
 using namespace std;
+
 
 class Controller;
 
@@ -59,7 +67,7 @@ public:
     Robot(string robotID, MQTTClient2 *client, Controller* controller);
 	
     void assignMessage(vector<float>& message, string& topic);
-	void updateRobot();
+	virtual void updateRobot();
 	
 	void startRobot();
 protected:
@@ -89,6 +97,9 @@ protected:
 	Setpoint runUpDestination();
 	Setpoint kickDestination();
 	Setpoint getPath (float minDistance);
+    void positionGoalkeeper();
+    void keeperCatch();
+    float angleBetweenVectors(Vector2 v1,Vector2 v2);
 	
 };
 

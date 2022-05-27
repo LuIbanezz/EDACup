@@ -14,7 +14,7 @@
 
 using namespace std;
 
-static Vector2 projection (Vector2 vector, Vector2 projector);
+static Vector2 projection(Vector2 vector, Vector2 projector);
 
 /**
  * @brief Construct a new Robot:: Robot object
@@ -29,7 +29,6 @@ Robot::Robot(string robotID, MQTTClient2 *client, Controller *controller)
     mqttClient2 = client;
     this->controller = controller;
     dressRobot(robotID[7] - '0');
-
 }
 
 /**
@@ -55,7 +54,7 @@ void Robot::startRobot()
  */
 void Robot::assignMessage(vector<float> &message, string &topic)
 {
-    
+
     if (topic.find("motion") != -1)
     {
         coordinates.x = message[0];
@@ -80,37 +79,44 @@ void Robot::assignMessage(vector<float> &message, string &topic)
  */
 void Robot::updateRobot()
 {
-    
-    
-/* 
-    if(!readyToKick)
+
+    if ((robotID[7] - '0') == 2)
     {
-        if(Vector3Length(controller->ball.speed) < BALL_SPEED_ZERO)
+        if (Vector3Length(controller->ball.speed) > 3)
         {
-            direction = runUpDestination();
-            Setpoint newPath = getPath(BALL_RADIUS + ROBOT_RADIUS + 0.1f);
-            readyToKick = moveRobot(newPath, MAX_SPEED);
+            keeperCatch();
+        }
+        positionGoalkeeper();
+    }
+    if ((robotID[7] - '0') == 1)
+    {
+        if (!readyToKick)
+        {
+            if (Vector3Length(controller->ball.speed) < BALL_SPEED_ZERO)
+            {
+                direction = runUpDestination();
+                Setpoint newPath = getPath(BALL_RADIUS + ROBOT_RADIUS + 0.1f);
+                readyToKick = moveRobot(newPath, MAX_SPEED);
+            }
+        }
+
+        else if (readyToKick && !kicked)
+        {
+            direction = kickDestination();
+            moveRobot(direction, MAX_SPEED);
+            if (Vector2Distance({controller->ball.position.x, controller->ball.position.y},
+                                {coordinates.x, coordinates.y}) < (BALL_RADIUS + ROBOT_KICKER_RADIUS))
+            {
+                kick(kickPower);
+                kicked = true;
+            }
+        }
+        else
+        {
+            readyToKick = false;
+            kicked = false;
         }
     }
-    
-    else if(readyToKick && !kicked)
-    {
-        direction = kickDestination();
-        moveRobot(direction, MAX_SPEED);
-        if(Vector2Distance({controller->ball.position.x, controller->ball.position.y}, 
-            {coordinates.x, coordinates.y}) < (BALL_RADIUS + ROBOT_KICKER_RADIUS))
-        {
-            kick(kickPower);
-            kicked = true;
-        }
-        
-    }
-    else
-    {
-        readyToKick = false;
-        kicked = false;
-    }
-*/
 }
 
 /**
@@ -128,18 +134,18 @@ bool Robot::moveRobot(Setpoint destination, float speed)
     directorVector.x = destination.position.x - coordinates.x;
     directorVector.y = destination.position.y - coordinates.y;
 
-    float rotationAngle = 90.0f - Vector2Angle({0,0}, directorVector);
+    float rotationAngle = 90.0f - Vector2Angle({0, 0}, directorVector);
 
     if (Vector2Length(directorVector) > (speed * DELTA_TIME))
     {
         directorVector = Vector2Add({coordinates.x, coordinates.y},
-                        Vector2Scale(Vector2Normalize(directorVector), DELTA_TIME * speed));
+                                    Vector2Scale(Vector2Normalize(directorVector), DELTA_TIME * speed));
 
         Setpoint setPoint = {directorVector, rotationAngle};
         setSetpoint(setPoint);
     }
-    else if(Vector2Distance({destination.position.x, destination.position.y},
-    {coordinates.x, coordinates.y}) > ARRIVED_MIN_DISTANCE)
+    else if (Vector2Distance({destination.position.x, destination.position.y},
+                             {coordinates.x, coordinates.y}) > ARRIVED_MIN_DISTANCE)
     {
         setSetpoint(destination);
     }
@@ -176,14 +182,14 @@ void Robot::setSetpoint(Setpoint setpoint)
  */
 Setpoint Robot::runUpDestination()
 {
-    Vector2 goalToBall = {controller->ball.position.x - GOAL1X,
-                        controller->ball.position.y - GOAL1Y};
+    Vector2 goalToBall = {controller->ball.position.x - goal2.x,
+                          controller->ball.position.y - goal2.y};
     Setpoint destination = {(Vector2Add(
                                 Vector2Scale(
                                     Vector2Normalize(goalToBall),
                                     BALL_RADIUS + ROBOT_KICKER_RADIUS + RUN_UP_DISTANCE),
                                 {controller->ball.position.x, controller->ball.position.y})),
-                            90.0f - Vector2Angle(goalToBall,{0,0})};
+                            90.0f - Vector2Angle(goalToBall, {0, 0})};
     return destination;
 }
 
@@ -195,13 +201,13 @@ Setpoint Robot::runUpDestination()
  */
 Setpoint Robot::kickDestination()
 {
-    Vector2 goalToBall = {controller->ball.position.x - GOAL1X,
-                            controller->ball.position.y - GOAL1Y};
+    Vector2 goalToBall = {controller->ball.position.x - goal2.x,
+                          controller->ball.position.y - goal2.y};
     Setpoint destination = {(Vector2Add(
                                 Vector2Scale(
-                                Vector2Normalize(goalToBall), -0.01f),
+                                    Vector2Normalize(goalToBall), -0.01f),
                                 {controller->ball.position.x, controller->ball.position.y})),
-                            90.0f - Vector2Angle(goalToBall,{0,0})};
+                            90.0f - Vector2Angle(goalToBall, {0, 0})};
     return destination;
 }
 
@@ -228,7 +234,7 @@ void Robot::kick(float strength)
  * @param projector Vector that direc will be projected over.
  * @return Vector2 
  */
-static Vector2 projection (Vector2 direc, Vector2 projector)
+static Vector2 projection(Vector2 direc, Vector2 projector)
 {
     Vector2 unitaryProjector = Vector2Normalize(projector);
     Vector2 result = Vector2Scale(unitaryProjector, Vector2DotProduct(direc, unitaryProjector));
@@ -240,13 +246,17 @@ static Vector2 projection (Vector2 direc, Vector2 projector)
  * 
  * @param v1 
  * @param v2 
+ * @note in counter clockwise direction, v1, then v2 (otherwise negative)
  * @return float 
  */
-static float angleBetweenVectors(Vector2 v1, Vector2 v2)
+float Robot::angleBetweenVectors(Vector2 v1, Vector2 v2)
 {
     float angle;
-    angle = acos(Vector2DotProduct(v1,v2) / (Vector2Length(v1) * Vector2Length(v2))) * (180 / PI);
-    return angle;
+    angle = acos(Vector2DotProduct(v1, v2) / (Vector2Length(v1) * Vector2Length(v2))) * (180 / PI);
+    if (v1.y < v2.y)
+        return -angle;
+    else
+        return angle;
 }
 
 /**
@@ -258,47 +268,43 @@ static float angleBetweenVectors(Vector2 v1, Vector2 v2)
  * 
  * @return Setpoint 
  */
-Setpoint Robot::getPath (float minDistance)
+Setpoint Robot::getPath(float minDistance)
 {
     Vector2 ballPosition = {controller->ball.position.x, controller->ball.position.y};
     Vector2 vToBall = Vector2Subtract(ballPosition, {coordinates.x, coordinates.y});
     Vector2 vToFinal = Vector2Subtract(direction.position, {coordinates.x, coordinates.y});
     Vector2 vBallToFinal = Vector2Subtract(vToFinal, vToBall);
 
-    Vector2 project = projection(vToBall,vToFinal);
+    Vector2 project = projection(vToBall, vToFinal);
 
     Vector2 distanceDirector = Vector2Subtract(project, vToBall);
-    
+
     Vector2 resultDirection;
     Setpoint result;
     float distance = Vector2Length(distanceDirector);
-    float angle = angleBetweenVectors(vBallToFinal, Vector2Scale(vToBall, -1) );
+    float angle = angleBetweenVectors(vBallToFinal, Vector2Scale(vToBall, -1));
 
-    if(distance < minDistance && angle > 90.0f)
+    if (distance < minDistance && angle > 90.0f)
     {
-        if( abs(angle - 180.f) < 0.1f) //POSIBLE CASO DE DISTANCEDIRECTOR = 0
+        if (abs(angle - 180.f) < 0.1f) //POSIBLE CASO DE DISTANCEDIRECTOR = 0
         {
-            Vector2 perpendicularVector = 
-                            Vector2Normalize({-distanceDirector.y, distanceDirector.x});
+            Vector2 perpendicularVector =
+                Vector2Normalize({-distanceDirector.y, distanceDirector.x});
 
-            resultDirection =  Vector2Add(Vector2Scale
-                        (Vector2Normalize(perpendicularVector), minDistance), ballPosition);
+            resultDirection = Vector2Add(Vector2Scale(Vector2Normalize(perpendicularVector), minDistance), ballPosition);
         }
         else
         {
-            resultDirection = Vector2Add(Vector2Scale
-                        (Vector2Normalize(distanceDirector), minDistance), ballPosition);
-  
+            resultDirection = Vector2Add(Vector2Scale(Vector2Normalize(distanceDirector), minDistance), ballPosition);
         }
         result = {{resultDirection.x, resultDirection.y},
-                  90.0f - Vector2Angle({0,0}, resultDirection)};
-        
+                  90.0f - Vector2Angle({0, 0}, resultDirection)};
     }
     else
     {
         result = direction;
     }
-    
+
     return result;
 }
 
@@ -327,39 +333,95 @@ void Robot::setShirt()
  */
 void Robot::dressRobot(int robotNumber)
 {
-    string path= RESOURCES_PATH;
+    string path = RESOURCES_PATH;
     switch (robotNumber)
     {
-        case 1:
-            path+= "1.png";
-            shirt = LoadImage(path.c_str());
-            break;
-        
-        case 2:
-            path+= "2.png";
-            shirt = LoadImage(path.c_str());
-            break;
+    case 1:
+        path += "1.png";
+        shirt = LoadImage(path.c_str());
+        break;
 
-        case 3:
-            path+= "3.png";
-            shirt = LoadImage(path.c_str());
-            break;
-        
-        case 4:
-            path+= "4.png";
-            shirt = LoadImage(path.c_str());
-            break;
+    case 2:
+        path += "2.png";
+        shirt = LoadImage(path.c_str());
+        break;
 
-        case 5:
-            path+= "5.png";
-            shirt = LoadImage(path.c_str());
-            break;
+    case 3:
+        path += "3.png";
+        shirt = LoadImage(path.c_str());
+        break;
 
-        case 6:
-            path+= "6.png";
-            shirt = LoadImage(path.c_str());
-            break;
+    case 4:
+        path += "4.png";
+        shirt = LoadImage(path.c_str());
+        break;
+
+    case 5:
+        path += "5.png";
+        shirt = LoadImage(path.c_str());
+        break;
+
+    case 6:
+        path += "6.png";
+        shirt = LoadImage(path.c_str());
+        break;
     }
     ImageFormat(&shirt, PIXELFORMAT_UNCOMPRESSED_R8G8B8);
     setShirt();
+}
+
+void Robot::positionGoalkeeper()
+{
+    static float ballSpeed = 0;
+    if (Vector3Length(controller->ball.speed)>ballSpeed)
+    {
+        ballSpeed=Vector3Length(controller->ball.speed);
+        cout << ballSpeed << endl;
+    }
+    Vector2 ball2D = {controller->ball.position.x, controller->ball.position.y};
+    Vector2 ballTo1st = Vector2Subtract(goal2_1, ball2D);
+    float angleTo1st = angleBetweenVectors(ballTo1st, {1, 0});
+
+    Vector2 ballTo2nd = Vector2Subtract(goal2_2, ball2D);
+    float angleTo2nd = angleBetweenVectors(ballTo2nd, {1, 0});
+
+    float angleDifference = angleTo2nd - angleTo1st;
+
+    float slope = tan((angleDifference / 2 + angleTo1st) * PI / 180);
+
+    Setpoint keeperSetPoint;
+
+    float adelantamiento = -0.3 * (ball2D.x - 2) * (ball2D.x - 2) + 1;
+    if (adelantamiento <= 0)
+    {
+        adelantamiento = 0;
+    }
+    
+    float x = 4.5 - adelantamiento;
+    float YPosition = ball2D.y + slope * (x - ball2D.x);
+    moveRobot({x, YPosition}, MAX_SPEED);
+}
+
+void Robot::keeperCatch()
+{
+    Vector2 ball2D = {controller->ball.position.x, controller->ball.position.y};
+    Vector2 ballTo1st = Vector2Subtract(goal2_1, ball2D);
+    float angleTo1st = angleBetweenVectors(ballTo1st, {1, 0});
+    Vector2 ballTo2nd = Vector2Subtract(goal2_2, ball2D);
+    float angleTo2nd = angleBetweenVectors(ballTo2nd, {1, 0});
+    Vector2 ballSpeed2D = {controller->ball.speed.x, controller->ball.speed.y};
+    float shotAngle = angleBetweenVectors(ballSpeed2D, {1, 0});
+    float slope = tan (shotAngle*PI/180);
+    if ((shotAngle >= angleTo1st-5) && (shotAngle <= angleTo2nd+5))
+    {
+        float x= (-ball2D.y+coordinates.y+slope*ball2D.x+coordinates.x/slope) /
+                    (+slope + 1/slope );
+        float y=ball2D.y+slope*(x-ball2D.x);
+        Setpoint keeperSetPoint={x,y};
+        //TO-DO arreglar las atajadas jaja
+    }
+    else
+    {
+        cout << "no" << endl;
+    }
 }

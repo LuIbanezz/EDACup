@@ -16,7 +16,8 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     add_link_options(-fsanitize=undefined)
 endif()
 
-add_executable(main main.cpp MyListener.cpp MQTTClient2.cpp Robot.cpp Controller.cpp Graph.cpp aStarAlgorithm.cpp)
+add_executable(main main.cpp MyListener.cpp MQTTClient2.cpp Robot.cpp Controller.cpp 
+                Graph.cpp aStarAlgorithm.cpp )
 
 # Packages
 
