@@ -29,6 +29,7 @@ Robot::Robot(string robotID, MQTTClient2 *client, Controller *controller)
     mqttClient2 = client;
     this->controller = controller;
     dressRobot(robotID[7] - '0');
+    team=robotID[5]-'0';
 }
 
 /**
@@ -79,44 +80,6 @@ void Robot::assignMessage(vector<float> &message, string &topic)
  */
 void Robot::updateRobot()
 {
-
-    if ((robotID[7] - '0') == 2)
-    {
-        if (Vector3Length(controller->ball.speed) > 3)
-        {
-            keeperCatch();
-        }
-        positionGoalkeeper();
-    }
-    if ((robotID[7] - '0') == 1)
-    {
-        if (!readyToKick)
-        {
-            if (Vector3Length(controller->ball.speed) < BALL_SPEED_ZERO)
-            {
-                direction = runUpDestination();
-                Setpoint newPath = getPath(BALL_RADIUS + ROBOT_RADIUS + 0.1f);
-                readyToKick = moveRobot(newPath, MAX_SPEED);
-            }
-        }
-
-        else if (readyToKick && !kicked)
-        {
-            direction = kickDestination();
-            moveRobot(direction, MAX_SPEED);
-            if (Vector2Distance({controller->ball.position.x, controller->ball.position.y},
-                                {coordinates.x, coordinates.y}) < (BALL_RADIUS + ROBOT_KICKER_RADIUS))
-            {
-                kick(kickPower);
-                kicked = true;
-            }
-        }
-        else
-        {
-            readyToKick = false;
-            kicked = false;
-        }
-    }
 }
 
 /**
@@ -182,8 +145,8 @@ void Robot::setSetpoint(Setpoint setpoint)
  */
 Setpoint Robot::runUpDestination()
 {
-    Vector2 goalToBall = {controller->ball.position.x - goal2.x,
-                          controller->ball.position.y - goal2.y};
+    Vector2 goalToBall = {controller->ball.position.x - goal1.x,
+                          controller->ball.position.y - goal1.y};
     Setpoint destination = {(Vector2Add(
                                 Vector2Scale(
                                     Vector2Normalize(goalToBall),
@@ -201,8 +164,8 @@ Setpoint Robot::runUpDestination()
  */
 Setpoint Robot::kickDestination()
 {
-    Vector2 goalToBall = {controller->ball.position.x - goal2.x,
-                          controller->ball.position.y - goal2.y};
+    Vector2 goalToBall = {controller->ball.position.x - goal1.x,
+                          controller->ball.position.y - goal1.y};
     Setpoint destination = {(Vector2Add(
                                 Vector2Scale(
                                     Vector2Normalize(goalToBall), -0.01f),
@@ -242,7 +205,7 @@ static Vector2 projection(Vector2 direc, Vector2 projector)
 }
 
 /**
- * @brief Calculates the angle between two vectors
+ * @brief Calculates the angle between two vectors. Start from v1, working clockwise
  * 
  * @param v1 
  * @param v2 
@@ -251,12 +214,24 @@ static Vector2 projection(Vector2 direc, Vector2 projector)
  */
 float Robot::angleBetweenVectors(Vector2 v1, Vector2 v2)
 {
+    float angleV1=Vector2Angle({0,0},v1);
+    if (angleV1>=180)
+        angleV1=angleV1-360;
+
+    float angleV2=Vector2Angle({0,0},v2);
+    if (angleV2>=180)
+        angleV2=angleV1-360;
+
     float angle;
-    angle = acos(Vector2DotProduct(v1, v2) / (Vector2Length(v1) * Vector2Length(v2))) * (180 / PI);
-    if (v1.y < v2.y)
-        return -angle;
-    else
-        return angle;
+    if (angleV2>=angleV1)
+        angle= angleV2-angleV1;
+    else 
+        angle= angleV1-angleV2;
+
+    if (angle>=180)
+        angle=angle-360;
+    
+    return angle;
 }
 
 /**
@@ -368,60 +343,4 @@ void Robot::dressRobot(int robotNumber)
     }
     ImageFormat(&shirt, PIXELFORMAT_UNCOMPRESSED_R8G8B8);
     setShirt();
-}
-
-void Robot::positionGoalkeeper()
-{
-    static float ballSpeed = 0;
-    if (Vector3Length(controller->ball.speed)>ballSpeed)
-    {
-        ballSpeed=Vector3Length(controller->ball.speed);
-        cout << ballSpeed << endl;
-    }
-    Vector2 ball2D = {controller->ball.position.x, controller->ball.position.y};
-    Vector2 ballTo1st = Vector2Subtract(goal2_1, ball2D);
-    float angleTo1st = angleBetweenVectors(ballTo1st, {1, 0});
-
-    Vector2 ballTo2nd = Vector2Subtract(goal2_2, ball2D);
-    float angleTo2nd = angleBetweenVectors(ballTo2nd, {1, 0});
-
-    float angleDifference = angleTo2nd - angleTo1st;
-
-    float slope = tan((angleDifference / 2 + angleTo1st) * PI / 180);
-
-    Setpoint keeperSetPoint;
-
-    float adelantamiento = -0.3 * (ball2D.x - 2) * (ball2D.x - 2) + 1;
-    if (adelantamiento <= 0)
-    {
-        adelantamiento = 0;
-    }
-    
-    float x = 4.5 - adelantamiento;
-    float YPosition = ball2D.y + slope * (x - ball2D.x);
-    moveRobot({x, YPosition}, MAX_SPEED);
-}
-
-void Robot::keeperCatch()
-{
-    Vector2 ball2D = {controller->ball.position.x, controller->ball.position.y};
-    Vector2 ballTo1st = Vector2Subtract(goal2_1, ball2D);
-    float angleTo1st = angleBetweenVectors(ballTo1st, {1, 0});
-    Vector2 ballTo2nd = Vector2Subtract(goal2_2, ball2D);
-    float angleTo2nd = angleBetweenVectors(ballTo2nd, {1, 0});
-    Vector2 ballSpeed2D = {controller->ball.speed.x, controller->ball.speed.y};
-    float shotAngle = angleBetweenVectors(ballSpeed2D, {1, 0});
-    float slope = tan (shotAngle*PI/180);
-    if ((shotAngle >= angleTo1st-5) && (shotAngle <= angleTo2nd+5))
-    {
-        float x= (-ball2D.y+coordinates.y+slope*ball2D.x+coordinates.x/slope) /
-                    (+slope + 1/slope );
-        float y=ball2D.y+slope*(x-ball2D.x);
-        Setpoint keeperSetPoint={x,y};
-        //TO-DO arreglar las atajadas jaja
-    }
-    else
-    {
-        cout << "no" << endl;
-    }
 }

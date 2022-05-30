@@ -17,6 +17,7 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 endif()
 
 add_executable(main main.cpp MyListener.cpp MQTTClient2.cpp Robot.cpp Controller.cpp 
+                P_Keeper.cpp P_DefRight.cpp P_DefLeft.cpp P_Mid.cpp P_LeftWing.cpp P_RightWing.cpp
                 Graph.cpp aStarAlgorithm.cpp )
 
 # Packages
