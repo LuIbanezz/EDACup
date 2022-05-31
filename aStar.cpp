@@ -1,3 +1,5 @@
+#include "Graph.h"
+
 struct Node
 {
     int index;

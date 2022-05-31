@@ -1,5 +1,6 @@
 #ifndef LEFTWING_H
 #define LEFTWING_H
+
 #include "Robot.h"
 using namespace std;
 class LeftWing : public Robot

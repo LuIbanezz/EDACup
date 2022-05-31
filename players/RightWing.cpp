@@ -1,4 +1,4 @@
-#include "P_RightWing.h"
+#include "RightWing.h"
 
 RightWing::RightWing(string robotID, MQTTClient2 *client, Controller *controller) : Robot(robotID, client, controller)
 {

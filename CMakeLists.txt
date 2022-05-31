@@ -16,11 +16,12 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     add_link_options(-fsanitize=undefined)
 endif()
 
-add_executable(main main.cpp MyListener.cpp MQTTClient2.cpp Robot.cpp Controller.cpp 
-                P_Keeper.cpp P_DefRight.cpp P_DefLeft.cpp P_Mid.cpp P_LeftWing.cpp P_RightWing.cpp
-                Graph.cpp aStarAlgorithm.cpp )
 
-# Packages
+include_directories(include)
+file(GLOB PLAYERS "players/*.cpp")
+file(GLOB SOURCES "src/*.cpp")
+add_executable(main ${SOURCES} ${PLAYERS})
+
 
 find_package(mosquitto REQUIRED)
 find_package(OpenSSL REQUIRED)

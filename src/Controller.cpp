@@ -11,12 +11,12 @@
 #include "Controller.h"
 #include <unordered_map>
 #include "aStarAlgorithm.h"
-#include "P_Keeper.h"
-#include "P_DefRight.h"
-#include "P_DefLeft.h"
-#include "P_Mid.h"
-#include "P_LeftWing.h"
-#include "P_RightWing.h"
+#include "Keeper.h"
+#include "RightBack.h"
+#include "LeftBack.h"
+#include "Mid.h"
+#include "LeftWing.h"
+#include "RightWing.h"
 
 Controller::Controller()
 {
@@ -67,8 +67,8 @@ void Controller::addRobot(Robot *robot, int teamNum)
 void Controller::createTeam1(MQTTClient2 *mqttClient2)
 {
     addRobot(new Keeper("robot1.1", mqttClient2, this), 1);
-    addRobot(new RightDef("robot1.2", mqttClient2, this), 1);
-    addRobot(new LeftDef("robot1.3", mqttClient2, this), 1);
+    addRobot(new RightBack("robot1.2", mqttClient2, this), 1);
+    addRobot(new LeftBack("robot1.3", mqttClient2, this), 1);
     addRobot(new Mid("robot1.4", mqttClient2, this), 1);
     addRobot(new LeftWing("robot1.5", mqttClient2, this), 1);
     addRobot(new RightWing("robot1.6", mqttClient2, this), 1);
