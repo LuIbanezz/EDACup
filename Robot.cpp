@@ -81,6 +81,11 @@ void Robot::assignMessage(vector<float> &message, string &topic)
 void Robot::updateRobot()
 {
     static bool parar = false;
+    if(controller->ball.position.y == 0)
+    {
+        cout << "tocó el piso en: x = " << controller->ball.position.x << " y = " 
+        << controller->ball.position.y << endl;
+    }
     if(!readyToKick)
     {
         if(Vector3Length(controller->ball.speed) < BALL_SPEED_ZERO)
@@ -90,27 +95,28 @@ void Robot::updateRobot()
             readyToKick = moveRobot(newPath, MAX_SPEED);
         }
     }
-    else if(readyToKick && !kicked)
-    {
-        direction = dribblingDestination();
-        moveRobot(direction, MAX_SPEED);
-        if(Vector2Distance({controller->ball.position.x, controller->ball.position.y}, 
-            {coordinates.x, coordinates.y}) < (BALL_RADIUS + ROBOT_KICKER_RADIUS))
-        {
-            dribble(true);
-            kicked = true;
-        }
+    // else if(readyToKick && !kicked)
+    // {
+    //     direction = dribblingDestination();
+    //     moveRobot(direction, MAX_SPEED);
+    //     if(Vector2Distance({controller->ball.position.x, controller->ball.position.y}, 
+    //         {coordinates.x, coordinates.y}) < (BALL_RADIUS + ROBOT_KICKER_RADIUS))
+    //     {
+    //         dribble(true);
+    //         kicked = true;
+    //     }
         
-    }
-    else
-    {
-        if(moveRobot({0,0,0},MAX_SPEED))
-        {
-            dribble(false);
-            readyToKick = false;
-            kicked = false;
-        }
-    }
+    // }
+    // else
+    // {
+    //     if(moveRobot({GOAL1X - 0.5f, GOAL1Y - 0.3f , 90},MAX_SPEED))
+    //     {
+    //         dribble(false);
+    //         kick(kickPower);
+    //         readyToKick = false;
+    //         kicked = false;
+    //     }
+    // }
 
     
 
@@ -133,6 +139,36 @@ void Robot::updateRobot()
     //     kicked = false;
     // }
     
+
+    else if(readyToKick && !kicked)
+    {
+        direction = kickDestination();
+        moveRobot(direction, MAX_SPEED);
+        if(Vector2Distance({controller->ball.position.x, controller->ball.position.y}, 
+            {coordinates.x, coordinates.y}) < (BALL_RADIUS + ROBOT_KICKER_RADIUS))
+        {
+            chipper(MAX_CHIPPER);
+            kicked = true;
+        }
+        
+    }
+    else
+    {
+        readyToKick = false;
+        kicked = false;
+    }
+
+}
+
+void Robot::chipper(float strength)
+{
+    vector<char> payload(4);
+
+    *((float *)&payload[0]) = strength;
+    mqttClient2->publish(robotID + "/kicker/chip/cmd", payload);
+
+    *((float *)&payload[0]) = 249.0f;
+    mqttClient2->publish(robotID + "/kicker/chargeVoltage/set", payload);
 }
 
 void Robot::dribble(bool on)
@@ -346,10 +382,7 @@ Setpoint Robot::getPath (float minDistance)
     return result;
 }
 
-/**
- * @brief Selects an image from a larger image
- * @copyright Marc S. Ressl - EDA 22.08
- */
+
 void Robot::setShirt()
 {
     Rectangle selectRectangle = {16.0F * 0, 0, 16, 16};
@@ -374,27 +407,27 @@ void Robot::dressRobot(int robotNumber)
     switch (robotNumber)
     {
         case 1:
-            shirt = LoadImage("../resources/1.png");
+            shirt = LoadImage("../../resources/1.png");
             break;
         
         case 2:
-            shirt = LoadImage("../resources/2.png");
+            shirt = LoadImage("../../resources/2.png");
             break;
 
         case 3:
-            shirt = LoadImage("../resources/3.png");
+            shirt = LoadImage("../../resources/3.png");
             break;
         
         case 4:
-            shirt = LoadImage("../resources/4.png");
+            shirt = LoadImage("../../resources/4.png");
             break;
 
         case 5:
-            shirt = LoadImage("../resources/5.png");
+            shirt = LoadImage("../../resources/5.png");
             break;
 
         case 6:
-            shirt = LoadImage("../resources/6.png");
+            shirt = LoadImage("../../resources/6.png");
             break;
     }
     ImageFormat(&shirt, PIXELFORMAT_UNCOMPRESSED_R8G8B8);

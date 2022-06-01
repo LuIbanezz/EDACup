@@ -264,6 +264,7 @@ void MQTTClient2::subscribeToTopics()
             subscribe(topic + "/motor" + c + "/rpm");
             subscribe(topic + "/motor" + c + "/temperature");
         }
+
         subscribe(topic + "/display/leftEye/set");
         subscribe(topic + "/display/rightEye/set");
         subscribe("ball/motion/state");

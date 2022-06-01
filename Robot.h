@@ -22,17 +22,18 @@
 
 #define DELTA_TIME 	0.1f
 #define MAX_SPEED	6.5f
-#define MAX_KICK_POWER	0.75f
+#define MAX_KICK_POWER	0.7979f
 #define	BALL_SPEED_ZERO	0.01f
 #define ARRIVED_MIN_DISTANCE 0.001f
 
-#define GOAL1X 		(-4.5f)
+#define GOAL1X 		4.5f
 #define GOAL1Y		0.0f
 
 #define BALL_RADIUS	0.0215f
 #define ROBOT_KICKER_RADIUS	0.08f
 #define ROBOT_RADIUS	0.09f
 #define RUN_UP_DISTANCE		0.25f
+#define MAX_CHIPPER			1.0f
 
 using namespace std;
 
@@ -83,6 +84,7 @@ protected:
 	Setpoint getPath (float minDistance);
 	Setpoint dribblingDestination();
 	void dribble(bool);
+	void chipper(float);
 };
 
 #endif //_ROBOT_H
