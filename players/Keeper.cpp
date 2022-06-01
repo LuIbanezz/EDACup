@@ -1,11 +1,11 @@
 #include "Keeper.h"
 
-Keeper:: Keeper(string robotID, MQTTClient2 *client, Controller *controller) : Robot(robotID, client,controller)
+Keeper::Keeper(string robotID, MQTTClient2 *client, Controller *controller) : Robot(robotID, client,controller)
 {
     
 }
 
-void Keeper ::updateRobot()
+void Keeper::updateRobot()
 {
     positionGK();
 }
@@ -26,7 +26,9 @@ void Keeper :: positionGK()
     Vector2 ballSpeed2D = {controller->ball.speed.x, controller->ball.speed.y};
     float shotAngle = angleBetweenVectors(ballSpeed2D, {TEAM_SIGN * 1, 0});
     
-    if ((TEAM_SIGN) * shotAngle <= (TEAM_SIGN) * (angleTo1st - 5) && (((TEAM_SIGN) * shotAngle) >= (TEAM_SIGN) * (angleTo2nd + 5)) && (Vector2Length(ballSpeed2D) > SHOT_SPEED))
+    if ((TEAM_SIGN) * shotAngle <= (TEAM_SIGN) * (angleTo1st - 5)
+    && (((TEAM_SIGN) * shotAngle) >= (TEAM_SIGN) * (angleTo2nd + 5))
+    && (Vector2Length(ballSpeed2D) > SHOT_SPEED))
     {
         shot = true;
     }
@@ -35,6 +37,7 @@ void Keeper :: positionGK()
     Setpoint keeperSetPoint;
     if (shot)
     {
+        float angleTo2nd = angleBetweenVectors(ballTo2nd, {TEAM_SIGN * 1, 0});
         //Define the line that follows the trajectory of the ball when shot
         float shotSlope = tan(TEAM_SIGN* shotAngle * PI / 180);
         //Define the diving trajectory of the keeper (at a right angle with ball trajectory)
@@ -46,7 +49,8 @@ void Keeper :: positionGK()
 
         float x = (coordinates.y - diveSlope * coordinates.x - ball2D.y+shotSlope*ball2D.x) / (shotSlope-diveSlope);
         float y = ball2D.y + shotSlope * (x - ball2D.x);
-        Setpoint keeperSetPoint = {x, y};
+        Setpoint keeperSetPoint = {{x, y},0};
+        
         setSetpoint(keeperSetPoint);
     }
     else if ((ball2D.x <= -3.5) && (ball2D.x <= 4.5) && (ball2D.y >= -1) && (ball2D.y <= 1))

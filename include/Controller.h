@@ -35,6 +35,7 @@ public:
     ~Controller();
     void addRobot(Robot* robot,int teamNum);
     void createTeam1(MQTTClient2 * mqttClient2);
+    void createTeam2(MQTTClient2 *mqttClient2);
     
     void assignRobotMessage(int robotTeam, int robotIndex, vector<float> &message, string& topic);
     void updateController();

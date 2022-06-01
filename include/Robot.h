@@ -21,11 +21,11 @@
 #include "Controller.h"
 
 #define DELTA_TIME 0.1f
-#define MAX_SPEED 6.5f
+#define MAX_SPEED 6.0f
 #define MAX_KICK_POWER 0.6f
 #define BALL_SPEED_ZERO 0.01f
 #define SHOT_SPEED 1.5
-#define ARRIVED_MIN_DISTANCE 0.001f
+#define ARRIVED_MIN_DISTANCE 0.01f
 #define TEAM_SIGN (float)((team==1) ? -1 : 1)
 #define RAD(x) ((x)*PI/180)
 
@@ -41,11 +41,11 @@ const Vector2 goal1{-4.5, 0};
 const Vector2 goal1_1{-4.5, -0.5}; // Primer y segundo palo
 const Vector2 goal1_2{-4.5, 0.5};
 
-const Vector2 goal2{4.5, -0.5};
+const Vector2 goal2{4.5, 0};
 const Vector2 goal2_1{4.5, -0.5};
 const Vector2 goal2_2{4.5, 0.5};
 
-#define MAC 1
+#define MAC 0
 
 #if MAC
 #define RESOURCES_PATH "../resources/"
@@ -73,12 +73,13 @@ public:
 
     void startRobot();
 
-protected:
-    int team;
     Vector3 coordinates;
     Vector3 speed;
     Vector3 rotation;
     Vector3 angularSpeed;
+
+protected:
+    int team;
     string robotID;
     MQTTClient2 *mqttClient2;
     Controller *controller;

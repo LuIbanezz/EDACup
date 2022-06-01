@@ -75,6 +75,22 @@ void Controller::createTeam1(MQTTClient2 *mqttClient2)
 }
 
 /**
+ * @brief Creates a new Team of robots
+ *
+ * @param mqttClient2
+ */
+void Controller::createTeam2(MQTTClient2 *mqttClient2)
+{
+    addRobot(new Keeper("robot2.1", mqttClient2, this), 2);
+    addRobot(new RightBack("robot2.2", mqttClient2, this), 2);
+    addRobot(new LeftBack("robot2.3", mqttClient2, this), 2);
+    addRobot(new Mid("robot2.4", mqttClient2, this), 2);
+    addRobot(new LeftWing("robot2.5", mqttClient2, this), 2);
+    addRobot(new RightWing("robot2.6", mqttClient2, this), 2);
+}
+
+
+/**
  * @brief Assigns the message of the robot received to the corresponding robot.
  *
  * @param robotTeam
@@ -108,9 +124,21 @@ void Controller::updateController()
         robot->updateRobot();
     }
 
-    for (int i = 5; i < GRAPH_LENGTH - 5; i++)
+    for(auto robot : team1)
     {
-        graph.nodes[GRAPHINDEX(30, i)].weight = 50.0f;
+        Vector3 coordinates = robot->coordinates;
+        int x, y;
+        x = int ((coordinates.x - 0.05f) * 10 + GRAPH_WIDTH/2);
+        y = int ( -(y + 0.05) * 10 + GRAPH_LENGTH / 2);
+
+        graph.nodes[GRAPHINDEX(x, y)].weight = 1000;
+        for(int i )
+
+    }
+
+    for(auto robot : team2)
+    {
+
     }
 
     static bool flag = true;

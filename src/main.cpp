@@ -35,6 +35,7 @@ int main(int argc, char** argv)
     cout << "Connected." << endl;
     mqttClient2.subscribeToTopics();
     controller.createTeam1(&mqttClient2);
+    controller.createTeam2(&mqttClient2);
     
     controller.start();
 

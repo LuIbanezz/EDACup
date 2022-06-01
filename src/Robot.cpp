@@ -101,10 +101,10 @@ bool Robot::moveRobot(Setpoint destination, float speed)
 
     if (Vector2Length(directorVector) > (speed * DELTA_TIME))
     {
-        directorVector = Vector2Add({coordinates.x, coordinates.y},
-                                    Vector2Scale(Vector2Normalize(directorVector), DELTA_TIME * speed));
+        Vector2 nextStepVec = Vector2Add({coordinates.x, coordinates.y},
+                             Vector2Scale(Vector2Normalize(directorVector), DELTA_TIME * speed));
 
-        Setpoint setPoint = {directorVector, rotationAngle};
+        Setpoint setPoint = {nextStepVec, rotationAngle};
         setSetpoint(setPoint);
     }
     else if (Vector2Distance({destination.position.x, destination.position.y},
@@ -145,8 +145,8 @@ void Robot::setSetpoint(Setpoint setpoint)
  */
 Setpoint Robot::runUpDestination()
 {
-    Vector2 goalToBall = {controller->ball.position.x - goal1.x,
-                          controller->ball.position.y - goal1.y};
+    Vector2 goalToBall = {controller->ball.position.x - goal2.x,
+                          controller->ball.position.y - goal2.y};
     Setpoint destination = {(Vector2Add(
                                 Vector2Scale(
                                     Vector2Normalize(goalToBall),
@@ -164,8 +164,8 @@ Setpoint Robot::runUpDestination()
  */
 Setpoint Robot::kickDestination()
 {
-    Vector2 goalToBall = {controller->ball.position.x - goal1.x,
-                          controller->ball.position.y - goal1.y};
+    Vector2 goalToBall = {controller->ball.position.x - goal2.x,
+                          controller->ball.position.y - goal2.y};
     Setpoint destination = {(Vector2Add(
                                 Vector2Scale(
                                     Vector2Normalize(goalToBall), -0.01f),
@@ -220,7 +220,7 @@ float Robot::angleBetweenVectors(Vector2 v1, Vector2 v2)
 
     float angleV2=Vector2Angle({0,0},v2);
     if (angleV2>=180)
-        angleV2=angleV1-360;
+        angleV2=angleV2-360;
 
     float angle;
     if (angleV2>=angleV1)
