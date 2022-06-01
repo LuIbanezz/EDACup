@@ -81,7 +81,8 @@ protected:
 	Setpoint runUpDestination();
 	Setpoint kickDestination();
 	Setpoint getPath (float minDistance);
-	
+	Setpoint dribblingDestination();
+	void dribble(bool);
 };
 
 #endif //_ROBOT_H

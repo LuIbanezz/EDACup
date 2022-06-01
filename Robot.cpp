@@ -80,6 +80,7 @@ void Robot::assignMessage(vector<float> &message, string &topic)
  */
 void Robot::updateRobot()
 {
+    static bool parar = false;
     if(!readyToKick)
     {
         if(Vector3Length(controller->ball.speed) < BALL_SPEED_ZERO)
@@ -89,25 +90,57 @@ void Robot::updateRobot()
             readyToKick = moveRobot(newPath, MAX_SPEED);
         }
     }
-    
     else if(readyToKick && !kicked)
     {
-        direction = kickDestination();
+        direction = dribblingDestination();
         moveRobot(direction, MAX_SPEED);
         if(Vector2Distance({controller->ball.position.x, controller->ball.position.y}, 
             {coordinates.x, coordinates.y}) < (BALL_RADIUS + ROBOT_KICKER_RADIUS))
         {
-            kick(kickPower);
+            dribble(true);
             kicked = true;
         }
         
     }
     else
     {
-        readyToKick = false;
-        kicked = false;
+        if(moveRobot({0,0,0},MAX_SPEED))
+        {
+            dribble(false);
+            readyToKick = false;
+            kicked = false;
+        }
     }
+
     
+
+    /////////////////////////////////////////////////////////////////////////////////////////////
+    // else if(readyToKick && !kicked)
+    // {
+    //     direction = kickDestination();
+    //     moveRobot(direction, MAX_SPEED);
+    //     if(Vector2Distance({controller->ball.position.x, controller->ball.position.y}, 
+    //         {coordinates.x, coordinates.y}) < (BALL_RADIUS + ROBOT_KICKER_RADIUS))
+    //     {
+    //         kick(kickPower);
+    //         kicked = true;
+    //     }
+        
+    // }
+    // else
+    // {
+    //     readyToKick = false;
+    //     kicked = false;
+    // }
+    
+}
+
+void Robot::dribble(bool on)
+{
+    vector<char> payload(4);
+    *((float *)&payload[0]) = 2.0f * on;
+    mqttClient2->publish(robotID + "/dribbler/current/set", payload);
+
 }
 
 /**
@@ -183,6 +216,20 @@ Setpoint Robot::runUpDestination()
                             90.0f - Vector2Angle(goalToBall,{0,0})};
     return destination;
 }
+
+Setpoint Robot::dribblingDestination()
+{
+    Vector2 goalToBall = {controller->ball.position.x - GOAL1X,
+                            controller->ball.position.y - GOAL1Y};
+    Setpoint destination = {(Vector2Add(
+                                Vector2Scale(
+                                Vector2Normalize(goalToBall), -0.01f),
+                                {controller->ball.position.x, controller->ball.position.y})),
+                            90.0f - Vector2Angle(goalToBall,{0,0})};
+    return destination;
+}
+
+
 
 /**
  * @brief Calculates the position between the ball and the goal, just ahead of the ball.
