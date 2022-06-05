@@ -114,11 +114,11 @@ void Controller::createTeam2(MQTTClient2 *mqttClient2)
 void Controller::assignRobotMessage(int robotTeam,
                                     int robotIndex, vector<float> &message, string &topic)
 {
-    if (robotTeam == 1)
+    if (robotTeam == team)
     {
         homeTeam[robotIndex]->assignMessage(message, topic);
     }
-    else if (robotTeam == 2)
+    else
     {
         awayTeam[robotIndex]->assignMessage(message, topic);
     }

@@ -7,7 +7,7 @@ Keeper::Keeper(string robotID, MQTTClient2 *client, Controller *controller) : Ro
 
 void Keeper::updateRobot()
 {
-    positionGK();
+    //positionGK();
 }
 
 void Keeper :: positionGK()

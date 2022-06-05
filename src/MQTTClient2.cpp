@@ -270,6 +270,27 @@ void MQTTClient2::subscribeToTopics()
         subscribe(topic + "/motion/state");
         subscribe(topic + "/kicker/chargeVoltage/set");
         subscribe(topic + "/kicker/kick/cmd");
+    }
+    for (int i = 1; i <= ROBOT_NUMBER; i++)
+    {
+        string topic = "robot";
+        topic += "2";
+        topic += ".";
+        topic += i + '0';
+        subscribe(topic + "/display/leftEye/set");
+        for (char c = '1'; c < ('1' + 4); c++)
+        {
+            subscribe(topic + "/motor" + c + "/current");
+            subscribe(topic + "/motor" + c + "/rpm");
+            subscribe(topic + "/motor" + c + "/temperature");
+        }
+        subscribe(topic + "/display/leftEye/set");
+        subscribe(topic + "/display/rightEye/set");
+        subscribe("ball/motion/state");
+        subscribe(topic + "/motion/state");
+        subscribe(topic + "/kicker/chargeVoltage/set");
+        subscribe(topic + "/kicker/kick/cmd");
+    }
         subscribe("edacup/preKickOff");
         subscribe("edacup/kickOff");
         subscribe("edacup/preFreeKick");
@@ -280,5 +301,4 @@ void MQTTClient2::subscribeToTopics()
         subscribe("edacup/continue");
         subscribe("edacup/removeRobot");
         subscribe("edacup/addRobot");
-    }
 }

@@ -96,9 +96,10 @@ public:
 
     Ball ball;
     
-private:
-	vector<Robot *> homeTeam;
+    vector<Robot *> homeTeam;
     vector<Enemy *> awayTeam;
+private:
+	
     float elapsedTime;
     
 };

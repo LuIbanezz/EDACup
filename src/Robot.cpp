@@ -145,16 +145,16 @@ void Robot::setSetpoint(Setpoint setpoint)
  * 
  * @return Setpoint     returns the position and the rotation
  */
-Setpoint Robot::runUpDestination()
+Setpoint Robot::runUpDestination(Vector2 shotTarget)
 {
-    Vector2 goalToBall = {controller->ball.position.x - goal2.x,
-                          controller->ball.position.y - goal2.y};
+    Vector2 targetToBall = {controller->ball.position.x - shotTarget.x,
+                          controller->ball.position.y - shotTarget.y};
     Setpoint destination = {(Vector2Add(
                                 Vector2Scale(
-                                    Vector2Normalize(goalToBall),
+                                    Vector2Normalize(targetToBall),
                                     BALL_RADIUS + ROBOT_KICKER_RADIUS + RUN_UP_DISTANCE),
                                 {controller->ball.position.x, controller->ball.position.y})),
-                            90.0f - Vector2Angle(goalToBall, {0, 0})};
+                            90.0f - Vector2Angle(targetToBall, {0, 0})};
     return destination;
 }
 
@@ -164,15 +164,15 @@ Setpoint Robot::runUpDestination()
  * 
  * @return Setpoint 
  */
-Setpoint Robot::kickDestination()
+Setpoint Robot::kickDestination(Vector2 shotTarget)
 {
-    Vector2 goalToBall = {controller->ball.position.x - goal2.x,
-                          controller->ball.position.y - goal2.y};
+    Vector2 shotTargetToBall = {controller->ball.position.x - shotTarget.x,
+                          controller->ball.position.y - shotTarget.y};
     Setpoint destination = {(Vector2Add(
                                 Vector2Scale(
-                                    Vector2Normalize(goalToBall), -0.01f),
+                                    Vector2Normalize(shotTargetToBall), -0.01f),
                                 {controller->ball.position.x, controller->ball.position.y})),
-                            90.0f - Vector2Angle(goalToBall, {0, 0})};
+                            90.0f - Vector2Angle(shotTargetToBall, {0, 0})};
     return destination;
 }
 
@@ -345,4 +345,26 @@ void Robot::dressRobot(int robotNumber)
     }
     ImageFormat(&shirt, PIXELFORMAT_UNCOMPRESSED_R8G8B8);
     setShirt();
+}
+
+void Robot::passToRobot(int robotReceiver)
+{
+    // if (!readyToKick)
+    // {
+    //     if (Vector3Length(controller->ball.speed) < BALL_SPEED_ZERO)
+    //     {
+    //         direction = runUpDestination();
+    //         Setpoint newPath = getPath(BALL_RADIUS + ROBOT_RADIUS + 0.1f);
+    //         readyToKick = moveRobot(newPath, MAX_SPEED);
+    //     }
+    // }
+
+    direction = kickDestination({controller->homeTeam[robotReceiver - 1]->coordinates.x,
+                                 controller->homeTeam[robotReceiver - 1]->coordinates.y});
+    moveRobot(direction, MAX_SPEED);
+    if (Vector2Distance({controller->ball.position.x, controller->ball.position.y},
+                        {coordinates.x, coordinates.y}) < (BALL_RADIUS + ROBOT_KICKER_RADIUS))
+    {
+        kick(kickPower);
+    }
 }
