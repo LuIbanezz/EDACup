@@ -22,7 +22,7 @@
 
 #define DELTA_TIME 0.1f
 #define MAX_SPEED 6.0f
-#define MAX_KICK_POWER 0.6f
+#define MAX_KICK_POWER 0.797f
 #define BALL_SPEED_ZERO 0.01f
 #define SHOT_SPEED 1.5
 #define ARRIVED_MIN_DISTANCE 0.01f
@@ -70,6 +70,7 @@ public:
 
     void assignMessage(vector<float> &message, string &topic);
     virtual void updateRobot();
+    bool moveRobot(Setpoint position, float speed);
 
     void startRobot();
 
@@ -97,7 +98,6 @@ protected:
     void setShirt();
     void kick(float strength);
     void setSetpoint(Setpoint setpoint);
-    bool moveRobot(Setpoint position, float speed); //esta publica los setpoints??? si
     Setpoint runUpDestination();
     Setpoint kickDestination();
     Setpoint getPath(float minDistance);

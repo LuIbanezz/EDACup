@@ -18,6 +18,9 @@
 #include "LeftWing.h"
 #include "RightWing.h"
 
+#define X2GRAPH(X) (((X) + 4.5f) * 10)
+#define Y2GRAPH(Y) ((-(Y) + 3f) * 10)
+
 Controller::Controller()
 {
     elapsedTime = 0;
@@ -119,44 +122,75 @@ void Controller::updateController()
 {
     elapsedTime += DELTA_TIME;
 
-    for (auto robot : team1)
-    {
-        robot->updateRobot();
-    }
+    for(int i = 0; i < GRAPH_TOTAL_SIZE; i++)
+        {
+            graph.nodes[i].weight = 1;
+        }
 
     for(auto robot : team1)
     {
         Vector3 coordinates = robot->coordinates;
         int x, y;
-        x = int ((coordinates.x - 0.05f) * 10 + GRAPH_WIDTH/2);
-        y = int ( -(y + 0.05) * 10 + GRAPH_LENGTH / 2);
+        x = int ((coordinates.x + 4.5f) * 10);
+        y = int ((-coordinates.y + 3.0f) * 10);
 
-        graph.nodes[GRAPHINDEX(x, y)].weight = 1000;
-        for(int i )
+        for(int i = 0; i < GRAPH_TOTAL_SIZE; i++)
+        {
+            int xCoordinate = NODE_COLUMN(i);
+            int yCoordinate = NODE_ROW(i);
+
+            graph.nodes[i].weight += 1E5f * expf(((xCoordinate - x)*(xCoordinate - x)
+            + (yCoordinate - y) * (yCoordinate - y)) * (-2));
+        }
 
     }
 
     for(auto robot : team2)
     {
+        Vector3 coordinates = robot->coordinates;
+        int x, y;
+        x = int ((coordinates.x + 4.5f) * 10);
+        y = int ((-coordinates.y + 3.0f) * 10);
 
-    }
-
-    static bool flag = true;
-
-    if (flag)
-    {
-        std::unordered_map<int, int> came_from;
-        std::unordered_map<int, float> cost_so_far;
-        a_star_search<int, Graph>(graph, 0, GRAPH_TOTAL_SIZE - 1, came_from, cost_so_far);
-        vector<int> path = reconstruct_path <int> (0, GRAPH_TOTAL_SIZE - 1, came_from);
-
-        for (int i = 0; i < path.size(); i++)
+        for(int i = 0; i < GRAPH_TOTAL_SIZE; i++)
         {
-            //cout << path[i] << endl;
-        }
+            int xCoordinate = NODE_COLUMN(i);
+            int yCoordinate = NODE_ROW(i);
 
-        flag = false;
+            graph.nodes[i].weight += 1E5f * expf(((xCoordinate - x)*(xCoordinate - x)
+            + (yCoordinate - y) * (yCoordinate - y)) * (-2));
+        }
     }
+
+    Vector3 position = team1[0]->coordinates;
+    int x = int ((position.x + 4.5f) * 10);
+    int y = int ((-position.y + 3.0f) * 10);
+
+    int graphPosition = GRAPHINDEX(x,y);
+
+    if(graphPosition >= 0 && graphPosition < GRAPH_TOTAL_SIZE)
+    {
+        int destinationIndex = 90 * 30 + 89;
+        
+       if(graphPosition != destinationIndex)
+       {
+            std::unordered_map<int, int> came_from;
+            std::unordered_map<int, float> cost_so_far;
+            a_star_search<int, Graph>(graph, graphPosition, destinationIndex, came_from, cost_so_far);
+            vector<int> path = reconstruct_path <int> (graphPosition, destinationIndex , came_from);
+
+            float xDestination = graph.nodes[path[1]].x;
+            float yDestination = graph.nodes[path[1]].y;
+
+            team1[0]->moveRobot({{xDestination, yDestination}, 90} ,MAX_SPEED);
+       }
+    }
+    else
+    {
+        team1[0]->moveRobot({goal1, 90.0f }, MAX_SPEED);
+    }
+
+
 }
 
 /**
