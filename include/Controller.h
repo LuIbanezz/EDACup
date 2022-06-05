@@ -49,7 +49,7 @@ class Enemy
 enum GameStates
 {
     preKickOff1, preKickOff2,
-    kickOff1, kickOff2,
+    kickOff,
     preFreeKick1, preFreeKick2,
     freeKick1, freeKick2,
     prePenaltyKick1, prePenaltyKick2,
@@ -57,7 +57,8 @@ enum GameStates
     pauseGame,
     continueGame,
     removeRobot1, removeRobot2,
-    addRobot1,addRobot2
+    addRobot1,addRobot2,
+    playing
 };
 
 using namespace std;
@@ -98,8 +99,9 @@ public:
     
     vector<Robot *> homeTeam;
     vector<Enemy *> awayTeam;
+    int receiver;
+
 private:
-	
     float elapsedTime;
     
 };

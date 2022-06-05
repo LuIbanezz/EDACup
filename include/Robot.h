@@ -23,7 +23,7 @@
 #define DELTA_TIME 0.1f
 #define MAX_SPEED 6.0f
 #define PAUSE_SPEED 1.4f
-#define MAX_KICK_POWER 0.797f
+#define MAX_KICK_POWER 0.6f
 #define BALL_SPEED_ZERO 0.01f
 #define SHOT_SPEED 1.5
 #define ARRIVED_MIN_DISTANCE 0.01f
@@ -74,6 +74,8 @@ public:
     bool moveRobot(Setpoint position, float speed);
 
     void startRobot();
+    void startDribble();
+    void stopDribble();
 
     Vector3 coordinates;
     Vector3 speed;

@@ -138,9 +138,7 @@ void Controller::updateController()
             break;
         case preKickOff2:
             break;
-        case kickOff1:
-            break;
-        case kickOff2:
+        case kickOff:
             break;
         case preFreeKick1:
             break;

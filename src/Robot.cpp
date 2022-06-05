@@ -358,13 +358,26 @@ void Robot::passToRobot(int robotReceiver)
     //         readyToKick = moveRobot(newPath, MAX_SPEED);
     //     }
     // }
-
-    direction = kickDestination({controller->homeTeam[robotReceiver - 1]->coordinates.x,
-                                 controller->homeTeam[robotReceiver - 1]->coordinates.y});
+    controller->receiver = robotReceiver;
+    Vector2 receiverPosition = {controller->homeTeam[robotReceiver - 1]->coordinates.x,
+                                 controller->homeTeam[robotReceiver - 1]->coordinates.y};
+    direction = kickDestination(receiverPosition);
     moveRobot(direction, MAX_SPEED);
     if (Vector2Distance({controller->ball.position.x, controller->ball.position.y},
                         {coordinates.x, coordinates.y}) < (BALL_RADIUS + ROBOT_KICKER_RADIUS))
     {
-        kick(kickPower);
+        cout << Vector2Distance({controller->ball.position.x, controller->ball.position.y}, receiverPosition) << endl;
+        kick((kickPower / 3.0f) * Vector2Distance({controller->ball.position.x, controller->ball.position.y}, receiverPosition));
+        controller->receiver = 0;
     }
+}
+
+void Robot::startDribble()
+{
+
+}
+
+void Robot::stopDribble()
+{
+
 }

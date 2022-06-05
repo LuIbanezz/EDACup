@@ -34,7 +34,7 @@ void RightWing::updateRobot()
         break;
         moveRobot(basePosition, PAUSE_SPEED);
         break;
-    case kickOff1:
+    case kickOff:
         if (team == 2)
         {
             moveRobot(basePosition, PAUSE_SPEED);
@@ -44,15 +44,7 @@ void RightWing::updateRobot()
             passToRobot(5);
         }
         break;
-    case kickOff2:
-        if (team == 2)
-        {
-            moveRobot(basePosition, PAUSE_SPEED);
-        }
-        else
-        {
-        }
-        break;
+
     case preFreeKick1:
         if (team == 2)
         {

@@ -15,9 +15,7 @@ void Mid::updateRobot()
         case preKickOff2:
             moveRobot(basePosition, PAUSE_SPEED);
             break;
-        case kickOff1:
-            break;
-        case kickOff2:
+        case kickOff:
             break;
         case preFreeKick1:
             break;
