@@ -347,17 +347,8 @@ void Robot::dressRobot(int robotNumber)
     setShirt();
 }
 
-void Robot::passToRobot(int robotReceiver)
+bool Robot::passToRobot(int robotReceiver)
 {
-    // if (!readyToKick)
-    // {
-    //     if (Vector3Length(controller->ball.speed) < BALL_SPEED_ZERO)
-    //     {
-    //         direction = runUpDestination();
-    //         Setpoint newPath = getPath(BALL_RADIUS + ROBOT_RADIUS + 0.1f);
-    //         readyToKick = moveRobot(newPath, MAX_SPEED);
-    //     }
-    // }
     controller->receiver = robotReceiver;
     Vector2 receiverPosition = {controller->homeTeam[robotReceiver - 1]->coordinates.x,
                                  controller->homeTeam[robotReceiver - 1]->coordinates.y};
@@ -366,9 +357,24 @@ void Robot::passToRobot(int robotReceiver)
     if (Vector2Distance({controller->ball.position.x, controller->ball.position.y},
                         {coordinates.x, coordinates.y}) < (BALL_RADIUS + ROBOT_KICKER_RADIUS))
     {
-        cout << Vector2Distance({controller->ball.position.x, controller->ball.position.y}, receiverPosition) << endl;
-        kick((kickPower / 3.0f) * Vector2Distance({controller->ball.position.x, controller->ball.position.y}, receiverPosition));
+        
+        float newKickPower = (kickPower / 3.5f) *
+        Vector2Distance({controller->ball.position.x, controller->ball.position.y}, receiverPosition);
+
+        if(newKickPower < kickPower)
+        {
+            kick(newKickPower);
+        }
+        else
+        {
+            kick(kickPower);
+        }
         controller->receiver = 0;
+        return true;
+    }
+    else
+    {
+        return false;
     }
 }
 

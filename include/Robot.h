@@ -108,7 +108,7 @@ protected:
     Setpoint kickDestination(Vector2 shotTarget);
     Setpoint getPath(float minDistance);
     float angleBetweenVectors(Vector2 v1, Vector2 v2);
-    void passToRobot(int robotReceiver);
+    bool passToRobot(int robotReceiver);
     
 };
 
