@@ -18,10 +18,10 @@ void LeftWing::updateRobot()
         case kickOff:
             if(controller->receiver == robotID[7]-'0')
             {
-                Vector2 robotToBall = {controller->ball.position.x - coordinates.x, controller->ball.position.y - coordinates.y};
+                Vector2 robotToBall = {controller->ball.position.x -coordinates.x,
+                controller->ball.position.y - coordinates.y};
                 setSetpoint({coordinates.x, coordinates.y, 90.0f - Vector2Angle({0,0}, robotToBall)});
             }
-            
             break;
         case preFreeKick1:
             break;

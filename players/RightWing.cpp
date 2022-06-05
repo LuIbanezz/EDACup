@@ -23,6 +23,7 @@ void RightWing::updateRobot()
             readyToKick = moveRobot(newPath, MAX_SPEED);
         }
         break;
+
     case preKickOff2:
         if (team == 2)
         {
@@ -32,8 +33,7 @@ void RightWing::updateRobot()
         {
         }
         break;
-        moveRobot(basePosition, PAUSE_SPEED);
-        break;
+
     case kickOff:
         if (team == 2)
         {
@@ -41,7 +41,10 @@ void RightWing::updateRobot()
         }
         else
         {
-            passToRobot(5);
+            if(passToRobot(5))
+            {
+                controller->referee = playing;
+            }
         }
         break;
 
