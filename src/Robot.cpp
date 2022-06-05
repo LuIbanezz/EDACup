@@ -30,6 +30,7 @@ Robot::Robot(string robotID, MQTTClient2 *client, Controller *controller)
     this->controller = controller;
     dressRobot(robotID[7] - '0');
     team=robotID[5]-'0';
+    sign = ((team == 1) ? 1 : -1);
 }
 
 /**
@@ -45,6 +46,7 @@ void Robot::startRobot()
     readyToKick = false;
     kicked = false;
     kickPower = MAX_KICK_POWER;
+
 }
 
 /**

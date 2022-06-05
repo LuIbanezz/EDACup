@@ -10,7 +10,6 @@
  */
 #include "Controller.h"
 #include <unordered_map>
-#include "aStarAlgorithm.h"
 #include "Keeper.h"
 #include "RightBack.h"
 #include "LeftBack.h"
@@ -18,8 +17,6 @@
 #include "LeftWing.h"
 #include "RightWing.h"
 
-#define X2GRAPH(X) (((X) + 4.5f) * 10)
-#define Y2GRAPH(Y) ((-(Y) + 3f) * 10)
 
 Controller::Controller()
 {
@@ -28,7 +25,7 @@ Controller::Controller()
 
 void Controller::start()
 {
-    for (auto robot : team1)
+    for (auto robot : homeTeam)
     {
         robot->startRobot();
     }
@@ -36,7 +33,11 @@ void Controller::start()
 
 Controller::~Controller()
 {
-    for (auto robot : team1)
+    for (auto robot : homeTeam)
+    {
+        delete robot;
+    }
+    for (auto robot : awayTeam)
     {
         delete robot;
     }
@@ -48,18 +49,14 @@ Controller::~Controller()
  * @param robot
  * @param teamNum
  */
-void Controller::addRobot(Robot *robot, int teamNum)
+void Controller::addRobot(Robot *robot)
 {
-    switch (teamNum)
-    {
-    case 1:
-        team1.push_back(robot);
-        break;
-    case 2:
-        team2.push_back(robot);
-    default:
-        break;
-    }
+    homeTeam.push_back(robot);
+}
+
+void Controller::addAwayRobot(Enemy *robot)
+{
+    awayTeam.push_back(robot);
 }
 
 /**
@@ -69,12 +66,12 @@ void Controller::addRobot(Robot *robot, int teamNum)
  */
 void Controller::createTeam1(MQTTClient2 *mqttClient2)
 {
-    addRobot(new Keeper("robot1.1", mqttClient2, this), 1);
-    addRobot(new RightBack("robot1.2", mqttClient2, this), 1);
-    addRobot(new LeftBack("robot1.3", mqttClient2, this), 1);
-    addRobot(new Mid("robot1.4", mqttClient2, this), 1);
-    addRobot(new LeftWing("robot1.5", mqttClient2, this), 1);
-    addRobot(new RightWing("robot1.6", mqttClient2, this), 1);
+    addRobot(new Keeper("robot1.1", mqttClient2, this));
+    addRobot(new RightBack("robot1.2", mqttClient2, this));
+    addRobot(new LeftBack("robot1.3", mqttClient2, this));
+    addRobot(new Mid("robot1.4", mqttClient2, this));
+    addRobot(new LeftWing("robot1.5", mqttClient2, this));
+    addRobot(new RightWing("robot1.6", mqttClient2, this));
 }
 
 /**
@@ -84,13 +81,26 @@ void Controller::createTeam1(MQTTClient2 *mqttClient2)
  */
 void Controller::createTeam2(MQTTClient2 *mqttClient2)
 {
-    addRobot(new Keeper("robot2.1", mqttClient2, this), 2);
-    addRobot(new RightBack("robot2.2", mqttClient2, this), 2);
-    addRobot(new LeftBack("robot2.3", mqttClient2, this), 2);
-    addRobot(new Mid("robot2.4", mqttClient2, this), 2);
-    addRobot(new LeftWing("robot2.5", mqttClient2, this), 2);
-    addRobot(new RightWing("robot2.6", mqttClient2, this), 2);
+    addRobot(new Keeper("robot2.1", mqttClient2, this));
+    addRobot(new RightBack("robot2.2", mqttClient2, this));
+    addRobot(new LeftBack("robot2.3", mqttClient2, this));
+    addRobot(new Mid("robot2.4", mqttClient2, this));
+    addRobot(new LeftWing("robot2.5", mqttClient2, this));
+    addRobot(new RightWing("robot2.6", mqttClient2, this));
 }
+
+/**
+ * @brief 
+ * 
+ */
+ void Controller::createAwayTeam()
+ {
+     for (int i = 0; i < 6; i++)
+     {
+        addAwayRobot(new Enemy);
+     }
+    
+ }
 
 
 /**
@@ -106,11 +116,11 @@ void Controller::assignRobotMessage(int robotTeam,
 {
     if (robotTeam == 1)
     {
-        team1[robotIndex]->assignMessage(message, topic);
+        homeTeam[robotIndex]->assignMessage(message, topic);
     }
     else if (robotTeam == 2)
     {
-        team2[robotIndex]->assignMessage(message, topic);
+        awayTeam[robotIndex]->assignMessage(message, topic);
     }
 }
 
@@ -120,76 +130,53 @@ void Controller::assignRobotMessage(int robotTeam,
  */
 void Controller::updateController()
 {
+
+
+    switch(referee)
+    {
+        case preKickOff1:
+            break;
+        case preKickOff2:
+            break;
+        case kickOff1:
+            break;
+        case kickOff2:
+            break;
+        case preFreeKick1:
+            break;
+        case preFreeKick2:
+            break;
+        case freeKick1:
+            break;
+        case freeKick2:
+            break;
+        case prePenaltyKick1:
+            break;
+        case prePenaltyKick2:
+            break;
+        case penaltyKick1:
+            break;
+        case penaltyKick2:
+            break;
+        case continueGame:
+            break;
+        case removeRobot1:
+            break;
+        case removeRobot2:
+            break;
+        case addRobot1:
+            break;
+        case addRobot2:
+            break;
+
+    }
+
     elapsedTime += DELTA_TIME;
 
-    for(int i = 0; i < GRAPH_TOTAL_SIZE; i++)
-        {
-            graph.nodes[i].weight = 1;
-        }
-
-    for(auto robot : team1)
+    for (auto robot : homeTeam)
     {
-        Vector3 coordinates = robot->coordinates;
-        int x, y;
-        x = int ((coordinates.x + 4.5f) * 10);
-        y = int ((-coordinates.y + 3.0f) * 10);
-
-        for(int i = 0; i < GRAPH_TOTAL_SIZE; i++)
-        {
-            int xCoordinate = NODE_COLUMN(i);
-            int yCoordinate = NODE_ROW(i);
-
-            graph.nodes[i].weight += 1E5f * expf(((xCoordinate - x)*(xCoordinate - x)
-            + (yCoordinate - y) * (yCoordinate - y)) * (-2));
-        }
-
+        robot->updateRobot();
     }
-
-    for(auto robot : team2)
-    {
-        Vector3 coordinates = robot->coordinates;
-        int x, y;
-        x = int ((coordinates.x + 4.5f) * 10);
-        y = int ((-coordinates.y + 3.0f) * 10);
-
-        for(int i = 0; i < GRAPH_TOTAL_SIZE; i++)
-        {
-            int xCoordinate = NODE_COLUMN(i);
-            int yCoordinate = NODE_ROW(i);
-
-            graph.nodes[i].weight += 1E5f * expf(((xCoordinate - x)*(xCoordinate - x)
-            + (yCoordinate - y) * (yCoordinate - y)) * (-2));
-        }
-    }
-
-    Vector3 position = team1[0]->coordinates;
-    int x = int ((position.x + 4.5f) * 10);
-    int y = int ((-position.y + 3.0f) * 10);
-
-    int graphPosition = GRAPHINDEX(x,y);
-
-    if(graphPosition >= 0 && graphPosition < GRAPH_TOTAL_SIZE)
-    {
-        int destinationIndex = 90 * 30 + 89;
-        
-       if(graphPosition != destinationIndex)
-       {
-            std::unordered_map<int, int> came_from;
-            std::unordered_map<int, float> cost_so_far;
-            a_star_search<int, Graph>(graph, graphPosition, destinationIndex, came_from, cost_so_far);
-            vector<int> path = reconstruct_path <int> (graphPosition, destinationIndex , came_from);
-
-            float xDestination = graph.nodes[path[1]].x;
-            float yDestination = graph.nodes[path[1]].y;
-
-            team1[0]->moveRobot({{xDestination, yDestination}, 90} ,MAX_SPEED);
-       }
-    }
-    else
-    {
-        team1[0]->moveRobot({goal1, 90.0f }, MAX_SPEED);
-    }
-
 
 }
 

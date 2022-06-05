@@ -19,6 +19,8 @@ using namespace std;
 
 int main(int argc, char** argv)
 {
+    char equipo = argv[1][0];
+
     Controller controller;
     MyListener listener(&controller);
     MQTTClient2 mqttClient2;
@@ -34,8 +36,18 @@ int main(int argc, char** argv)
     
     cout << "Connected." << endl;
     mqttClient2.subscribeToTopics();
-    controller.createTeam1(&mqttClient2);
-    controller.createTeam2(&mqttClient2);
+    if (equipo == '1')
+    {
+        controller.createTeam1(&mqttClient2); 
+        controller.team = 1;
+    }
+    else
+    {
+        controller.createTeam2(&mqttClient2);
+        controller.team = 2;
+    }
+    
+    controller.createAwayTeam();
     
     controller.start();
 

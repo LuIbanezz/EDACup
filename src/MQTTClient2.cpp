@@ -270,5 +270,15 @@ void MQTTClient2::subscribeToTopics()
         subscribe(topic + "/motion/state");
         subscribe(topic + "/kicker/chargeVoltage/set");
         subscribe(topic + "/kicker/kick/cmd");
+        subscribe("edacup/preKickOff");
+        subscribe("edacup/kickOff");
+        subscribe("edacup/preFreeKick");
+        subscribe("edacup/freeKick");
+        subscribe("edacup/prePenaltyKick");
+        subscribe("edacup/penaltyKick");
+        subscribe("edacup/pause");
+        subscribe("edacup/continue");
+        subscribe("edacup/removeRobot");
+        subscribe("edacup/addRobot");
     }
 }

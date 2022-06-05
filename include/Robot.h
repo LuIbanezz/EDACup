@@ -22,6 +22,7 @@
 
 #define DELTA_TIME 0.1f
 #define MAX_SPEED 6.0f
+#define PAUSE_SPEED 1.4f
 #define MAX_KICK_POWER 0.797f
 #define BALL_SPEED_ZERO 0.01f
 #define SHOT_SPEED 1.5
@@ -81,12 +82,15 @@ public:
 
 protected:
     int team;
+    int sign;
     string robotID;
     MQTTClient2 *mqttClient2;
     Controller *controller;
     Image shirt;
 
     Setpoint direction;
+    Setpoint basePosition;
+    
     float kickPower;
 
     float positioningTime;

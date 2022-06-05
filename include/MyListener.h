@@ -24,7 +24,7 @@ public:
     
 private:
     Controller* controller;
-
+    uint8_t decodeByte(vector<char> vecChar);
     vector<float> decode(vector<char> vecChar);
     void assign(vector<float>& message, Robot* robot, string topic);
     

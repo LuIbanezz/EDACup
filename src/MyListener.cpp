@@ -27,24 +27,72 @@ MyListener::MyListener(Controller* controller)
  */
 void MyListener::onMessage(string topic, vector<char> payload)
 {
-    vector<float> decodedMessage = decode(payload);
+    vector<float> decodedMessage;
     if (topic.find("robot") != -1)
     {
-        
+        decodedMessage = decode(payload);
+
         int robotTeam = topic[5] - '0';
         
         int robotIndex = topic[7] - '1';
        
-        controller->assignRobotMessage(robotTeam, robotIndex, decodedMessage, topic);
-            
+        controller->assignRobotMessage(robotTeam, robotIndex, decodedMessage, topic); 
     }
     else if (topic.find("ball") != -1)
     {
+        decodedMessage = decode(payload);
         controller->updateBall(decodedMessage);
         controller->updateController();
-
     }
-
+    else if (topic.find("edacup") != -1)
+    {
+        uint8_t contenido;
+        if(payload.size() > 0)
+            contenido = decodeByte(payload);
+        string endOfTopic;
+        endOfTopic = topic.substr(6, topic.size() - 6);
+        if(endOfTopic == "/preKickOff")
+        {
+            controller->referee = (GameStates)(preKickOff1 + contenido - 1);
+        }
+        else if(endOfTopic == "/kickOff")
+        {
+            controller->referee = (GameStates)(kickOff1 + contenido - 1);
+        }
+        else if(endOfTopic == "/preFreeKick")
+        {
+            controller->referee = (GameStates)(preFreeKick1 + contenido - 1);
+        }
+        else if(endOfTopic == "/freeKick")
+        {
+            controller->referee = (GameStates)(freeKick1 + contenido - 1);
+        }
+        else if(endOfTopic == "/prePenaltyKick")
+        {
+            controller->referee = (GameStates)(prePenaltyKick1 + contenido - 1);
+        }
+        else if(endOfTopic == "/penaltyKick")
+        {
+            controller->referee = (GameStates)(penaltyKick1 + contenido - 1);
+        }
+        else if(endOfTopic == "/pause")
+        {
+            controller->referee = (GameStates)(pauseGame);
+        }
+        else if(endOfTopic == "/continue")
+        {
+            controller->referee = (GameStates)(continueGame);
+        }
+        else if(endOfTopic == "/removeRobot")
+        {
+            controller->referee = (GameStates)(removeRobot1 + contenido - 1);
+        }
+        else if(endOfTopic == "/addRobot")
+        {
+            controller->referee = (GameStates)(addRobot1 + contenido - 1);
+        }
+    }
+    cout << controller->referee << endl;
 }
 
 /**
@@ -68,4 +116,15 @@ vector<float> MyListener::decode(vector<char> vecChar)
         vecFloat.push_back(flaux);
     }
     return vecFloat;
+}
+
+/**
+ * @brief Decodes a message from a char vector to a byte
+ * 
+ * @param vecChar 
+ * @return uint8_t
+ */
+uint8_t MyListener::decodeByte(vector<char> vecChar)
+{
+    return (uint8_t)vecChar[0];
 }

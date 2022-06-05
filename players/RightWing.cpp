@@ -2,6 +2,7 @@
 
 RightWing::RightWing(string robotID, MQTTClient2 *client, Controller *controller) : Robot(robotID, client, controller)
 {
+    basePosition={-0.7f * sign, -1.5f * sign, 90.0f * sign};
 }
 
 void RightWing::updateRobot()
