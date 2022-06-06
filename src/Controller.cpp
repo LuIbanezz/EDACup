@@ -130,52 +130,12 @@ void Controller::assignRobotMessage(int robotTeam,
  */
 void Controller::updateController()
 {
-
-
-    switch(referee)
-    {
-        case preKickOff1:
-            break;
-        case preKickOff2:
-            break;
-        case kickOff:
-            break;
-        case preFreeKick1:
-            break;
-        case preFreeKick2:
-            break;
-        case freeKick1:
-            break;
-        case freeKick2:
-            break;
-        case prePenaltyKick1:
-            break;
-        case prePenaltyKick2:
-            break;
-        case penaltyKick1:
-            break;
-        case penaltyKick2:
-            break;
-        case continueGame:
-            break;
-        case removeRobot1:
-            break;
-        case removeRobot2:
-            break;
-        case addRobot1:
-            break;
-        case addRobot2:
-            break;
-
-    }
-
     elapsedTime += DELTA_TIME;
 
     for (auto robot : homeTeam)
     {
         robot->updateRobot();
     }
-
 }
 
 /**

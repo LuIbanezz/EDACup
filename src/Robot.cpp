@@ -46,6 +46,7 @@ void Robot::startRobot()
     readyToKick = false;
     kicked = false;
     kickPower = MAX_KICK_POWER;
+    withBall = false;
 
 }
 

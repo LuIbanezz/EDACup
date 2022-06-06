@@ -59,6 +59,7 @@ void RightWing::updateRobot()
         }
         else
         {
+            moveRobot(basePosition, PAUSE_SPEED);
         }
         break;
     case preFreeKick2:
@@ -89,12 +90,40 @@ void RightWing::updateRobot()
         }
         break;
     case prePenaltyKick1:
+        if (team == 2)
+        {
+            moveRobot(basePosition, PAUSE_SPEED);
+        }
+        else
+        {
+        }
         break;
     case prePenaltyKick2:
+        if (team == 2)
+        {
+            moveRobot(basePosition, PAUSE_SPEED);
+        }
+        else
+        {
+        }
         break;
     case penaltyKick1:
+        if (team == 2)
+        {
+            moveRobot(basePosition, PAUSE_SPEED);
+        }
+        else
+        {
+        }
         break;
     case penaltyKick2:
+        if (team == 2)
+        {
+            moveRobot(basePosition, PAUSE_SPEED);
+        }
+        else
+        {
+        }
         break;
     case continueGame:
         break;
@@ -140,5 +169,9 @@ void RightWing::playingRightWing()
     if(controller->receiver == robotID[7]-'0')
     {
         receivePass();
+    }
+    else if (!withBall)
+    {
+        moveRobot({2.0f, 1.0f, 90.0f}, MAX_SPEED);
     }
 }

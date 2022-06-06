@@ -99,6 +99,7 @@ protected:
 
     bool readyToKick;
     bool kicked;
+    bool withBall;
     
     void dressRobot(int robotNumber);
     void setShirt();
