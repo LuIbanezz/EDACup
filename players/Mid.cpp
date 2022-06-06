@@ -20,6 +20,7 @@ void Mid::updateRobot()
         case preFreeKick1:
             break;
         case preFreeKick2:
+            moveRobot({4, -1, -90}, PAUSE_SPEED);
             break;
         case freeKick1:
             break;
