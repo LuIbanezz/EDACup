@@ -26,7 +26,7 @@
 #define MAX_KICK_POWER 0.6f
 #define BALL_SPEED_ZERO 0.01f
 #define SHOT_SPEED 1.5
-#define ARRIVED_MIN_DISTANCE 0.01f
+#define ARRIVED_MIN_DISTANCE 0.006f
 #define TEAM_SIGN (float)((team==1) ? -1 : 1)
 #define RAD(x) ((x)*PI/180)
 
@@ -82,6 +82,7 @@ public:
     void startDribble();
     void stopDribble();
 
+    bool removed;
 
     Vector3 coordinates;
     Vector3 speed;
@@ -109,6 +110,7 @@ protected:
     bool kicked;
     bool withBall;
     
+    
     void dressRobot(int robotNumber);
     void setShirt();
     void kick(float strength);
@@ -117,6 +119,7 @@ protected:
     Setpoint kickDestination(Vector2 shotTarget);
     Setpoint getPath(float minDistance);
     float angleBetweenVectors(Vector2 v1, Vector2 v2);
+    float angleBetweenVectors2(Vector2 v1, Vector2 v2);
     bool passToRobot(int robotReceiver);
     bool kickToGoal(Vector2 goalPosition);
     bool receivePass();

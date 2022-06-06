@@ -8,12 +8,16 @@ RightBack::RightBack(string robotID, MQTTClient2 *client, Controller *controller
 
 void RightBack::updateRobot()
 {
-    switch (controller->referee)
+    if(!removed)
+    {
+        switch (controller->referee)
     {
     case preKickOff1:
+        withBall = false;
         moveRobot(basePosition, PAUSE_SPEED);
         break;
     case preKickOff2:
+        withBall = false;
         moveRobot(basePosition, PAUSE_SPEED);
         break;
     case kickOff:
@@ -87,5 +91,19 @@ void RightBack::updateRobot()
         break;
     case continueGame:
         break;
+    case pauseGame:
+        break;
     }
+    }
+    else if (controller->removedPlayers < RightBackRemoval)
+    {
+        removed = false;
+        returnRobot();
+    }
+    else if (controller->removedPlayers >= RightBackRemoval)
+    {
+        removed = true;
+        removeRobot();
+    }
+    
 }

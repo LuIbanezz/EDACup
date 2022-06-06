@@ -8,14 +8,18 @@ LeftBack::LeftBack(string robotID, MQTTClient2 *client, Controller *controller) 
 
 void LeftBack::updateRobot()
 {
-    switch(controller->referee)
+    if(!removed)
     {
+        switch(controller->referee)
+        {
         case preKickOff1:
+            withBall = false;
             moveRobot(basePosition, PAUSE_SPEED);
-            cout << "speed: " << Vector3Length(speed) << endl;
+            // cout << "speed: " << Vector3Length(speed) << endl;
            break;
 
         case preKickOff2:
+            withBall = false;
             moveRobot(basePosition, PAUSE_SPEED);
            break;
 
@@ -92,5 +96,18 @@ void LeftBack::updateRobot()
             break;
         case continueGame:
             break;
+        case pauseGame:
+            break;
+        }
+    }
+    else if(controller->removedPlayers < LeftBackRemoval)
+    {
+        removed = false;
+        returnRobot();
+    }
+    else if(controller->removedPlayers >= LeftBackRemoval)
+    {
+        removed = true;
+        removeRobot();
     }
 }

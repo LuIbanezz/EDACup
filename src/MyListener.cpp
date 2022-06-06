@@ -86,7 +86,27 @@ void MyListener::onMessage(string topic, vector<char> payload)
         else if(endOfTopic == "/removeRobot")
         {
             controller->removedPlayers ++;
-            // controller->referee = (GameStates)(removeRobot1 + contenido - 1);
+            switch (controller->removedPlayers)
+            {
+                case 1:
+                    controller->homeTeam[1]->removed = true;
+                    break;
+                case 2:
+                    controller->homeTeam[2]->removed = true;
+                    break;
+                case 3:
+                    controller->homeTeam[3]->removed = true;
+                    break;
+                case 4:
+                    controller->homeTeam[0]->removed = true;
+                    break;
+                case 5:
+                    controller->homeTeam[4]->removed = true;
+                    break;
+                case 6:
+                    controller->homeTeam[5]->removed = true;
+                    break;
+            }
         }
         else if(endOfTopic == "/addRobot")
         {
@@ -94,7 +114,6 @@ void MyListener::onMessage(string topic, vector<char> payload)
             //controller->referee = (GameStates)(addRobot1 + contenido - 1);
         }
     }
-    cout << controller->referee << endl;
 }
 
 /**

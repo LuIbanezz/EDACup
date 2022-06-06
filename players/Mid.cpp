@@ -8,54 +8,60 @@ Mid::Mid(string robotID, MQTTClient2 *client, Controller *controller) : Robot(ro
 
 void Mid::updateRobot()
 {
-    switch (controller->referee)
+    if (!removed)
     {
-    case preKickOff1:
-        moveRobot(basePosition, PAUSE_SPEED);
-        break;
-    case preKickOff2:
-        moveRobot(basePosition, PAUSE_SPEED);
-        break;
-    case kickOff:
-        break;
-    case preFreeKick1:
+        switch (controller->referee)
         {
-            Vector2 ballPosition = {controller->ball.position.x, controller->ball.position.y};
-            Vector2 baseToBall = {basePosition.position.x - ballPosition.x, 
-                                    basePosition.position.y - ballPosition.y};
-
-            if(Vector2Length(baseToBall) < 0.6f)
-            {
-                    Vector2 newBasePosition = Vector2Add({basePosition.position.x, 
-                    basePosition.position.y}, Vector2Scale(Vector2Normalize(baseToBall), 0.6f));
-
-                    moveRobot({{newBasePosition}, 90.0f}, PAUSE_SPEED);
-            }
-            else
-            {
-                moveRobot(basePosition, PAUSE_SPEED);
-            }
-        }
-        break;
-    case preFreeKick2:
-        {
-            Vector2 ballPosition = {controller->ball.position.x, controller->ball.position.y};
-            Vector2 baseToBall = {basePosition.position.x - ballPosition.x, 
-                                    basePosition.position.y - ballPosition.y};
-
-            if(Vector2Length(baseToBall) < 0.6f)
-            {
-                    Vector2 newBasePosition = Vector2Add({basePosition.position.x, 
-                    basePosition.position.y}, Vector2Scale(Vector2Normalize(baseToBall), 0.6f));
-
-                    moveRobot({{newBasePosition}, 90.0f}, PAUSE_SPEED);
-            }
-            else
-            {
-                moveRobot(basePosition, PAUSE_SPEED);
-            }
-        }
+        case preKickOff1:
+            withBall = false;
+            moveRobot(basePosition, PAUSE_SPEED);
             break;
+        case preKickOff2:
+            withBall = false;
+            moveRobot(basePosition, PAUSE_SPEED);
+            break;
+        case kickOff:
+            break;
+        case preFreeKick1:
+        {
+            Vector2 ballPosition = {controller->ball.position.x, controller->ball.position.y};
+            Vector2 baseToBall = {basePosition.position.x - ballPosition.x,
+                                  basePosition.position.y - ballPosition.y};
+
+            if (Vector2Length(baseToBall) < 0.6f)
+            {
+                Vector2 newBasePosition = Vector2Add({basePosition.position.x,
+                                                      basePosition.position.y},
+                                                     Vector2Scale(Vector2Normalize(baseToBall), 0.6f));
+
+                moveRobot({{newBasePosition}, 90.0f}, PAUSE_SPEED);
+            }
+            else
+            {
+                moveRobot(basePosition, PAUSE_SPEED);
+            }
+        }
+        break;
+        case preFreeKick2:
+        {
+            Vector2 ballPosition = {controller->ball.position.x, controller->ball.position.y};
+            Vector2 baseToBall = {basePosition.position.x - ballPosition.x,
+                                  basePosition.position.y - ballPosition.y};
+
+            if (Vector2Length(baseToBall) < 0.6f)
+            {
+                Vector2 newBasePosition = Vector2Add({basePosition.position.x,
+                                                      basePosition.position.y},
+                                                     Vector2Scale(Vector2Normalize(baseToBall), 0.6f));
+
+                moveRobot({{newBasePosition}, 90.0f}, PAUSE_SPEED);
+            }
+            else
+            {
+                moveRobot(basePosition, PAUSE_SPEED);
+            }
+        }
+        break;
         case freeKick1:
             break;
         case freeKick2:
@@ -86,5 +92,18 @@ void Mid::updateRobot()
             break;
         case continueGame:
             break;
+        case pauseGame:
+            break;
+        }
+    }
+    else if (controller->removedPlayers < MidRemoval)
+    {
+        removed = false;
+        returnRobot();
+    }
+    else if (controller->removedPlayers >= MidRemoval)
+    {
+        removed = true;
+        removeRobot();
     }
 }
