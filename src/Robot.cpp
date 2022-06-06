@@ -379,6 +379,23 @@ bool Robot::passToRobot(int robotReceiver)
     }
 }
 
+bool Robot::receivePass()
+{
+    Vector2 robotToBall = {controller->ball.position.x - coordinates.x,
+    controller->ball.position.y - coordinates.y};
+    moveRobot({controller->ball.position.x, controller->ball.position.y,
+        90.0f - Vector2Angle({0,0}, robotToBall)}, PAUSE_SPEED);
+    if(Vector2Length(robotToBall) < ARRIVED_MIN_DISTANCE)
+    {
+        return true;
+        controller->receiver = 0;
+    }
+    else
+    {
+        return false;
+    }
+}
+
 void Robot::startDribble()
 {
 

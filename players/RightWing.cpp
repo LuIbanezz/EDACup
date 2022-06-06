@@ -10,6 +10,10 @@ void RightWing::updateRobot()
 
     switch (controller->referee)
     {
+    case playing:
+        playingRightWing();
+        break;
+    
     case preKickOff1:
         if (team == 2)
         {
@@ -129,4 +133,12 @@ void RightWing::updateRobot()
     //     readyToKick = false;
     //     kicked = false;
     // }
+}
+
+void RightWing::playingRightWing()
+{
+    if(controller->receiver == robotID[7]-'0')
+    {
+        receivePass();
+    }
 }

@@ -109,6 +109,7 @@ protected:
     Setpoint getPath(float minDistance);
     float angleBetweenVectors(Vector2 v1, Vector2 v2);
     bool passToRobot(int robotReceiver);
+    bool receivePass();
     
 };
 
