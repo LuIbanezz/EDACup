@@ -139,6 +139,6 @@ void RightWing::updateRobot()
         }
         else if (!withBall)
         {
-            controller->receiverReady = moveRobot({2.0f, 1.0f, 90.0f}, MAX_SPEED);
+            moveRobot({2.0f, 1.0f, 90.0f}, MAX_SPEED);
         }
     }

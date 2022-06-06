@@ -163,19 +163,36 @@ void LeftWing::playingLeftWing()
     }
     else if(withBall)
     {
-        controller->receiver = 6;
-        Vector3 receiverPosition = controller->homeTeam[controller->receiver - 1]->coordinates;
-        Vector2 robotToReceiver =
-        {receiverPosition.x - coordinates.x,
-        receiverPosition.y - coordinates.y};
-        float rotationAngle= 90.0f - Vector2Angle({0,0}, robotToReceiver);
-        setSetpoint({coordinates.x, coordinates.y,
-        rotationAngle});
-        if(controller->receiverReady == true)
+        stopDribble();
+        if(!readyToKick)
+        {
+            controller->receiver = 6;
+            Vector3 receiverPosition = controller->homeTeam[controller->receiver - 1]->coordinates;
+            direction = runUpDestination({receiverPosition.x, receiverPosition.y});
+            Setpoint newPath = getPath(BALL_RADIUS + ROBOT_RADIUS + 0.1f);
+            moveRobot(newPath, PAUSE_SPEED);
+            if(Vector3Distance(coordinates, controller->ball.position) < 0.05f)
+            {
+                readyToKick = true;
+            }
+        }
+        else
         {
             passToRobot(6);
-            controller->receiverReady = false;
-            cout << "pateo" << endl;
         }
+        
+
+        // controller->receiver = 6;
+        // Vector3 receiverPosition = controller->homeTeam[controller->receiver - 1]->coordinates;
+        // Vector2 robotToReceiver =
+        // {receiverPosition.x - coordinates.x,
+        // receiverPosition.y - coordinates.y};
+        // float rotationAngle= 90.0f - Vector2Angle({0,0}, robotToReceiver);
+        // setSetpoint({coordinates.x, coordinates.y, rotationAngle});
+        // if(abs(rotation.z - rotationAngle) < 1.0f)
+        // {
+        //     passToRobot(6);
+        // }
+        
     }
 }

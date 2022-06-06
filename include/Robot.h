@@ -20,7 +20,7 @@
 #include <iostream>
 #include "Controller.h"
 
-#define DELTA_TIME 0.3f
+#define DELTA_TIME 0.1f
 #define MAX_SPEED 6.0f
 #define PAUSE_SPEED 1.5f
 #define MAX_KICK_POWER 0.6f
