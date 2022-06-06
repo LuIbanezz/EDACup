@@ -100,6 +100,8 @@ public:
     vector<Robot *> homeTeam;
     vector<Enemy *> awayTeam;
     int receiver;
+    int removedPlayers;
+    bool receiverReady;
 
 private:
     float elapsedTime;

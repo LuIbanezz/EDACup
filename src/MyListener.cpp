@@ -85,11 +85,13 @@ void MyListener::onMessage(string topic, vector<char> payload)
         }
         else if(endOfTopic == "/removeRobot")
         {
-            controller->referee = (GameStates)(removeRobot1 + contenido - 1);
+            controller->removedPlayers ++;
+            // controller->referee = (GameStates)(removeRobot1 + contenido - 1);
         }
         else if(endOfTopic == "/addRobot")
         {
-            controller->referee = (GameStates)(addRobot1 + contenido - 1);
+            controller->removedPlayers --;
+            //controller->referee = (GameStates)(addRobot1 + contenido - 1);
         }
     }
     cout << controller->referee << endl;

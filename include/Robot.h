@@ -20,9 +20,9 @@
 #include <iostream>
 #include "Controller.h"
 
-#define DELTA_TIME 0.1f
+#define DELTA_TIME 0.3f
 #define MAX_SPEED 6.0f
-#define PAUSE_SPEED 1.4f
+#define PAUSE_SPEED 1.5f
 #define MAX_KICK_POWER 0.6f
 #define BALL_SPEED_ZERO 0.01f
 #define SHOT_SPEED 1.5
@@ -45,6 +45,11 @@ const Vector2 goal1_2{-4.5, 0.5};
 const Vector2 goal2{4.5, 0};
 const Vector2 goal2_1{4.5, -0.5};
 const Vector2 goal2_2{4.5, 0.5};
+
+enum PlayerRemovals
+{
+    LeftBackRemoval=1, RightBackRemoval, MidRemoval, LeftWingRemoval, RightWingRemoval
+};
 
 #define MAC 0
 
@@ -77,6 +82,7 @@ public:
     void startDribble();
     void stopDribble();
 
+
     Vector3 coordinates;
     Vector3 speed;
     Vector3 rotation;
@@ -92,6 +98,7 @@ protected:
 
     Setpoint direction;
     Setpoint basePosition;
+    Setpoint outPosition;
     
     float kickPower;
 
@@ -111,6 +118,8 @@ protected:
     float angleBetweenVectors(Vector2 v1, Vector2 v2);
     bool passToRobot(int robotReceiver);
     bool receivePass();
+    void removeRobot();
+    void returnRobot();
     
 };
 

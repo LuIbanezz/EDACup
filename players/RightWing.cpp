@@ -13,25 +13,25 @@ void RightWing::updateRobot()
     case playing:
         playingRightWing();
         break;
-    
+
     case preKickOff1:
         if (team == 2)
         {
-            moveRobot(basePosition, PAUSE_SPEED);  
+            moveRobot(basePosition, PAUSE_SPEED);
         }
         else
         {
-            direction = runUpDestination({controller->homeTeam[4]->coordinates.x, 
+            direction = runUpDestination({controller->homeTeam[4]->coordinates.x,
                                           controller->homeTeam[4]->coordinates.y});
             Setpoint newPath = getPath(BALL_RADIUS + ROBOT_RADIUS + 0.1f);
-            readyToKick = moveRobot(newPath, MAX_SPEED);
+            readyToKick = moveRobot(newPath, PAUSE_SPEED);
         }
         break;
 
     case preKickOff2:
         if (team == 2)
         {
-            moveRobot(basePosition, PAUSE_SPEED);  
+            moveRobot(basePosition, PAUSE_SPEED);
         }
         else
         {
@@ -45,7 +45,7 @@ void RightWing::updateRobot()
         }
         else
         {
-            if(passToRobot(5))
+            if (passToRobot(5))
             {
                 controller->referee = playing;
             }
@@ -96,12 +96,13 @@ void RightWing::updateRobot()
         }
         else
         {
+            // acá debería patear
         }
         break;
     case prePenaltyKick2:
         if (team == 2)
         {
-            moveRobot(basePosition, PAUSE_SPEED);
+            // acá debería patear, es messi
         }
         else
         {
@@ -128,25 +129,16 @@ void RightWing::updateRobot()
         break;
     case continueGame:
         break;
-    case removeRobot1:
-        break;
-    case removeRobot2:
-        break;
-    case addRobot1:
-        break;
-    case addRobot2:
-        break;
     }
 }
-
-void RightWing::playingRightWing()
-{
-    if(controller->receiver == robotID[7]-'0')
+    void RightWing::playingRightWing()
     {
-        receivePass();
+        if (controller->receiver == robotID[7] - '0')
+        {
+            receivePass();
+        }
+        else if (!withBall)
+        {
+            controller->receiverReady = moveRobot({2.0f, 1.0f, 90.0f}, MAX_SPEED);
+        }
     }
-    else if (!withBall)
-    {
-        moveRobot({2.0f, 1.0f, 90.0f}, MAX_SPEED);
-    }
-}

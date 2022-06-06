@@ -21,6 +21,8 @@
 Controller::Controller()
 {
     elapsedTime = 0;
+    removedPlayers=0;
+    receiverReady = false;
 }
 
 void Controller::start()
@@ -67,8 +69,8 @@ void Controller::addAwayRobot(Enemy *robot)
 void Controller::createTeam1(MQTTClient2 *mqttClient2)
 {
     addRobot(new Keeper("robot1.1", mqttClient2, this));
-    addRobot(new RightBack("robot1.2", mqttClient2, this));
-    addRobot(new LeftBack("robot1.3", mqttClient2, this));
+    addRobot(new LeftBack("robot1.2", mqttClient2, this));
+    addRobot(new RightBack("robot1.3", mqttClient2, this));
     addRobot(new Mid("robot1.4", mqttClient2, this));
     addRobot(new LeftWing("robot1.5", mqttClient2, this));
     addRobot(new RightWing("robot1.6", mqttClient2, this));
@@ -82,8 +84,8 @@ void Controller::createTeam1(MQTTClient2 *mqttClient2)
 void Controller::createTeam2(MQTTClient2 *mqttClient2)
 {
     addRobot(new Keeper("robot2.1", mqttClient2, this));
-    addRobot(new RightBack("robot2.2", mqttClient2, this));
-    addRobot(new LeftBack("robot2.3", mqttClient2, this));
+    addRobot(new LeftBack("robot2.2", mqttClient2, this));
+    addRobot(new RightBack("robot2.3", mqttClient2, this));
     addRobot(new Mid("robot2.4", mqttClient2, this));
     addRobot(new LeftWing("robot2.5", mqttClient2, this));
     addRobot(new RightWing("robot2.6", mqttClient2, this));

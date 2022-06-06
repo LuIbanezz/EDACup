@@ -384,12 +384,23 @@ bool Robot::receivePass()
 {
     Vector2 robotToBall = {controller->ball.position.x - coordinates.x,
     controller->ball.position.y - coordinates.y};
-    moveRobot({controller->ball.position.x, controller->ball.position.y,
-        90.0f - Vector2Angle({0,0}, robotToBall)}, PAUSE_SPEED);
-    if(Vector2Length(robotToBall) < ARRIVED_MIN_DISTANCE)
+    if(Vector2Length(robotToBall) < 0.5f)
     {
-        return true;
+        moveRobot({controller->ball.position.x, controller->ball.position.y,
+        90.0f - Vector2Angle({0,0}, robotToBall)}, PAUSE_SPEED);
+    }
+    else
+    {
+        moveRobot({coordinates.x, coordinates.y,
+        90.0f - Vector2Angle({0,0}, robotToBall)}, PAUSE_SPEED);
+    }
+    
+    if(Vector2Length(robotToBall) < BALL_RADIUS + ROBOT_KICKER_RADIUS)
+    {
         controller->receiver = 0;
+        startDribble();
+        withBall = true;
+        return true;
     }
     else
     {
@@ -399,10 +410,26 @@ bool Robot::receivePass()
 
 void Robot::startDribble()
 {
+    vector<char> payload(4);
 
+    *((float *)&payload[0]) = 4;
+    mqttClient2->publish(robotID + "/dribbler/current/set", payload);
 }
 
 void Robot::stopDribble()
 {
+    vector<char> payload(4);
 
+    *((float *)&payload[0]) = 0;
+    mqttClient2->publish(robotID + "/dribbler/current/set", payload);
+}
+
+void Robot::removeRobot()
+{
+    moveRobot({outPosition}, PAUSE_SPEED);
+}
+
+void Robot::returnRobot()
+{
+    moveRobot({basePosition}, PAUSE_SPEED);
 }
