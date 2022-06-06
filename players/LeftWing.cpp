@@ -9,6 +9,10 @@ void LeftWing::updateRobot()
 {
     switch(controller->referee)
     {
+        case playing:
+            playingLeftWing();
+            break;
+
         case preKickOff1:
             moveRobot(basePosition, PAUSE_SPEED);
             break;
@@ -20,7 +24,8 @@ void LeftWing::updateRobot()
             {
                 Vector2 robotToBall = {controller->ball.position.x -coordinates.x,
                 controller->ball.position.y - coordinates.y};
-                setSetpoint({coordinates.x, coordinates.y, 90.0f - Vector2Angle({0,0}, robotToBall)});
+                setSetpoint({coordinates.x, coordinates.y, 90.0f -
+                Vector2Angle({0,0}, robotToBall)});
             }
             break;
         case preFreeKick1:
@@ -49,5 +54,16 @@ void LeftWing::updateRobot()
             break;
         case addRobot2:
             break;
+    }
+}
+
+void LeftWing::playingLeftWing()
+{
+    if(controller->receiver == robotID[7]-'0')
+    {
+        Vector2 robotToBall = {controller->ball.position.x - coordinates.x,
+        controller->ball.position.y - coordinates.y};
+        moveRobot({controller->ball.position.x, controller->ball.position.y,
+         90.0f - Vector2Angle({0,0}, robotToBall)}, PAUSE_SPEED);
     }
 }

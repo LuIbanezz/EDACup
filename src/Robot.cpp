@@ -268,11 +268,13 @@ Setpoint Robot::getPath(float minDistance)
             Vector2 perpendicularVector =
                 Vector2Normalize({-distanceDirector.y, distanceDirector.x});
 
-            resultDirection = Vector2Add(Vector2Scale(Vector2Normalize(perpendicularVector), minDistance), ballPosition);
+            resultDirection = Vector2Add(Vector2Scale
+                        (Vector2Normalize(perpendicularVector), minDistance), ballPosition);
         }
         else
         {
-            resultDirection = Vector2Add(Vector2Scale(Vector2Normalize(distanceDirector), minDistance), ballPosition);
+            resultDirection = Vector2Add(Vector2Scale
+                            (Vector2Normalize(distanceDirector), minDistance), ballPosition);
         }
         result = {{resultDirection.x, resultDirection.y},
                   90.0f - Vector2Angle({0, 0}, resultDirection)};
@@ -369,7 +371,6 @@ bool Robot::passToRobot(int robotReceiver)
         {
             kick(kickPower);
         }
-        controller->receiver = 0;
         return true;
     }
     else

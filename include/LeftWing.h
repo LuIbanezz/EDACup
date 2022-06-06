@@ -5,9 +5,12 @@
 using namespace std;
 class LeftWing : public Robot
 {
-    public:
+public:
     LeftWing(string robotID, MQTTClient2 *client, Controller *controller);
     void updateRobot();
+
+private:
+    void LeftWing::playingLeftWing();
 };
 
 #endif
