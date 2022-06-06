@@ -49,7 +49,7 @@ class Enemy
 enum GameStates
 {
     preKickOff1, preKickOff2,
-    kickOff,
+    kickOff1, kickOff2,
     preFreeKick1, preFreeKick2,
     freeKick1, freeKick2,
     prePenaltyKick1, prePenaltyKick2,

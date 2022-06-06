@@ -26,8 +26,8 @@ void Keeper :: positionGK()
     Vector2 ballSpeed2D = {controller->ball.speed.x, controller->ball.speed.y};
     float shotAngle = angleBetweenVectors2(ballSpeed2D, {TEAM_SIGN * 1, 0});
     
-    if ((TEAM_SIGN) * shotAngle <= (TEAM_SIGN) * (angleTo1st - 5)
-    && (((TEAM_SIGN) * shotAngle) >= (TEAM_SIGN) * (angleTo2nd + 5))
+    if (sign * shotAngle <= sign * (angleTo1st - 5)
+    && ((sign * shotAngle) >= sign * (angleTo2nd + 5))
     && (Vector2Length(ballSpeed2D) > SHOT_SPEED))
     {
         shot = true;

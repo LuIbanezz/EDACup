@@ -57,7 +57,7 @@ void MyListener::onMessage(string topic, vector<char> payload)
         }
         else if(endOfTopic == "/kickOff")
         {
-            controller->referee = kickOff;
+            controller->referee = (GameStates)(kickOff1 + contenido - 1);
         }
         else if(endOfTopic == "/preFreeKick")
         {

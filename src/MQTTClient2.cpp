@@ -258,6 +258,7 @@ void MQTTClient2::subscribeToTopics()
         topic += ".";
         topic += i + '0';
         subscribe(topic + "/motion/state");
+        subscribe(topic + "/dribbler/rpm");
     }
     for (int i = 1; i <= ROBOT_NUMBER; i++)
     {

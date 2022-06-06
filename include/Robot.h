@@ -26,7 +26,7 @@
 #define MAX_KICK_POWER 0.6f
 #define BALL_SPEED_ZERO 0.01f
 #define SHOT_SPEED 1.5
-#define ARRIVED_MIN_DISTANCE 0.006f
+#define ARRIVED_MIN_DISTANCE 0.01f
 #define TEAM_SIGN (float)((team==1) ? -1 : 1)
 #define RAD(x) ((x)*PI/180)
 

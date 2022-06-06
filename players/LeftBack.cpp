@@ -23,7 +23,9 @@ void LeftBack::updateRobot()
             moveRobot(basePosition, PAUSE_SPEED);
            break;
 
-        case kickOff:
+        case kickOff1:
+          break;
+        case kickOff2:
           break;
 
         case preFreeKick1:

@@ -24,7 +24,7 @@ void LeftWing::updateRobot()
             withBall = false;
             moveRobot(basePosition, PAUSE_SPEED);
             break;
-        case kickOff:
+        case kickOff1:
             if (controller->receiver == robotID[7] - '0')
             {
                 Vector2 robotToBall = {controller->ball.position.x - coordinates.x,
@@ -32,6 +32,9 @@ void LeftWing::updateRobot()
                 setSetpoint({coordinates.x, coordinates.y, 90.0f - Vector2Angle({0, 0}, robotToBall)});
             }
             break;
+
+        case kickOff2:
+          break;
 
         case preFreeKick1:
         {
@@ -188,24 +191,52 @@ void LeftWing::playingLeftWing()
         // }
         if(controller->getTime() - auxTime < 1.0f)
         {
-            stopDribble();
+            // stopDribble();
         }
-        if(controller->getTime() - auxTime > 1.0f && controller->getTime() - auxTime < 2.0f)
+        if(controller->getTime() - auxTime > 1.0f && controller->getTime() - auxTime < 3.0f)
         {
-            startDribble();
+            // startDribble();
             controller->receiver = 6;
             Vector3 receiverPosition = controller->homeTeam[controller->receiver - 1]->coordinates;
             Vector2 robotToReceiver =
             {receiverPosition.x - coordinates.x,
             receiverPosition.y - coordinates.y};
             float rotationAngle= 90.0f - Vector2Angle({0,0}, robotToReceiver);
-            setSetpoint({coordinates.x, coordinates.y, rotationAngle});
+            if(rotationAngle < 0)
+            {
+                rotationAngle += 360;
+            }
+            float currentRotation = rotation.z;
+            if (rotation.z < 0)
+            {
+                currentRotation += 360;
+            }
+
+            float angleDifference = rotationAngle - currentRotation;
+            if(angleDifference < 0)
+            {
+                angleDifference += 360;
+            }
+            float sign = 1;
+            if(angleDifference > 180)
+            {
+                sign = -1;
+            }
+
+            if (abs(rotationAngle - currentRotation) < 20.0f)
+            {
+                setSetpoint({coordinates.x, coordinates.y, rotationAngle});
+            }
+            else
+            {
+                setSetpoint({coordinates.x, coordinates.y, (float)(currentRotation+20.0f*sign)});
+            }
         }
-        if(controller->getTime() - auxTime > 2.0f )
+        if(controller->getTime() - auxTime > 3.0f )
         {
             if(passToRobot(6))
             {
-                stopDribble();
+                // stopDribble();
                 withBall = false;
             }
         }

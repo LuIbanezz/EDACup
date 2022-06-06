@@ -46,7 +46,7 @@ void RightWing::updateRobot()
             }
             break;
 
-        case kickOff:
+        case kickOff1:
             if (team == 2)
             {
                 moveRobot(basePosition, PAUSE_SPEED);
@@ -59,6 +59,9 @@ void RightWing::updateRobot()
                 }
             }
             break;
+
+        case kickOff2:
+          break;
 
         case preFreeKick1:
             withBall = false;
@@ -216,7 +219,7 @@ void RightWing::playingRightWing()
         Vector2 goalDestination = {goal2.x * sign, (goal2.y - 0.3f) * sign};
         if (controller->getTime() - auxTime < 1.0f)
         {
-            stopDribble();
+            // stopDribble();
         }
         else if (controller->getTime() - auxTime < 3.0f)
         {
@@ -232,7 +235,7 @@ void RightWing::playingRightWing()
 
             // moveRobot({awayFromBall, rotationAngle}, PAUSE_SPEED);
             startDribble();
-            Vector2 goalDestination = {goal2.x * sign, (goal2.y - 0.3f) * sign};
+            Vector2 goalDestination = calculateGoalDestination();
             Vector2 robotToGoal = {goalDestination.x - coordinates.x,
                                    goalDestination.y - coordinates.y};
 
@@ -246,47 +249,49 @@ void RightWing::playingRightWing()
             {
                 currentRotation += 360;
             }
+
+            float angleDifference = rotationAngle - currentRotation;
+            if(angleDifference < 0)
+            {
+                angleDifference += 360;
+            }
+            float sign = 1;
+            if(angleDifference > 180)
+            {
+                sign = -1;
+            }
+
             if (abs(rotationAngle - currentRotation) < 20.0f)
             {
                 setSetpoint({coordinates.x, coordinates.y, rotationAngle});
             }
             else
             {
-                setSetpoint({coordinates.x, coordinates.y, (float)(currentRotation+20.0f)});
+                setSetpoint({coordinates.x, coordinates.y, (float)(currentRotation+20.0f*sign)});
             }
         }
         else if (controller->getTime() - auxTime > 3.0f)
         {
-            // stopDribble();
-            // Vector2 goalDestination = {goal2.x * sign, (goal2.y - 0.3f) * sign};
-            // Vector2 robotToGoal = {goalDestination.x - coordinates.x,
-            //                        goalDestination.y - coordinates.y};
-
-            // float rotationAngle = 90.0f - Vector2Angle({0, 0}, robotToGoal);
-            // setSetpoint({coordinates.x, coordinates.y, rotationAngle});
-
-            //     if (!readyToKick)
-            //     {
-            //         controller->receiver = 6;
-            //         direction = runUpDestination(goalDestination);
-            //         Setpoint newPath = getPath(BALL_RADIUS + ROBOT_RADIUS + 0.1f);
-            //         readyToKick = moveRobot(newPath, PAUSE_SPEED);
-            //     }
-
-            //     else
-            //     {
-            //         if(kickToGoal(goalDestination))
-            //         {
-            //             withBall = false;
-            //             stopDribble();
-            //         }
-            //     }
-            // }
+            calculateGoalDestination();
             if (kickToGoal(goalDestination))
             {
-                stopDribble();
+                // stopDribble();
                 withBall = false;
             }
         }
     }
+}
+
+Vector2 RightWing::calculateGoalDestination()
+{
+    Vector2 goalDestination;
+    if(coordinates.y > 0)
+    {
+        goalDestination = {goal2.x * sign, goal2.y * sign + 0.4f};
+    }
+    else
+    {
+        goalDestination = {goal2.x * sign, goal2.y * sign - 0.4f};
+    }
+    return goalDestination;
 }

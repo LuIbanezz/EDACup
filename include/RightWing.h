@@ -10,6 +10,7 @@ class RightWing : public Robot
 
 private:
     void playingRightWing();
+    Vector2 calculateGoalDestination();
 };
 
 #endif

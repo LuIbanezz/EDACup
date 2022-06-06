@@ -102,10 +102,10 @@ bool Robot::moveRobot(Setpoint destination, float speed)
     Setpoint setPoint;
     float rotationAngle = 90.0f - Vector2Angle({0, 0}, directorVector);
 
-    if (Vector2Length(directorVector) > (speed * DELTA_TIME))
+    if (Vector2Length(directorVector) > (speed * DELTA_TIME* 2.0f))
     {
         Vector2 nextStepVec = Vector2Add({coordinates.x, coordinates.y},
-                                         Vector2Scale(Vector2Normalize(directorVector), DELTA_TIME * speed));
+                    Vector2Scale(Vector2Normalize(directorVector), DELTA_TIME * speed * 2.0f));
 
         setPoint = {nextStepVec, rotationAngle};
     }
@@ -187,6 +187,7 @@ Setpoint Robot::kickDestination(Vector2 shotTarget)
  */
 void Robot::kick(float strength)
 {
+    // stopDribble();
     vector<char> payload(4);
 
     *((float *)&payload[0]) = strength;
@@ -377,8 +378,8 @@ bool Robot::passToRobot(int robotReceiver)
                         {coordinates.x, coordinates.y}) < (BALL_RADIUS + ROBOT_KICKER_RADIUS))
     {
 
-        float newKickPower = (kickPower / 4.0f) *
-                             Vector2Distance({controller->ball.position.x, controller->ball.position.y}, receiverPosition);
+        float newKickPower = (kickPower / 3.5f) *
+        Vector2Distance({controller->ball.position.x, controller->ball.position.y}, receiverPosition);
 
         if (newKickPower < kickPower)
         {
@@ -463,8 +464,9 @@ void Robot::startDribble()
 {
     vector<char> payload(4);
 
-    *((float *)&payload[0]) = 36;
+    *((float *)&payload[0]) = 5;
     mqttClient2->publish(robotID + "/dribbler/voltage/set", payload);
+    cout << "prendido" << endl;
 }
 
 void Robot::stopDribble()
@@ -473,12 +475,13 @@ void Robot::stopDribble()
 
     *((float *)&payload[0]) = 0;
     mqttClient2->publish(robotID + "/dribbler/voltage/set", payload);
+    cout << "apagado" << endl;
 }
 
 void Robot::removeRobot()
 {
     moveRobot({outPosition}, PAUSE_SPEED);
-    cout << "expulsado" << endl;
+    // cout << "expulsado" << endl;
 }
 
 void Robot::returnRobot()
