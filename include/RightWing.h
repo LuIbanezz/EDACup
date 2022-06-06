@@ -7,6 +7,9 @@ class RightWing : public Robot
     public:
     RightWing(string robotID, MQTTClient2 *client, Controller *controller);
     void updateRobot();
+
+private:
+    void playingRightWing();
 };
 
 #endif

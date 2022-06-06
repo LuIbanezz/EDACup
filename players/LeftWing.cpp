@@ -61,9 +61,6 @@ void LeftWing::playingLeftWing()
 {
     if(controller->receiver == robotID[7]-'0')
     {
-        Vector2 robotToBall = {controller->ball.position.x - coordinates.x,
-        controller->ball.position.y - coordinates.y};
-        moveRobot({controller->ball.position.x, controller->ball.position.y,
-         90.0f - Vector2Angle({0,0}, robotToBall)}, PAUSE_SPEED);
+        receivePass();
     }
 }
