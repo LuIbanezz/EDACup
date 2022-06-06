@@ -61,6 +61,17 @@ void RightWing::updateRobot()
             break;
 
         case kickOff2:
+            if (team == 1)
+            {
+                moveRobot(basePosition, PAUSE_SPEED);
+            }
+            else
+            {
+                if (passToRobot(5))
+                {
+                    controller->referee = playing;
+                }
+            }
           break;
 
         case preFreeKick1:
@@ -169,13 +180,19 @@ void RightWing::updateRobot()
         case penaltyKick1:
             if (team == 1)
             {
-                kickToGoal({goal2.x, goal2.y - 0.4f});
+                if(readyToKick)
+                {
+                    readyToKick = !kickToGoal({goal2.x, goal2.y - 0.4f});
+                }
             }
             break;
         case penaltyKick2:
             if (team == 2)
             {
-                kickToGoal({goal1.x, goal1.y - 0.4f});
+                if(readyToKick)
+                {
+                    readyToKick = !kickToGoal({goal1.x, goal1.y - 0.4f});
+                }
             }
             break;
 
@@ -212,7 +229,7 @@ void RightWing::playingRightWing()
     }
     else if (!withBall)
     {
-        moveRobot({2.0f, 1.0f, 90.0f}, MAX_SPEED);
+        moveRobot({sign * 2.0f, sign * 1.0f, sign * 90.0f}, MAX_SPEED);
     }
     else if (withBall)
     {
