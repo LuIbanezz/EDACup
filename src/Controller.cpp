@@ -23,6 +23,7 @@ Controller::Controller()
     elapsedTime = 0;
     removedPlayers=0;
     receiverReady = false;
+    referee = starting;
 }
 
 void Controller::start()

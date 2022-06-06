@@ -1,8 +1,10 @@
 #include "RightWing.h"
 
-RightWing::RightWing(string robotID, MQTTClient2 *client, Controller *controller) : Robot(robotID, client, controller)
+RightWing::RightWing(string robotID, MQTTClient2 *client, Controller *controller) :
+            Robot(robotID, client, controller)
 {
     basePosition = {-0.7f * sign, -1.5f * sign, 90.0f * sign};
+    outPosition = {-2.0f * sign, -4.0f, 0};
 }
 
 void RightWing::updateRobot()
@@ -53,24 +55,42 @@ void RightWing::updateRobot()
         break;
 
     case preFreeKick1:
-        if (team == 2)
-        {
-            moveRobot(basePosition, PAUSE_SPEED);
-        }
-        else
-        {
-            moveRobot(basePosition, PAUSE_SPEED);
-        }
-        break;
+        if(team == 2)
+            {
+                //hacer que se coloque a mas de medio metro como mínimo
+                if(Vector3Distance(controller->ball.position, coordinates) < 0.7f)
+                {
+                    moveRobot({basePosition.position.x + 0.6f,
+                        basePosition.position.y, basePosition.rotation}, PAUSE_SPEED);
+                }
+                else
+                {
+                    moveRobot(basePosition, PAUSE_SPEED);
+                }
+            }
+            else
+            {
+                //acá le pega
+            }
+            break;
     case preFreeKick2:
-        if (team == 2)
-        {
-            moveRobot(basePosition, PAUSE_SPEED);
-        }
-        else
-        {
-        }
-        break;
+        if(team == 2)
+            {
+                //acá le pega
+            }
+            else
+            {
+                if(Vector3Distance(controller->ball.position, coordinates) < 0.7f)
+                {
+                    moveRobot({basePosition.position.x - 0.6f,
+                        basePosition.position.y, basePosition.rotation}, PAUSE_SPEED);
+                }
+                else
+                {
+                    moveRobot(basePosition, PAUSE_SPEED);
+                }
+            }
+            break;
     case freeKick1:
         if (team == 2)
         {
@@ -135,10 +155,31 @@ void RightWing::updateRobot()
     {
         if (controller->receiver == robotID[7] - '0')
         {
-            receivePass();
+            if(receivePass())
+            {
+                auxTime = controller->getTime();
+            }
         }
         else if (!withBall)
         {
             moveRobot({2.0f, 1.0f, 90.0f}, MAX_SPEED);
+        }
+        else if(withBall)
+        {
+            Vector2 goalDestination = {goal2.x * sign, (goal2.y - 0.3f) *sign};
+            Vector2 robotToGoal = {goalDestination.x - coordinates.x,
+                                    goalDestination.y - coordinates.y};
+
+            float rotationAngle= 90.0f - Vector2Angle({0,0}, robotToGoal);
+            setSetpoint({coordinates.x, coordinates.y, rotationAngle});
+
+            if(controller->getTime() - auxTime > 2.0f)
+            {
+                if(kickToGoal(goalDestination))
+                {
+                    stopDribble();
+                    withBall = false;
+                }
+            }
         }
     }

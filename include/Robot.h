@@ -101,6 +101,7 @@ protected:
     Setpoint outPosition;
     
     float kickPower;
+    float auxTime;
 
     float positioningTime;
 
@@ -117,6 +118,7 @@ protected:
     Setpoint getPath(float minDistance);
     float angleBetweenVectors(Vector2 v1, Vector2 v2);
     bool passToRobot(int robotReceiver);
+    bool kickToGoal(Vector2 goalPosition);
     bool receivePass();
     void removeRobot();
     void returnRobot();

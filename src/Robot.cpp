@@ -47,6 +47,7 @@ void Robot::startRobot()
     kicked = false;
     kickPower = MAX_KICK_POWER;
     withBall = false;
+    auxTime = 0;
 
 }
 
@@ -361,8 +362,42 @@ bool Robot::passToRobot(int robotReceiver)
                         {coordinates.x, coordinates.y}) < (BALL_RADIUS + ROBOT_KICKER_RADIUS))
     {
         
-        float newKickPower = (kickPower / 3.5f) *
+        float newKickPower = (kickPower / 3.0f) *
         Vector2Distance({controller->ball.position.x, controller->ball.position.y}, receiverPosition);
+
+        if(newKickPower < kickPower)
+        {
+            kick(newKickPower);
+        }
+        else
+        {
+            kick(kickPower);
+        }
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+/**
+ * @brief 
+ * 
+ * @param robotReceiver 
+ * @return true 
+ * @return false 
+ */
+bool Robot::kickToGoal(Vector2 goalPosition)
+{
+    direction = kickDestination(goalPosition);
+    moveRobot(direction, MAX_SPEED);
+    if (Vector2Distance({controller->ball.position.x, controller->ball.position.y},
+                        {coordinates.x, coordinates.y}) < (BALL_RADIUS + ROBOT_KICKER_RADIUS))
+    {
+        
+        float newKickPower = (kickPower / 3.0f) *
+        Vector2Distance({controller->ball.position.x, controller->ball.position.y}, goalPosition);
 
         if(newKickPower < kickPower)
         {
@@ -391,8 +426,8 @@ bool Robot::receivePass()
     }
     else
     {
-        moveRobot({coordinates.x, coordinates.y,
-        90.0f - Vector2Angle({0,0}, robotToBall)}, PAUSE_SPEED);
+        setSetpoint({coordinates.x, coordinates.y,
+        90.0f - Vector2Angle({0,0}, robotToBall)});
     }
     
     if(Vector2Length(robotToBall) < BALL_RADIUS + ROBOT_KICKER_RADIUS)

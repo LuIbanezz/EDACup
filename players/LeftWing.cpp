@@ -31,58 +31,43 @@ void LeftWing::updateRobot()
             break;
             
         case preFreeKick1:
-            if(team == 2)
+        {
+            Vector2 ballPosition = {controller->ball.position.x, controller->ball.position.y};
+            Vector2 baseToBall = {basePosition.position.x - ballPosition.x, 
+                                    basePosition.position.y - ballPosition.y};
+
+            if(Vector2Length(baseToBall) < 0.6f)
             {
-                //hacer que se coloque a mas de medio metro como mínimo
-                if(Vector3Distance(controller->ball.position, coordinates) < 0.5f)
-                {
-                    moveRobot({basePosition.position.x + 0.5f,
-                        basePosition.position.y, basePosition.rotation}, PAUSE_SPEED);
-                }
-                else
-                {
-                    moveRobot(basePosition, PAUSE_SPEED);
-                }
+                    Vector2 newBasePosition = Vector2Add({basePosition.position.x, 
+                    basePosition.position.y}, Vector2Scale(Vector2Normalize(baseToBall), 0.6f));
+
+                    moveRobot({{newBasePosition}, 90.0f}, PAUSE_SPEED);
             }
             else
             {
-                if(Vector3Distance(controller->ball.position, coordinates) < 0.5f)
-                {
-                    moveRobot({basePosition.position.x - 0.5f,
-                        basePosition.position.y, basePosition.rotation}, PAUSE_SPEED);
-                }
-                else
-                {
-                    moveRobot(basePosition, PAUSE_SPEED);
-                }
+                moveRobot(basePosition, PAUSE_SPEED);
             }
+        }
             break;
 
         case preFreeKick2:
-            if(team == 2)
+        {
+            Vector2 ballPosition = {controller->ball.position.x, controller->ball.position.y};
+            Vector2 baseToBall = {basePosition.position.x - ballPosition.x, 
+                                    basePosition.position.y - ballPosition.y};
+
+            if(Vector2Length(baseToBall) < 0.6f)
             {
-                if(Vector3Distance(controller->ball.position, coordinates) < 0.5f)
-                {
-                    moveRobot({basePosition.position.x + 0.5f,
-                        basePosition.position.y, basePosition.rotation}, PAUSE_SPEED);
-                }
-                else
-                {
-                    moveRobot(basePosition, PAUSE_SPEED);
-                }
+                    Vector2 newBasePosition = Vector2Add({basePosition.position.x, 
+                    basePosition.position.y}, Vector2Scale(Vector2Normalize(baseToBall), 0.6f));
+
+                    moveRobot({{newBasePosition}, 90.0f}, PAUSE_SPEED);
             }
             else
             {
-                if(Vector3Distance(controller->ball.position, coordinates) < 0.5f)
-                {
-                    moveRobot({basePosition.position.x - 0.5f, 
-                    basePosition.position.y, basePosition.rotation}, PAUSE_SPEED);
-                }
-                else
-                {
-                    moveRobot(basePosition, PAUSE_SPEED);
-                }
+                moveRobot(basePosition, PAUSE_SPEED);
             }
+        }
             break;
 
         case removeRobot1:
@@ -159,40 +144,52 @@ void LeftWing::playingLeftWing()
 {
     if(controller->receiver == robotID[7]-'0')
     {
-        receivePass();
+        if(receivePass())
+        {
+            auxTime = controller->getTime();
+        }
     }
     else if(withBall)
     {
-        stopDribble();
-        if(!readyToKick)
-        {
-            controller->receiver = 6;
-            Vector3 receiverPosition = controller->homeTeam[controller->receiver - 1]->coordinates;
-            direction = runUpDestination({receiverPosition.x, receiverPosition.y});
-            Setpoint newPath = getPath(BALL_RADIUS + ROBOT_RADIUS + 0.1f);
-            moveRobot(newPath, PAUSE_SPEED);
-            if(Vector3Distance(coordinates, controller->ball.position) < 0.05f)
-            {
-                readyToKick = true;
-            }
-        }
-        else
-        {
-            passToRobot(6);
-        }
-        
-
-        // controller->receiver = 6;
-        // Vector3 receiverPosition = controller->homeTeam[controller->receiver - 1]->coordinates;
-        // Vector2 robotToReceiver =
-        // {receiverPosition.x - coordinates.x,
-        // receiverPosition.y - coordinates.y};
-        // float rotationAngle= 90.0f - Vector2Angle({0,0}, robotToReceiver);
-        // setSetpoint({coordinates.x, coordinates.y, rotationAngle});
-        // if(abs(rotation.z - rotationAngle) < 1.0f)
+        // stopDribble();
+        // if(!readyToKick)
+        // {
+        //     controller->receiver = 6;
+        //     Vector3 receiverPosition = controller->homeTeam[controller->receiver - 1]->coordinates;
+        //     direction = runUpDestination({receiverPosition.x, receiverPosition.y});
+        //     Setpoint newPath = getPath(BALL_RADIUS + ROBOT_RADIUS + 0.1f);
+        //     moveRobot(newPath, PAUSE_SPEED);
+        //     if(Vector3Distance(coordinates, controller->ball.position) < 0.05f)
+        //     {
+        //         readyToKick = true;
+        //     }
+        // }
+        // else
         // {
         //     passToRobot(6);
         // }
+
+
+        controller->receiver = 6;
+        Vector3 receiverPosition = controller->homeTeam[controller->receiver - 1]->coordinates;
+        Vector2 robotToReceiver =
+        {receiverPosition.x - coordinates.x,
+        receiverPosition.y - coordinates.y};
+        float rotationAngle= 90.0f - Vector2Angle({0,0}, robotToReceiver);
+        setSetpoint({coordinates.x, coordinates.y, rotationAngle});
+
+        if(controller->getTime() - auxTime > 1.0f)
+        {
+            if(passToRobot(6))
+            {
+                stopDribble();
+                withBall = false;
+            }
+        }
         
+    }
+    else if(!withBall)
+    {
+
     }
 }

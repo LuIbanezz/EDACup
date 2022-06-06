@@ -19,27 +19,17 @@ void Mid::updateRobot()
     case kickOff:
         break;
     case preFreeKick1:
-        if (team == 2)
         {
-            // hacer que se coloque a mas de medio metro como mínimo
-            if (Vector3Distance(controller->ball.position, coordinates) < 0.5f)
+            Vector2 ballPosition = {controller->ball.position.x, controller->ball.position.y};
+            Vector2 baseToBall = {basePosition.position.x - ballPosition.x, 
+                                    basePosition.position.y - ballPosition.y};
+
+            if(Vector2Length(baseToBall) < 0.6f)
             {
-                moveRobot({basePosition.position.x + 0.5f,
-                           basePosition.position.y, basePosition.rotation},
-                          PAUSE_SPEED);
-            }
-            else
-            {
-                moveRobot(basePosition, PAUSE_SPEED);
-            }
-        }
-        else
-        {
-            if (Vector3Distance(controller->ball.position, coordinates) < 0.5f)
-            {
-                moveRobot({basePosition.position.x - 0.5f,
-                           basePosition.position.y, basePosition.rotation},
-                          PAUSE_SPEED);
+                    Vector2 newBasePosition = Vector2Add({basePosition.position.x, 
+                    basePosition.position.y}, Vector2Scale(Vector2Normalize(baseToBall), 0.6f));
+
+                    moveRobot({{newBasePosition}, 90.0f}, PAUSE_SPEED);
             }
             else
             {
@@ -48,14 +38,23 @@ void Mid::updateRobot()
         }
         break;
     case preFreeKick2:
-        if (team == 2)
         {
-            if (Vector3Distance(controller->ball.position, coordinates) < 0.5f)
+            Vector2 ballPosition = {controller->ball.position.x, controller->ball.position.y};
+            Vector2 baseToBall = {basePosition.position.x - ballPosition.x, 
+                                    basePosition.position.y - ballPosition.y};
+
+            if(Vector2Length(baseToBall) < 0.6f)
             {
-                moveRobot({basePosition.position.x + 0.5f,
-                           basePosition.position.y, basePosition.rotation},
-                          PAUSE_SPEED);
+                    Vector2 newBasePosition = Vector2Add({basePosition.position.x, 
+                    basePosition.position.y}, Vector2Scale(Vector2Normalize(baseToBall), 0.6f));
+
+                    moveRobot({{newBasePosition}, 90.0f}, PAUSE_SPEED);
             }
+            else
+            {
+                moveRobot(basePosition, PAUSE_SPEED);
+            }
+        }
             break;
         case freeKick1:
             break;
@@ -87,6 +86,5 @@ void Mid::updateRobot()
             break;
         case continueGame:
             break;
-        }
     }
 }

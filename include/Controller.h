@@ -58,7 +58,8 @@ enum GameStates
     continueGame,
     removeRobot1, removeRobot2,
     addRobot1,addRobot2,
-    playing
+    playing,
+    starting
 };
 
 using namespace std;
