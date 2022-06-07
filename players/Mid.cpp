@@ -95,6 +95,21 @@ void Mid::updateRobot()
         case continueGame:
             break;
         case pauseGame:
+            Vector2 ballPosition = {controller->ball.position.x, controller->ball.position.y};
+            Vector2 baseToBall = {basePosition.position.x - ballPosition.x, 
+                                    basePosition.position.y - ballPosition.y};
+
+            if(Vector2Length(baseToBall) < 0.6f)
+            {
+                    Vector2 newBasePosition = Vector2Add({basePosition.position.x, 
+                    basePosition.position.y}, Vector2Scale(Vector2Normalize(baseToBall), 0.6f));
+
+                    moveRobot({{newBasePosition}, 90.0f}, PAUSE_SPEED);
+            }
+            else
+            {
+                moveRobot(basePosition, PAUSE_SPEED);
+            }
             break;
         }
     }

@@ -134,7 +134,6 @@ void Controller::assignRobotMessage(int robotTeam,
 void Controller::updateController()
 {
     elapsedTime += DELTA_TIME;
-    // cout << referee << endl;
     for (auto robot : homeTeam)
     {
         robot->updateRobot();

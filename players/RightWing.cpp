@@ -21,6 +21,7 @@ void RightWing::updateRobot()
             if (team == 2)
             {
                 moveRobot(basePosition, PAUSE_SPEED);
+                readyToKick = false;
             }
             else
             {
@@ -43,13 +44,28 @@ void RightWing::updateRobot()
             else
             {
                 moveRobot(basePosition, PAUSE_SPEED);
+                readyToKick = false;
             }
             break;
 
         case kickOff1:
             if (team == 2)
             {
-                moveRobot(basePosition, PAUSE_SPEED);
+                if(!readyToKick)
+                {
+                    direction = runUpDestination({controller->homeTeam[4]->coordinates.x,
+                                              controller->homeTeam[4]->coordinates.y});
+                Setpoint newPath = getPath(BALL_RADIUS + ROBOT_RADIUS + 0.1f);
+                readyToKick = moveRobot(newPath, PAUSE_SPEED);
+                }
+                
+                else
+                {
+                    if (passToRobot(5))
+                    {
+                    controller->referee = playing;
+                    }
+                }
             }
             else
             {
@@ -63,7 +79,21 @@ void RightWing::updateRobot()
         case kickOff2:
             if (team == 1)
             {
-                moveRobot(basePosition, PAUSE_SPEED);
+                if(!readyToKick)
+                {
+                    direction = runUpDestination({controller->homeTeam[4]->coordinates.x,
+                                              controller->homeTeam[4]->coordinates.y});
+                Setpoint newPath = getPath(BALL_RADIUS + ROBOT_RADIUS + 0.1f);
+                readyToKick = moveRobot(newPath, PAUSE_SPEED);
+                }
+                
+                else
+                {
+                    if (passToRobot(5))
+                    {
+                    controller->referee = playing;
+                    }
+                }
             }
             else
             {
@@ -95,6 +125,7 @@ void RightWing::updateRobot()
                 {
                     moveRobot(basePosition, PAUSE_SPEED);
                 }
+                readyToKick = false;
             }
             else
             {
@@ -129,6 +160,7 @@ void RightWing::updateRobot()
                 {
                     moveRobot(basePosition, PAUSE_SPEED);
                 }
+                readyToKick = false;
             }
             break;
         case freeKick1:
@@ -139,6 +171,24 @@ void RightWing::updateRobot()
                     controller->referee = playing;
                 }
             }
+            else
+            {
+                if(!readyToKick)
+                {
+                    direction = runUpDestination({controller->homeTeam[4]->coordinates.x,
+                                              controller->homeTeam[4]->coordinates.y});
+                Setpoint newPath = getPath(BALL_RADIUS + ROBOT_RADIUS + 0.1f);
+                readyToKick = moveRobot(newPath, PAUSE_SPEED);
+                }
+                
+                else
+                {
+                    if (passToRobot(5))
+                    {
+                    controller->referee = playing;
+                    }
+                }
+            }
             break;
         case freeKick2:
             if (team == 2)
@@ -146,6 +196,24 @@ void RightWing::updateRobot()
                 if (kickToGoal({goal1.x, goal1.y - 0.4f}))
                 {
                     controller->referee = playing;
+                }
+            }
+            else
+            {
+if(!readyToKick)
+                {
+                    direction = runUpDestination({controller->homeTeam[4]->coordinates.x,
+                                              controller->homeTeam[4]->coordinates.y});
+                Setpoint newPath = getPath(BALL_RADIUS + ROBOT_RADIUS + 0.1f);
+                readyToKick = moveRobot(newPath, PAUSE_SPEED);
+                }
+                
+                else
+                {
+                    if (passToRobot(5))
+                    {
+                    controller->referee = playing;
+                    }
                 }
             }
             break;
@@ -199,6 +267,21 @@ void RightWing::updateRobot()
         case continueGame:
             break;
         case pauseGame:
+            Vector2 ballPosition = {controller->ball.position.x, controller->ball.position.y};
+            Vector2 baseToBall = {basePosition.position.x - ballPosition.x, 
+                                    basePosition.position.y - ballPosition.y};
+
+            if(Vector2Length(baseToBall) < 0.6f)
+            {
+                    Vector2 newBasePosition = Vector2Add({basePosition.position.x, 
+                    basePosition.position.y}, Vector2Scale(Vector2Normalize(baseToBall), 0.6f));
+
+                    moveRobot({{newBasePosition}, 90.0f}, PAUSE_SPEED);
+            }
+            else
+            {
+                moveRobot(basePosition, PAUSE_SPEED);
+            }
             break;
         }
     }
@@ -236,21 +319,9 @@ void RightWing::playingRightWing()
         Vector2 goalDestination = {goal2.x * sign, (goal2.y - 0.3f) * sign};
         if (controller->getTime() - auxTime < 1.0f)
         {
-            // stopDribble();
         }
         else if (controller->getTime() - auxTime < 3.0f)
         {
-            // startDribble();
-            // Vector2 ballPosition = {controller->ball.position.x, controller->ball.position.y};
-            // Vector2 ballToRobot = {coordinates.x - ballPosition.x, coordinates.y - ballPosition.y};
-            // Vector2 normalizedBallToRobot = Vector2Normalize(ballToRobot);
-
-            // Vector2 awayFromBall = Vector2Add({coordinates.x, coordinates.y},
-            //                         Vector2Scale(normalizedBallToRobot, 0.5f));
-
-            // float rotationAngle = 90.0f - Vector2Angle(ballToRobot, {0, 0});
-
-            // moveRobot({awayFromBall, rotationAngle}, PAUSE_SPEED);
             startDribble();
             Vector2 goalDestination = calculateGoalDestination();
             Vector2 robotToGoal = {goalDestination.x - coordinates.x,
@@ -292,7 +363,6 @@ void RightWing::playingRightWing()
             calculateGoalDestination();
             if (kickToGoal(goalDestination))
             {
-                // stopDribble();
                 withBall = false;
             }
         }

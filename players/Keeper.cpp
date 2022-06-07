@@ -2,29 +2,50 @@
 
 Keeper::Keeper(string robotID, MQTTClient2 *client, Controller *controller) : Robot(robotID, client,controller)
 {
-    
+    basePosition = {-4.2f * sign, 0, 90.0f * sign};
+    outPosition = {-4.5f * sign, -4.0f, 0};
 }
 
 void Keeper::updateRobot()
 {
-    //positionGK();
+    positionGK();
 }
 
 void Keeper :: positionGK()
 {
+    if(controller->referee == pauseGame)
+    {
+        Vector2 ballPosition = {controller->ball.position.x, controller->ball.position.y};
+            Vector2 baseToBall = {basePosition.position.x - ballPosition.x, 
+                                    basePosition.position.y - ballPosition.y};
+
+            if(Vector2Length(baseToBall) < 0.6f)
+            {
+                    Vector2 newBasePosition = Vector2Add({basePosition.position.x, 
+                    basePosition.position.y}, Vector2Scale(Vector2Normalize(baseToBall), 0.6f));
+
+                    moveRobot({{newBasePosition}, 90.0f}, PAUSE_SPEED);
+            }
+            else
+            {
+                moveRobot(basePosition, PAUSE_SPEED);
+            }
+    }
+    else
+    {
     shot=false;
     Vector2 ball2D = {controller->ball.position.x, controller->ball.position.y};
    
     // Define the angles between the ball and the goal
-    Vector2 ballTo1st = Vector2Subtract(goal1_1, ball2D);
-    float angleTo1st = angleBetweenVectors2(ballTo1st,{TEAM_SIGN * 1, 0});
-    Vector2 ballTo2nd = Vector2Subtract(goal1_2, ball2D);
-    float angleTo2nd = angleBetweenVectors2(ballTo2nd, {TEAM_SIGN * 1, 0});
+    Vector2 ballTo1st = Vector2Subtract({goal1_1.x*sign, goal1_1.y}, ball2D);
+    float angleTo1st = angleBetweenVectors2(ballTo1st,{(-1.0f) * sign, 0});
+    Vector2 ballTo2nd = Vector2Subtract({goal1_2.x*sign, goal1_2.y}, ball2D);
+    float angleTo2nd = angleBetweenVectors2(ballTo2nd, {(-1.0f) * sign , 0});
     
 
     //Define the angle of the ball trajectory
     Vector2 ballSpeed2D = {controller->ball.speed.x, controller->ball.speed.y};
-    float shotAngle = angleBetweenVectors2(ballSpeed2D, {TEAM_SIGN * 1, 0});
+    float shotAngle = angleBetweenVectors2(ballSpeed2D, {(-1.0f) * sign, 0});
     
     if (sign * shotAngle <= sign * (angleTo1st - 5)
     && ((sign * shotAngle) >= sign * (angleTo2nd + 5))
@@ -37,9 +58,8 @@ void Keeper :: positionGK()
     Setpoint keeperSetPoint;
     if (shot)
     {
-        float angleTo2nd = angleBetweenVectors2(ballTo2nd, {TEAM_SIGN * 1, 0});
         //Define the line that follows the trajectory of the ball when shot
-        float shotSlope = tan(TEAM_SIGN* shotAngle * PI / 180);
+        float shotSlope = tan(-shotAngle * PI / 180);
         //Define the diving trajectory of the keeper (at a right angle with ball trajectory)
         Vector3 diveVector = Vector3Scale(Vector3CrossProduct(controller->ball.speed,{0,0,-1}),
         TEAM_SIGN);
@@ -51,38 +71,39 @@ void Keeper :: positionGK()
         float x = (coordinates.y - diveSlope * coordinates.x - ball2D.y+shotSlope*ball2D.x)
         / (shotSlope-diveSlope);
         float y = ball2D.y + shotSlope * (x - ball2D.x);
-        Setpoint keeperSetPoint = {{x, y},90};
+        keeperSetPoint = {{x, y},sign*90.0f};
         
-        setSetpoint(keeperSetPoint);
+        moveRobot(keeperSetPoint, MAX_SPEED);
     }
-    else if (sign=1 && (ball2D.x <= -3.5) && (ball2D.x >= -4.5)
-             && (ball2D.y >= -1) && (ball2D.y <= 1))
+    else if (sign==1 && (ball2D.x <= -3.5f) && (ball2D.x >= -4.5f)
+             && (ball2D.y >= -1.0f) && (ball2D.y <= 1.0f))
     {
         ballInGKArea();
     }
-    else if (sign=-1 && (ball2D.x >= 3.5) && (ball2D.x <= 4.5)
-             && (ball2D.y >= -1) && (ball2D.y <= 1))
+    else if (sign==-1 && (ball2D.x >= 3.5f) && (ball2D.x <= 4.5f)
+             && (ball2D.y >= -1.0f) && (ball2D.y <= 1.0f))
     {
         ballInGKArea();
     }
     else
     {
         
-        float bisector = (angleTo2nd + angleTo1st) * 0.5;
-        bisector *= PI / 180;
-        float slope = tan(TEAM_SIGN *bisector);
+        float bisector = (angleTo2nd + angleTo1st) * 0.5f;
+        bisector *= PI / 180.0f;
+        float slope = tan(-bisector);
         float forwardStep = FORWARD_STEP(ball2D.x);
         if (forwardStep <= 0)
             forwardStep = 0;
-        float x = sign*(-4.5+0.5);
+        float x = sign*(-4.5f+forwardStep);
         float y = ball2D.y + slope * (x - ball2D.x);
-        moveRobot({{x, y},0}, MAX_SPEED);
+        moveRobot({{x, y}, sign*90.0f}, MAX_SPEED);
     }
+    }
+
 }
 
 void Keeper::ballInGKArea()
 {
-    // Just for testing
     moveRobot({controller->ball.position.x, controller->ball.position.y}, MAX_SPEED);
 }
 

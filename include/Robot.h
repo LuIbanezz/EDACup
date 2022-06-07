@@ -36,15 +36,15 @@
 #define ROBOT_KICKER_RADIUS 0.08f
 #define ROBOT_RADIUS 0.09f
 #define RUN_UP_DISTANCE 0.25f
-#define FORWARD_STEP(x) (-0.3 * (-(x)-2) * (-(x)-2) + 0.5)
+#define FORWARD_STEP(x) (-0.3f * (-(sign*(x))-2.0f) * (-(sign*(x))-2.0f) + 0.5f)
 
-const Vector2 goal1{-4.5, 0};
-const Vector2 goal1_1{-4.5, -0.5}; // Primer y segundo palo
-const Vector2 goal1_2{-4.5, 0.5};
+const Vector2 goal1{-4.5f, 0.0f};
+const Vector2 goal1_1{-4.5f, -0.5f}; // Primer y segundo palo
+const Vector2 goal1_2{-4.5f, 0.5f};
 
-const Vector2 goal2{4.5, 0};
-const Vector2 goal2_1{4.5, -0.5};
-const Vector2 goal2_2{4.5, 0.5};
+const Vector2 goal2{4.5f, 0.0f};
+const Vector2 goal2_1{4.5f, -0.5f};
+const Vector2 goal2_2{4.5f, 0.5f};
 
 enum PlayerRemovals
 {

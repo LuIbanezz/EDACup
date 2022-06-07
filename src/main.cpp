@@ -20,7 +20,6 @@ using namespace std;
 int main(int argc, char** argv)
 {
     char equipo = argv[1][0];
-    cout << equipo << endl;
     Controller controller;
     MyListener listener(&controller);
     MQTTClient2 mqttClient2;
