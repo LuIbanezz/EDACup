@@ -53,8 +53,8 @@ void Robot::startRobot()
 /**
  * @brief Assigns the message with the information of the robot to the robot.
  *
- * @param message
- * @param topic
+ * @param message   Data to assign
+ * @param topic     Kind of data to assign to the robot
  */
 void Robot::assignMessage(vector<float> &message, string &topic)
 {
@@ -77,8 +77,7 @@ void Robot::assignMessage(vector<float> &message, string &topic)
 }
 
 /**
- * @brief Calculates the path to the position to hit the ball, moves the robot and decides when
- * to kick the ball.
+ * @brief Virtual robot update method
  *
  */
 void Robot::updateRobot()
@@ -102,16 +101,17 @@ bool Robot::moveRobot(Setpoint destination, float speed)
     Setpoint setPoint;
     float rotationAngle = 90.0f - Vector2Angle({0, 0}, directorVector);
 
-    if (Vector2Length(directorVector) > (speed * DELTA_TIME* 1.5f))
+    if (Vector2Length(directorVector) > (speed * DELTA_TIME * 1.5f))
     {
         Vector2 nextStepVec = Vector2Add({coordinates.x, coordinates.y},
-                    Vector2Scale(Vector2Normalize(directorVector), DELTA_TIME * speed * 1.5f));
+                                         Vector2Scale(Vector2Normalize(directorVector),
+                                                      DELTA_TIME * speed * 1.5f));
 
         setPoint = {nextStepVec, rotationAngle};
     }
     else if (Vector2Distance({destination.position.x, destination.position.y},
                              {coordinates.x, coordinates.y}) > ARRIVED_MIN_DISTANCE)
-                             
+
     {
         setPoint = destination;
     }
@@ -119,7 +119,7 @@ bool Robot::moveRobot(Setpoint destination, float speed)
     {
         arrived = true;
     }
-    if(arrived == false)
+    if (arrived == false)
     {
         setSetpoint(setPoint);
     }
@@ -187,7 +187,6 @@ Setpoint Robot::kickDestination(Vector2 shotTarget)
  */
 void Robot::kick(float strength)
 {
-    // stopDribble();
     vector<char> payload(4);
 
     *((float *)&payload[0]) = strength;
@@ -212,22 +211,21 @@ static Vector2 projection(Vector2 direc, Vector2 projector)
 }
 
 /**
- * @brief Calculates the angle between two vectors. Start from v1, working clockwise
+ * @brief Calculates the absolute value of the smallest angle between two vectors.
  *
  * @param v1
  * @param v2
- * @note in counter clockwise direction, v1, then v2 (otherwise negative)
- * @return float
+ * @return float (Angle between 0 and 180 degrees)
  */
 float Robot::angleBetweenVectors(Vector2 v1, Vector2 v2)
 {
     float angle;
-    angle = acos(Vector2DotProduct(v1,v2) / (Vector2Length(v1) * Vector2Length(v2))) * (180 / PI);
+    angle = acos(Vector2DotProduct(v1, v2) / (Vector2Length(v1) * Vector2Length(v2))) * (180 / PI);
     return angle;
 }
 
 /**
- * @brief Calculates the angle between two vectors. Start from v1, working clockwise
+ * @brief Calculates the angle between two vectors. Starting from v1 clockwise to v2.
  *
  * @param v1
  * @param v2
@@ -281,18 +279,22 @@ Setpoint Robot::getPath(float minDistance)
 
     if (distance < minDistance && angle > 90.0f)
     {
-        if (abs(angle - 180.f) < 0.1f) // POSIBLE CASO DE DISTANCEDIRECTOR = 0
+        if (abs(angle - 180.f) < 0.1f)
         {
             Vector2 perpendicularVector =
                 Vector2Normalize({-distanceDirector.y, distanceDirector.x});
 
             resultDirection =
-            Vector2Add(Vector2Scale(Vector2Normalize(perpendicularVector), minDistance), ballPosition);
+                Vector2Add(Vector2Scale(Vector2Normalize(perpendicularVector),
+                                        minDistance),
+                           ballPosition);
         }
         else
         {
             resultDirection =
-            Vector2Add(Vector2Scale(Vector2Normalize(distanceDirector), minDistance), ballPosition);
+                Vector2Add(Vector2Scale(Vector2Normalize(distanceDirector),
+                                        minDistance),
+                           ballPosition);
         }
         result = {{resultDirection.x, resultDirection.y},
                   90.0f - Vector2Angle({0, 0}, resultDirection)};
@@ -367,6 +369,13 @@ void Robot::dressRobot(int robotNumber)
     setShirt();
 }
 
+/**
+ * @brief executes a pass to a player indicated
+ *
+ * @param robotReceiver
+ * @return true if the pass has been made
+ * @return false otherwise
+ */
 bool Robot::passToRobot(int robotReceiver)
 {
     controller->receiver = robotReceiver;
@@ -379,7 +388,9 @@ bool Robot::passToRobot(int robotReceiver)
     {
 
         float newKickPower = (kickPower / 4.0f) *
-        Vector2Distance({controller->ball.position.x, controller->ball.position.y}, receiverPosition);
+                             Vector2Distance({controller->ball.position.x,
+                                              controller->ball.position.y},
+                                             receiverPosition);
 
         if (newKickPower < kickPower)
         {
@@ -398,11 +409,11 @@ bool Robot::passToRobot(int robotReceiver)
 }
 
 /**
- * @brief
+ * @brief executes a shot to a goal indicated
  *
  * @param robotReceiver
- * @return true
- * @return false
+ * @return true if the shot has been made
+ * @return false otherwise
  */
 bool Robot::kickToGoal(Vector2 goalPosition)
 {
@@ -413,7 +424,9 @@ bool Robot::kickToGoal(Vector2 goalPosition)
     {
 
         float newKickPower = (kickPower / 3.0f) *
-        Vector2Distance({controller->ball.position.x, controller->ball.position.y}, goalPosition);
+                             Vector2Distance({controller->ball.position.x,
+                                              controller->ball.position.y},
+                                             goalPosition);
 
         if (newKickPower < kickPower)
         {
@@ -431,6 +444,12 @@ bool Robot::kickToGoal(Vector2 goalPosition)
     }
 }
 
+/**
+ * @brief makes a robot receive a pass approaching it to the ball
+ *
+ * @return true if the ball is next to the robot
+ * @return false otherwise
+ */
 bool Robot::receivePass()
 {
     Vector2 robotToBall = {controller->ball.position.x - coordinates.x,
@@ -460,6 +479,10 @@ bool Robot::receivePass()
     }
 }
 
+/**
+ * @brief turns the dribbler motor on
+ *
+ */
 void Robot::startDribble()
 {
     vector<char> payload(4);
@@ -468,6 +491,10 @@ void Robot::startDribble()
     mqttClient2->publish(robotID + "/dribbler/voltage/set", payload);
 }
 
+/**
+ * @brief turns the dribbler motor off
+ *
+ */
 void Robot::stopDribble()
 {
     vector<char> payload(4);
@@ -476,11 +503,19 @@ void Robot::stopDribble()
     mqttClient2->publish(robotID + "/dribbler/voltage/set", payload);
 }
 
+/**
+ * @brief removes a robot from the field
+ *
+ */
 void Robot::removeRobot()
 {
     moveRobot({outPosition}, PAUSE_SPEED);
 }
 
+/**
+ * @brief returns a robot to the field
+ *
+ */
 void Robot::returnRobot()
 {
     moveRobot({basePosition}, PAUSE_SPEED);

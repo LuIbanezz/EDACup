@@ -1,11 +1,25 @@
+/**
+ * @file LeftBack.cpp
+ * @author Agrippino, Cilfone, Di Sanzo, Hertter, Ibañez
+ * @brief Definition for LeftBack class methods
+ * @version 0.1
+ * @date 2022-06-06
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
 #include "LeftBack.h"
 
-LeftBack::LeftBack(string robotID, MQTTClient2 *client, Controller *controller) : Robot(robotID, client, controller)
+LeftBack::LeftBack(string robotID, MQTTClient2 *client, Controller *controller)
+: Robot(robotID, client, controller)
 {
     basePosition = {-2.5f * sign, 1.0f * sign, 90.0f * sign};
     outPosition = {-4.0f * sign, -4.0f, 0};
 }
-
+/**
+ * @brief Updates Left Back robot
+ *
+ */
 void LeftBack::updateRobot()
 {
     if(!removed)

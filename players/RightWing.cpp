@@ -1,11 +1,31 @@
+/**
+ * @file RightWing.cpp
+ * @author Agrippino, Cilfone, Di Sanzo, Hertter, Ibañez
+ * @brief Definition for RightBack class methods
+ * @version 0.1
+ * @date 2022-06-06
+ *
+ * @copyright Copyright (c) 2022
+ *
+ */
 #include "RightWing.h"
-
-RightWing::RightWing(string robotID, MQTTClient2 *client, Controller *controller) : Robot(robotID, client, controller)
+/**
+ * @brief Construct a new Right Wing:: Right Wing object. Positions it in a base position
+ * 
+ * @param robotID 
+ * @param client 
+ * @param controller 
+ */
+RightWing::RightWing(string robotID, MQTTClient2 *client, Controller *controller) 
+: Robot(robotID, client, controller)
 {
     basePosition = {-0.7f * sign, -1.5f * sign, 90.0f * sign};
     outPosition = {-2.0f * sign, -4.0f, 0};
 }
-
+/**
+ * @brief Updates Right Wing robot
+ *
+ */
 void RightWing::updateRobot()
 {
     if (!removed)
@@ -51,19 +71,19 @@ void RightWing::updateRobot()
         case kickOff1:
             if (team == 2)
             {
-                if(!readyToKick)
+                if (!readyToKick)
                 {
                     direction = runUpDestination({controller->homeTeam[4]->coordinates.x,
-                                              controller->homeTeam[4]->coordinates.y});
-                Setpoint newPath = getPath(BALL_RADIUS + ROBOT_RADIUS + 0.1f);
-                readyToKick = moveRobot(newPath, PAUSE_SPEED);
+                                                  controller->homeTeam[4]->coordinates.y});
+                    Setpoint newPath = getPath(BALL_RADIUS + ROBOT_RADIUS + 0.1f);
+                    readyToKick = moveRobot(newPath, PAUSE_SPEED);
                 }
-                
+
                 else
                 {
                     if (passToRobot(5))
                     {
-                    controller->referee = playing;
+                        controller->referee = playing;
                     }
                 }
             }
@@ -79,19 +99,19 @@ void RightWing::updateRobot()
         case kickOff2:
             if (team == 1)
             {
-                if(!readyToKick)
+                if (!readyToKick)
                 {
                     direction = runUpDestination({controller->homeTeam[4]->coordinates.x,
-                                              controller->homeTeam[4]->coordinates.y});
-                Setpoint newPath = getPath(BALL_RADIUS + ROBOT_RADIUS + 0.1f);
-                readyToKick = moveRobot(newPath, PAUSE_SPEED);
+                                                  controller->homeTeam[4]->coordinates.y});
+                    Setpoint newPath = getPath(BALL_RADIUS + ROBOT_RADIUS + 0.1f);
+                    readyToKick = moveRobot(newPath, PAUSE_SPEED);
                 }
-                
+
                 else
                 {
                     if (passToRobot(5))
                     {
-                    controller->referee = playing;
+                        controller->referee = playing;
                     }
                 }
             }
@@ -102,7 +122,7 @@ void RightWing::updateRobot()
                     controller->referee = playing;
                 }
             }
-          break;
+            break;
 
         case preFreeKick1:
             withBall = false;
@@ -116,8 +136,8 @@ void RightWing::updateRobot()
                 if (Vector2Length(baseToBall) < 0.6f)
                 {
                     Vector2 newBasePosition = Vector2Add({basePosition.position.x,
-                                                          basePosition.position.y},
-                                                         Vector2Scale(Vector2Normalize(baseToBall), 0.6f));
+                                                basePosition.position.y},
+                                                Vector2Scale(Vector2Normalize(baseToBall), 0.6f));
 
                     moveRobot({{newBasePosition}, 90.0f}, PAUSE_SPEED);
                 }
@@ -129,7 +149,14 @@ void RightWing::updateRobot()
             }
             else
             {
-                direction = runUpDestination({goal2.x, goal2.y - 0.4f});
+                if (controller->ball.position.y > 0)
+                {
+                    direction = runUpDestination({goal2.x, goal2.y + 0.4f});
+                }
+                else
+                {
+                    direction = runUpDestination({goal2.x, goal2.y - 0.4f});
+                }
                 Setpoint newPath = getPath(BALL_RADIUS + ROBOT_RADIUS + 0.1f);
                 readyToKick = moveRobot(newPath, PAUSE_SPEED);
             }
@@ -138,7 +165,14 @@ void RightWing::updateRobot()
             withBall = false;
             if (team == 2)
             {
-                direction = runUpDestination({goal1.x, goal1.y - 0.4f});
+                if (controller->ball.position.y > 0)
+                {
+                    direction = runUpDestination({goal1.x, goal1.y + 0.4f});
+                }
+                else
+                {
+                    direction = runUpDestination({goal1.x, goal1.y - 0.4f});
+                }
                 Setpoint newPath = getPath(BALL_RADIUS + ROBOT_RADIUS + 0.1f);
                 readyToKick = moveRobot(newPath, PAUSE_SPEED);
             }
@@ -151,8 +185,8 @@ void RightWing::updateRobot()
                 if (Vector2Length(baseToBall) < 0.6f)
                 {
                     Vector2 newBasePosition = Vector2Add({basePosition.position.x,
-                                                          basePosition.position.y},
-                                                         Vector2Scale(Vector2Normalize(baseToBall), 0.6f));
+                                                basePosition.position.y},
+                                                Vector2Scale(Vector2Normalize(baseToBall), 0.6f));
 
                     moveRobot({{newBasePosition}, 90.0f}, PAUSE_SPEED);
                 }
@@ -166,26 +200,40 @@ void RightWing::updateRobot()
         case freeKick1:
             if (team == 1)
             {
-                if (kickToGoal({goal2.x, goal2.y - 0.4f}))
+                if (readyToKick)
                 {
-                    controller->referee = playing;
+                    if (controller->ball.position.y > 0)
+                    {
+                        readyToKick = !kickToGoal({goal2.x, goal2.y + 0.4f});
+                    }
+                    else
+                    {
+                        readyToKick = !kickToGoal({goal2.x, goal2.y - 0.4f});
+                    }
+                }
+                else
+                {
+                    if (moveRobot(basePosition, PAUSE_SPEED))
+                    {
+                        controller->referee = playing;
+                    }
                 }
             }
             else
             {
-                if(!readyToKick)
+                if (!readyToKick)
                 {
                     direction = runUpDestination({controller->homeTeam[4]->coordinates.x,
-                                              controller->homeTeam[4]->coordinates.y});
-                Setpoint newPath = getPath(BALL_RADIUS + ROBOT_RADIUS + 0.1f);
-                readyToKick = moveRobot(newPath, PAUSE_SPEED);
+                                                  controller->homeTeam[4]->coordinates.y});
+                    Setpoint newPath = getPath(BALL_RADIUS + ROBOT_RADIUS + 0.1f);
+                    readyToKick = moveRobot(newPath, PAUSE_SPEED);
                 }
-                
+
                 else
                 {
                     if (passToRobot(5))
                     {
-                    controller->referee = playing;
+                        controller->referee = playing;
                     }
                 }
             }
@@ -193,26 +241,40 @@ void RightWing::updateRobot()
         case freeKick2:
             if (team == 2)
             {
-                if (kickToGoal({goal1.x, goal1.y - 0.4f}))
+                if (readyToKick)
                 {
-                    controller->referee = playing;
+                    if (controller->ball.position.y > 0)
+                    {
+                        readyToKick = !kickToGoal({goal1.x, goal1.y + 0.4f});
+                    }
+                    else
+                    {
+                        readyToKick = !kickToGoal({goal1.x, goal1.y - 0.4f});
+                    }
+                }
+                else
+                {
+                    if (moveRobot(basePosition, PAUSE_SPEED))
+                    {
+                        controller->referee = playing;
+                    }
                 }
             }
             else
             {
-if(!readyToKick)
+                if (!readyToKick)
                 {
                     direction = runUpDestination({controller->homeTeam[4]->coordinates.x,
-                                              controller->homeTeam[4]->coordinates.y});
-                Setpoint newPath = getPath(BALL_RADIUS + ROBOT_RADIUS + 0.1f);
-                readyToKick = moveRobot(newPath, PAUSE_SPEED);
+                                                  controller->homeTeam[4]->coordinates.y});
+                    Setpoint newPath = getPath(BALL_RADIUS + ROBOT_RADIUS + 0.1f);
+                    readyToKick = moveRobot(newPath, PAUSE_SPEED);
                 }
-                
+
                 else
                 {
                     if (passToRobot(5))
                     {
-                    controller->referee = playing;
+                        controller->referee = playing;
                     }
                 }
             }
@@ -225,8 +287,6 @@ if(!readyToKick)
             }
             else
             {
-                /* if (coordinates.y>0)
-                */
                 direction = runUpDestination({goal2.x, goal2.y - 0.4f});
                 Setpoint newPath = getPath(BALL_RADIUS + ROBOT_RADIUS + 0.1f);
                 readyToKick = moveRobot(newPath, PAUSE_SPEED);
@@ -248,7 +308,7 @@ if(!readyToKick)
         case penaltyKick1:
             if (team == 1)
             {
-                if(readyToKick)
+                if (readyToKick)
                 {
                     readyToKick = !kickToGoal({goal2.x, goal2.y - 0.4f});
                 }
@@ -257,7 +317,7 @@ if(!readyToKick)
         case penaltyKick2:
             if (team == 2)
             {
-                if(readyToKick)
+                if (readyToKick)
                 {
                     readyToKick = !kickToGoal({goal1.x, goal1.y - 0.4f});
                 }
@@ -268,15 +328,16 @@ if(!readyToKick)
             break;
         case pauseGame:
             Vector2 ballPosition = {controller->ball.position.x, controller->ball.position.y};
-            Vector2 baseToBall = {basePosition.position.x - ballPosition.x, 
-                                    basePosition.position.y - ballPosition.y};
+            Vector2 baseToBall = {basePosition.position.x - ballPosition.x,
+                                  basePosition.position.y - ballPosition.y};
 
-            if(Vector2Length(baseToBall) < 0.6f)
+            if (Vector2Length(baseToBall) < 0.6f)
             {
-                    Vector2 newBasePosition = Vector2Add({basePosition.position.x, 
-                    basePosition.position.y}, Vector2Scale(Vector2Normalize(baseToBall), 0.6f));
+                Vector2 newBasePosition = Vector2Add({basePosition.position.x,
+                                            basePosition.position.y},
+                                            Vector2Scale(Vector2Normalize(baseToBall), 0.6f));
 
-                    moveRobot({{newBasePosition}, 90.0f}, PAUSE_SPEED);
+                moveRobot({{newBasePosition}, 90.0f}, PAUSE_SPEED);
             }
             else
             {
@@ -339,12 +400,12 @@ void RightWing::playingRightWing()
             }
 
             float angleDifference = rotationAngle - currentRotation;
-            if(angleDifference < 0)
+            if (angleDifference < 0)
             {
                 angleDifference += 360;
             }
             float sign = 1;
-            if(angleDifference > 180)
+            if (angleDifference > 180)
             {
                 sign = -1;
             }
@@ -355,7 +416,8 @@ void RightWing::playingRightWing()
             }
             else
             {
-                setSetpoint({coordinates.x, coordinates.y, (float)(currentRotation+20.0f*sign)});
+                setSetpoint({coordinates.x, coordinates.y, 
+                            (float)(currentRotation + 20.0f * sign)});
             }
         }
         else if (controller->getTime() - auxTime > 3.0f)
@@ -372,7 +434,7 @@ void RightWing::playingRightWing()
 Vector2 RightWing::calculateGoalDestination()
 {
     Vector2 goalDestination;
-    if(coordinates.y > 0)
+    if (coordinates.y > 0)
     {
         goalDestination = {goal2.x * sign, goal2.y * sign + 0.4f};
     }

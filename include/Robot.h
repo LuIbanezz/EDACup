@@ -4,9 +4,9 @@
  * @brief Robot class declaration
  * @version 0.1
  * @date 2022-05-14
- * 
+ *
  * @copyright Copyright (c) 2022
- * 
+ *
  */
 
 #ifndef _ROBOT_H
@@ -27,8 +27,8 @@
 #define BALL_SPEED_ZERO 0.01f
 #define SHOT_SPEED 1.5
 #define ARRIVED_MIN_DISTANCE 0.01f
-#define TEAM_SIGN (float)((team==1) ? -1 : 1)
-#define RAD(x) ((x)*PI/180)
+#define TEAM_SIGN (float)((team == 1) ? -1 : 1)
+#define RAD(x) ((x)*PI / 180)
 
 #define GOAL_LENGTH 1
 
@@ -36,7 +36,7 @@
 #define ROBOT_KICKER_RADIUS 0.08f
 #define ROBOT_RADIUS 0.09f
 #define RUN_UP_DISTANCE 0.25f
-#define FORWARD_STEP(x) (-0.3f * (-(sign*(x))-2.0f) * (-(sign*(x))-2.0f) + 0.5f)
+#define FORWARD_STEP(x) (-0.3f * (-(sign * (x)) - 2.0f) * (-(sign * (x)) - 2.0f) + 0.5f)
 
 const Vector2 goal1{-4.5f, 0.0f};
 const Vector2 goal1_1{-4.5f, -0.5f}; // Primer y segundo palo
@@ -48,7 +48,11 @@ const Vector2 goal2_2{4.5f, 0.5f};
 
 enum PlayerRemovals
 {
-    LeftBackRemoval=1, RightBackRemoval, MidRemoval, LeftWingRemoval, RightWingRemoval
+    LeftBackRemoval = 1,
+    RightBackRemoval,
+    MidRemoval,
+    LeftWingRemoval,
+    RightWingRemoval
 };
 
 #define MAC 0
@@ -100,7 +104,7 @@ protected:
     Setpoint direction;
     Setpoint basePosition;
     Setpoint outPosition;
-    
+
     float kickPower;
     float auxTime;
 
@@ -109,8 +113,7 @@ protected:
     bool readyToKick;
     bool kicked;
     bool withBall;
-    
-    
+
     void dressRobot(int robotNumber);
     void setShirt();
     void kick(float strength);
@@ -125,7 +128,6 @@ protected:
     bool receivePass();
     void removeRobot();
     void returnRobot();
-    
 };
 
 #endif //_ROBOT_H

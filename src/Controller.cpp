@@ -16,16 +16,22 @@
 #include "Mid.h"
 #include "LeftWing.h"
 #include "RightWing.h"
-
-
+/**
+ * @brief Construct a new Controller:: Controller object
+ * 
+ */
 Controller::Controller()
 {
     elapsedTime = 0;
-    removedPlayers=0;
+    removedPlayers = 0;
     receiverReady = false;
     referee = starting;
 }
 
+/**
+ * @brief initializes the home team robots
+ *
+ */
 void Controller::start()
 {
     for (auto robot : homeTeam)
@@ -33,7 +39,10 @@ void Controller::start()
         robot->startRobot();
     }
 }
-
+/**
+ * @brief Destroy the Controller:: Controller object
+ * 
+ */
 Controller::~Controller()
 {
     for (auto robot : homeTeam)
@@ -47,16 +56,20 @@ Controller::~Controller()
 }
 
 /**
- * @brief Adds new robot to the indicated team
+ * @brief Adds new robot to the home team
  *
- * @param robot
- * @param teamNum
+ * @param robot     Robot to add
  */
 void Controller::addRobot(Robot *robot)
 {
     homeTeam.push_back(robot);
 }
 
+/**
+ * @brief Adds new robot to the away team
+ *
+ * @param robot
+ */
 void Controller::addAwayRobot(Enemy *robot)
 {
     awayTeam.push_back(robot);
@@ -93,26 +106,24 @@ void Controller::createTeam2(MQTTClient2 *mqttClient2)
 }
 
 /**
- * @brief 
- * 
+ * @brief Creates a new away team with 6 robots
+ *
  */
- void Controller::createAwayTeam()
- {
-     for (int i = 0; i < 6; i++)
-     {
+void Controller::createAwayTeam()
+{
+    for (int i = 0; i < 6; i++)
+    {
         addAwayRobot(new Enemy);
-     }
-    
- }
-
+    }
+}
 
 /**
  * @brief Assigns the message of the robot received to the corresponding robot.
  *
- * @param robotTeam
+ * @param robotTeam     Team to which is added the new robot
  * @param robotIndex
- * @param message
- * @param topic
+ * @param message       Message to assign
+ * @param topic         type of data to add
  */
 void Controller::assignRobotMessage(int robotTeam,
                                     int robotIndex, vector<float> &message, string &topic)

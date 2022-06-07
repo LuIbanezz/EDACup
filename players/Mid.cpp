@@ -1,11 +1,34 @@
+/**
+ * @file Mid.cpp
+ * @author Agrippino, Cilfone, Di Sanzo, Hertter, Ibañez
+ * @brief Definition forMid class methods
+ * @version 0.1
+ * @date 2022-06-06
+ *
+ * @copyright Copyright (c) 2022
+ *
+ */
 #include "Mid.h"
 
-Mid::Mid(string robotID, MQTTClient2 *client, Controller *controller) : Robot(robotID, client, controller)
+/**
+ * @brief Construct a new Mid:: Mid object. Positions it to a base position
+ *
+ * @param robotID
+ * @param client
+ * @param controller
+ */
+
+Mid::Mid(string robotID, MQTTClient2 *client, Controller *controller)
+    : Robot(robotID, client, controller)
 {
     basePosition = {-1.5f * sign, 0.0f * sign, 90.0f * sign};
     outPosition = {-3.0f * sign, -4.0f, 0};
 }
 
+/**
+ * @brief Updates Mid robot
+ *
+ */
 void Mid::updateRobot()
 {
     if (!removed)
@@ -33,8 +56,8 @@ void Mid::updateRobot()
             if (Vector2Length(baseToBall) < 0.6f)
             {
                 Vector2 newBasePosition = Vector2Add({basePosition.position.x,
-                                                      basePosition.position.y},
-                                                     Vector2Scale(Vector2Normalize(baseToBall), 0.6f));
+                                            basePosition.position.y},
+                                            Vector2Scale(Vector2Normalize(baseToBall), 0.6f));
 
                 moveRobot({{newBasePosition}, 90.0f}, PAUSE_SPEED);
             }
@@ -53,8 +76,8 @@ void Mid::updateRobot()
             if (Vector2Length(baseToBall) < 0.6f)
             {
                 Vector2 newBasePosition = Vector2Add({basePosition.position.x,
-                                                      basePosition.position.y},
-                                                     Vector2Scale(Vector2Normalize(baseToBall), 0.6f));
+                                            basePosition.position.y},
+                                            Vector2Scale(Vector2Normalize(baseToBall), 0.6f));
 
                 moveRobot({{newBasePosition}, 90.0f}, PAUSE_SPEED);
             }
@@ -96,15 +119,16 @@ void Mid::updateRobot()
             break;
         case pauseGame:
             Vector2 ballPosition = {controller->ball.position.x, controller->ball.position.y};
-            Vector2 baseToBall = {basePosition.position.x - ballPosition.x, 
-                                    basePosition.position.y - ballPosition.y};
+            Vector2 baseToBall = {basePosition.position.x - ballPosition.x,
+                                  basePosition.position.y - ballPosition.y};
 
-            if(Vector2Length(baseToBall) < 0.6f)
+            if (Vector2Length(baseToBall) < 0.6f)
             {
-                    Vector2 newBasePosition = Vector2Add({basePosition.position.x, 
-                    basePosition.position.y}, Vector2Scale(Vector2Normalize(baseToBall), 0.6f));
+                Vector2 newBasePosition = Vector2Add({basePosition.position.x,
+                                            basePosition.position.y},
+                                            Vector2Scale(Vector2Normalize(baseToBall), 0.6f));
 
-                    moveRobot({{newBasePosition}, 90.0f}, PAUSE_SPEED);
+                moveRobot({{newBasePosition}, 90.0f}, PAUSE_SPEED);
             }
             else
             {

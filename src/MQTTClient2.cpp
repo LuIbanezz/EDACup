@@ -248,7 +248,10 @@ void MQTTClient2::run()
             disconnect();
     }
 }
-
+/**
+ * @brief Subscribes to topics of interests to receive messages from the server
+ * 
+ */
 void MQTTClient2::subscribeToTopics()
 {
     for (int i = 1; i <= ROBOT_NUMBER; i++)

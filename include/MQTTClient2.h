@@ -18,7 +18,7 @@
 
 #include <mosquitto.h>
 
-#define ROBOT_NUMBER  6
+#define ROBOT_NUMBER 6
 #define TEAM1 "1"
 
 class MQTTListener
@@ -29,7 +29,7 @@ public:
 
 /**
  * @brief Manages an MQTT mqttClient2 connection.
- * 
+ *
  */
 class MQTTClient2
 {
@@ -37,7 +37,8 @@ public:
     MQTTClient2();
     ~MQTTClient2();
 
-    bool connect(std::string clientId, std::string host, int port, std::string username, std::string password);
+    bool connect(std::string clientId, std::string host, int port, std::string username, 
+                 std::string password);
     bool isConnected();
     void disconnect();
 

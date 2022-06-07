@@ -1,5 +1,5 @@
 /**
- * @file MyListener.cpp
+ * @file MQTTMessageListener.cpp
  * @author Agrippino, Cilfone, Di Sanzo, Hertter, Ibañez
  * @brief MQTTListener sub-class definition
  * @version 0.1
@@ -10,22 +10,22 @@
  */
 #include <iostream>
 
-#include "MyListener.h"
+#include "MQTTMessageListener.h"
 
 using namespace std;
 
-MyListener::MyListener(Controller* controller)       
+MQTTMessageListener::MQTTMessageListener(Controller* controller)       
 {
     this->controller = controller;
 }
 
 /**
- * @brief 
+ * @brief           Receives a message from the server and decides
  * 
- * @param topic 
- * @param payload 
+ * @param topic     type of data received
+ * @param payload   data received
  */
-void MyListener::onMessage(string topic, vector<char> payload)
+void MQTTMessageListener::onMessage(string topic, vector<char> payload)
 {
     vector<float> decodedMessage;
     if (topic.find("robot") != -1)
@@ -85,33 +85,39 @@ void MyListener::onMessage(string topic, vector<char> payload)
         }
         else if(endOfTopic == "/removeRobot")
         {
-            controller->removedPlayers ++;
-            switch (controller->removedPlayers)
+            if(contenido == controller->team)
             {
-                case 1:
-                    controller->homeTeam[1]->removed = true;
-                    break;
-                case 2:
-                    controller->homeTeam[2]->removed = true;
-                    break;
-                case 3:
-                    controller->homeTeam[3]->removed = true;
-                    break;
-                case 4:
-                    controller->homeTeam[0]->removed = true;
-                    break;
-                case 5:
-                    controller->homeTeam[4]->removed = true;
-                    break;
-                case 6:
-                    controller->homeTeam[5]->removed = true;
-                    break;
+                controller->removedPlayers ++;
+                switch (controller->removedPlayers)
+                {
+                    case 1:
+                        controller->homeTeam[1]->removed = true;
+                        break;
+                    case 2:
+                        controller->homeTeam[2]->removed = true;
+                        break;
+                    case 3:
+                        controller->homeTeam[3]->removed = true;
+                        break;
+                    case 4:
+                        controller->homeTeam[0]->removed = true;
+                        break;
+                    case 5:
+                        controller->homeTeam[4]->removed = true;
+                        break;
+                    case 6:
+                        controller->homeTeam[5]->removed = true;
+                        break;
+                }
             }
+            
         }
         else if(endOfTopic == "/addRobot")
         {
-            controller->removedPlayers --;
-            //controller->referee = (GameStates)(addRobot1 + contenido - 1);
+            if(contenido == controller->team)
+            {
+                controller->removedPlayers --;
+            }
         }
     }
 }
@@ -122,7 +128,7 @@ void MyListener::onMessage(string topic, vector<char> payload)
  * @param vecChar 
  * @return vector<float> 
  */
-vector<float> MyListener::decode(vector<char> vecChar)
+vector<float> MQTTMessageListener::decode(vector<char> vecChar)
 {
     vector<float> vecFloat;
     float flaux;
@@ -131,7 +137,6 @@ vector<float> MyListener::decode(vector<char> vecChar)
     for (int i = 0; i < (vecChar.size() / 4); i++)
     {
         for (int j = 0; j < 4; j++)
-            //cambio btb el float auxiliar
             ptrAuxChar[j] = vecChar[(i * 4) + j]; 
 
         vecFloat.push_back(flaux);
@@ -145,7 +150,7 @@ vector<float> MyListener::decode(vector<char> vecChar)
  * @param vecChar 
  * @return uint8_t
  */
-uint8_t MyListener::decodeByte(vector<char> vecChar)
+uint8_t MQTTMessageListener::decodeByte(vector<char> vecChar)
 {
     return (uint8_t)vecChar[0];
 }
