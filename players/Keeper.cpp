@@ -25,7 +25,7 @@ void Keeper::updateRobot()
     positionGK();
 }
 /**
- * @brief
+ * @brief Positions Keeper in a way such that it stops the goal
  *
  */
     void Keeper ::positionGK()

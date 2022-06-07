@@ -423,7 +423,7 @@ bool Robot::kickToGoal(Vector2 goalPosition)
                         {coordinates.x, coordinates.y}) < (BALL_RADIUS + ROBOT_KICKER_RADIUS))
     {
 
-        float newKickPower = (kickPower / 3.0f) *
+        float newKickPower = (kickPower / 2.0f) *
                              Vector2Distance({controller->ball.position.x,
                                               controller->ball.position.y},
                                              goalPosition);
